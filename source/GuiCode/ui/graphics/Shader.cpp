@@ -50,9 +50,6 @@ static std::string LoadFile(const char* path)
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath) 
 {
-    LOG(vertexPath);
-    LOG(fragmentPath);
-
     ID = glCreateProgram();
 
     std::string _vData = LoadFile(vertexPath);
