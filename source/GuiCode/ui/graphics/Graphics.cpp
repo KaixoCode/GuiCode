@@ -87,7 +87,7 @@ namespace Graphics
     {
         //glClear(GL_COLOR_BUFFER_BIT);
         //glClearColor(0, 0, 0, 0);
-        LOG(d.Get().size());
+        
 
        for (int i = 0; i < d.Get().size(); i++)
        {
