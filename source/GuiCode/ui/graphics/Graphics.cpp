@@ -88,9 +88,8 @@ namespace Graphics
         //glClear(GL_COLOR_BUFFER_BIT);
         //glClearColor(0, 0, 0, 0);
         
-
-       for (int i = 0; i < d.Get().size(); i++)
-       {
+        for (int i = 0; i < d.Get().size(); i++)
+        {
            
             auto& a = d.Get()[i];
             switch (a->type)
