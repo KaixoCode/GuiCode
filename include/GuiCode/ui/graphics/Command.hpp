@@ -16,6 +16,7 @@ namespace Graphics
 
     struct CommandBase
     {
+        // TODO: wip
         bool operator ==(const CommandBase& b)
         {
             if (b.type != type)
