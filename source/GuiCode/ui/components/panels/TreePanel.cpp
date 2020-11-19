@@ -1,6 +1,6 @@
 #include "GuiCode/ui/components/panels/TreePanel.hpp"
-#include "GuiCode/ui/components/treeview/TreeItem.hpp"
-#include "GuiCode/ui/components/treeview/TreeItemType.hpp"
+#include "GuiCode/ui/components/treeitems/TreeItem.hpp"
+#include "GuiCode/ui/components/treeitems/TreeItemType.hpp"
 
 // --------------------------------------------------------------------------
 // ----------------------------- Tree Panel ---------------------------------

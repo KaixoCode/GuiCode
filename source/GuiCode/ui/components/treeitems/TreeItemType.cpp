@@ -1,5 +1,5 @@
-#include "GuiCode/ui/components/treeview/TreeItemType.hpp"
-#include "GuiCode/ui/components/treeview/TreeItemGraphics.hpp"
+#include "GuiCode/ui/components/treeitems/TreeItemType.hpp"
+#include "GuiCode/ui/components/treeitems/TreeItemGraphics.hpp"
 
 // --------------------------------------------------------------------------
 // --------------------------- TreeItem Type --------------------------------

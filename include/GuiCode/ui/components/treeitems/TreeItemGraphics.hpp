@@ -1,7 +1,7 @@
 #pragma once
 #include "GuiCode/pch.hpp"
-#include "GuiCode/ui/components/treeview/TreeItem.hpp"
-#include "GuiCode/ui/components/treeview/TreeItemType.hpp"
+#include "GuiCode/ui/components/treeitems/TreeItem.hpp"
+#include "GuiCode/ui/components/treeitems/TreeItemType.hpp"
 #include "GuiCode/ui/graphics/Graphics.hpp"
 #include "GuiCode/ui/graphics/Theme.hpp"
 
