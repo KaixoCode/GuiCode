@@ -53,4 +53,5 @@ target_link_libraries(GuiCode
 )
 
 add_definitions(-DABSOLUTE_SHADER_PATH=\"${SRCGUI}shaders/\")
+add_definitions(-DABSOLUTE_ASSETS_PATH=\"${SRCGUI}assets/\")
 

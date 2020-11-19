@@ -1,6 +1,7 @@
 #include "GuiCode/ui/graphics/Graphics.hpp"
 
 #define SHADER(a) ABSOLUTE_SHADER_PATH###a
+#define ASSET(a) ABSOLUTE_ASSETS_PATH###a
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
@@ -35,28 +36,28 @@ namespace Graphics
 
     void Init()
     {
-        Graphics::LoadFont("../assets/fonts/gidole/Gidole-Regular.otf", Fonts::Gidole);
-        Graphics::LoadFont("../assets/fonts/gidole/Gidole-Regular.otf", Fonts::Gidole14, 14);
-        Textures::FileIcon.SetTexture("../assets/textures/file.png");
-        Textures::AudioFileIcon.SetTexture("../assets/textures/audiofile.png");
-        Textures::FolderIcon.SetTexture("../assets/textures/folder.png");
+        Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole);
+        Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole14, 14);
+        Textures::FileIcon.SetTexture(ASSET(textures/file.png));
+        Textures::AudioFileIcon.SetTexture(ASSET(textures/audiofile.png));
+        Textures::FolderIcon.SetTexture(ASSET(textures/folder.png));
 
-        Textures::Cross1.SetTexture("../assets/textures/cross1.png");
-        Textures::Cross2.SetTexture("../assets/textures/cross2.png");
-        Textures::Cross3.SetTexture("../assets/textures/cross3.png");
+        Textures::Cross1.SetTexture(ASSET(textures/cross1.png));
+        Textures::Cross2.SetTexture(ASSET(textures/cross2.png));
+        Textures::Cross3.SetTexture(ASSET(textures/cross3.png));
     
-        Textures::Maxi1.SetTexture("../assets/textures/maxi1.png");
-        Textures::Maxi2.SetTexture("../assets/textures/maxi2.png");
-        Textures::Maxi3.SetTexture("../assets/textures/maxi3.png");
-        Textures::Maxi4.SetTexture("../assets/textures/maxi4.png");
-        Textures::Maxi5.SetTexture("../assets/textures/maxi5.png");
-        Textures::Maxi6.SetTexture("../assets/textures/maxi6.png");
+        Textures::Maxi1.SetTexture(ASSET(textures/maxi1.png));
+        Textures::Maxi2.SetTexture(ASSET(textures/maxi2.png));
+        Textures::Maxi3.SetTexture(ASSET(textures/maxi3.png));
+        Textures::Maxi4.SetTexture(ASSET(textures/maxi4.png));
+        Textures::Maxi5.SetTexture(ASSET(textures/maxi5.png));
+        Textures::Maxi6.SetTexture(ASSET(textures/maxi6.png));
     
-        Textures::Mini1.SetTexture("../assets/textures/mini1.png");
-        Textures::Mini2.SetTexture("../assets/textures/mini2.png");
-        Textures::Mini3.SetTexture("../assets/textures/mini3.png");
+        Textures::Mini1.SetTexture(ASSET(textures/mini1.png));
+        Textures::Mini2.SetTexture(ASSET(textures/mini2.png));
+        Textures::Mini3.SetTexture(ASSET(textures/mini3.png));
 
-        Textures::Logo.SetTexture("../assets/textures/logosmall.png");
+        Textures::Logo.SetTexture(ASSET(textures/logosmall.png));
     }
 
     // --------------------------------------------------------------------------
