@@ -40,14 +40,14 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
         int yw = m_ScrollbarY->Width();
         int xh = m_ScrollbarX->Height();
 
-        int yoff = m_ScrollbarX->NotNecessary() ? 0 : xh;
+        int yoff = m_ScrollbarX->NotNecessary() || !m_EnableX ? 0 : xh;
         m_ScrollbarY->Position({ Width() - yw, yoff });
         m_ScrollbarY->Height(Height() - yoff);
         m_ScrollbarY->Range({ 0, m_Panel->Height() + yoff });
         m_ScrollbarY->VisibleRange(Height());
         m_ScrollbarY->Visible(!m_ScrollbarY->NotNecessary() && m_EnableY);
 
-        int xoff = m_ScrollbarY->NotNecessary() ? 0 : yw;
+        int xoff = m_ScrollbarY->NotNecessary() || !m_EnableY ? 0 : yw;
         m_ScrollbarX->Position({ 0, 0 });
         m_ScrollbarX->Width(Width() - xoff);
         m_ScrollbarX->Range({ 0, m_Panel->Width() + xoff });
