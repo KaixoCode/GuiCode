@@ -10,11 +10,11 @@
 class ViewBase : public Panel
 {
 public:
-	/*void Draw() override 
-	{
-		Graphics::SetColor(Theme::View::background);
-		Graphics::Quad({ m_X, m_Y, m_Width, m_Height });
-	}*/
+    /*void Draw() override 
+    {
+        Graphics::SetColor(Theme::View::background);
+        Graphics::Quad({ m_X, m_Y, m_Width, m_Height });
+    }*/
 };
 
 // --------------------------------------------------------------------------
@@ -25,11 +25,11 @@ template<typename T>
 class View : public T
 {
 public:
-	static T& Instance()
-	{
-		static T _t;
-		return _t;
-	}
+    static T& Instance()
+    {
+        static T _t;
+        return _t;
+    }
 };
 
 class Test1 : public ViewBase

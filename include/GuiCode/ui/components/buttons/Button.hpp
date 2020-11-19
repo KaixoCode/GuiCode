@@ -44,12 +44,12 @@ protected:
 template<typename ButtonGraphics, typename ButtonType = ButtonBase>
 struct Button : public ButtonType
 {
-	using ButtonType::ButtonType;
+    using ButtonType::ButtonType;
 
-	void Render(CommandCollection& d) override
-	{
+    void Render(CommandCollection& d) override
+    {
         ButtonType::Render(d);
-		ButtonGraphics::Render(*this, d);
-	};
+        ButtonGraphics::Render(*this, d);
+    };
 };
 

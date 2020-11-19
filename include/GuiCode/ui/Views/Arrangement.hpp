@@ -12,16 +12,16 @@
 //class Track : public ComponentBase, public EventDistributor
 //{
 //public:
-//	Track()
-//		: ComponentBase(0, 0, 1, 100)
-//	{}
+//    Track()
+//        : ComponentBase(0, 0, 1, 100)
+//    {}
 //
-//	void MousePressed(MouseEvent e)
-//	{
-//		LOG("eee");
-//	}
+//    void MousePressed(MouseEvent e)
+//    {
+//        LOG("eee");
+//    }
 //
-//	void Draw() override;
+//    void Draw() override;
 //};
 //
 //// --------------------------------------------------------------------------
@@ -32,25 +32,25 @@
 //{
 //public:
 //
-//	Arrangement();
+//    Arrangement();
 //
-//	void MousePressed(MouseEvent) override;
+//    void MousePressed(MouseEvent) override;
 //
-//	void AddTrack();
-//	void Draw() override;
+//    void AddTrack();
+//    void Draw() override;
 //
 //private:
-//	double m_Unit = 32;
+//    double m_Unit = 32;
 //
-//	int m_CheckerBoardSize = 16;
+//    int m_CheckerBoardSize = 16;
 //
-//	bool m_RightClick = false,
-//		m_ScrollDragging = false;
+//    bool m_RightClick = false,
+//        m_ScrollDragging = false;
 //
-//	ZoomArea m_ZoomArea;
+//    ZoomArea m_ZoomArea;
 //
-//	Button<ButtonGraphics::Normal<>> m_Btton{ []() {}, "BUttottnt", 100, 100 };
+//    Button<ButtonGraphics::Normal<>> m_Btton{ []() {}, "BUttottnt", 100, 100 };
 //
-//	std::vector<std::unique_ptr<Track>> m_Tracks;
-//	Menu<MenuGraphics::Vertical, MenuType::Normal> m_RightClickMenu;
+//    std::vector<std::unique_ptr<Track>> m_Tracks;
+//    Menu<MenuGraphics::Vertical, MenuType::Normal> m_RightClickMenu;
 //};

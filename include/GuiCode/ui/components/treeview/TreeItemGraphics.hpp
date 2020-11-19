@@ -11,7 +11,7 @@
 
 namespace TreeItemGraphics
 {
-	using namespace Graphics;
+    using namespace Graphics;
 
     // --------------------------------------------------------------------------
     // ------------------------------- Normal -----------------------------------

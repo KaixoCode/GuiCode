@@ -8,7 +8,7 @@
 class TreePanel : public Panel 
 {
 public:
-	TreePanel();
+    TreePanel();
 
-	void SortItems(bool reverse);
+    void SortItems(bool reverse);
 };
