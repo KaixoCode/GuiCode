@@ -1,66 +1,95 @@
 #pragma once
 #include "GuiCode/pch.hpp"
 
-struct Theme
+
+class Theme
 {
-    struct Window
-    { 
-        static inline Color             background{  23,  23,  23, 255 };
-    };                                  
-                                      
-                                      
-    struct Gui                          
-    {
-        static inline Color             background{   0,   0,   0,   0 };
+public:
 
-        static inline Color            button_text{   0,   0,   0,   0 };
-        static inline Color                 button{   0,   0,   0,   0 };
-        static inline Color           button_hover{   0,   0,   0,   0 };
-        static inline Color           button_press{   0,   0,   0,   0 };
+	enum ID
+	{
+		WINDOW_BACKGROUND = 0,
+		TITLEBAR_BACKGROUND = 1,
+		TITLEBAR_TEXT = 2,
+        MENU_BACKGROUND = 10,
+        MENU_BORDER = 11,
+        MENU_BUTTON_TEXT = 12,
+        MENU_BUTTON_DARKER_TEXT = 13,
+        MENU_BUTTON_BACKGROUND = 14,
+        MENU_BUTTON_BACKGROUND_HOVER = 15,
+        MENU_BUTTON_BACKGROUND_PRESS = 16,
+        MENU_DISABLED_BUTTON_TEXT = 17,
+        MENU_DISABLED_BUTTON_DARKER_TEXT = 18,
+        MENU_DISABLED_BUTTON_BACKGROUND = 19,
+        MENU_DISABLED_BUTTON_BACKGROUND_HOVER = 20,
+        MENU_DISABLED_BUTTON_BACKGROUND_PRESS = 21,
+
+        VIEW_BACKGROUND = 100,
     };
 
-    struct Menu
-    {
-        static inline Color             background{  18,  18,  18, 255 };
-        static inline Color                 border{  64,  64,  64, 255 };
+    static Color Get(int c) { return m_Colors.find(c) == m_Colors.end() ? Color{ 0,0,0,0 } : m_Colors[c]; }
 
-        static inline Color               button_text{ 255, 255, 255, 255 };
-        static inline Color             keycombo_text{ 128, 128, 128, 255 };
-        static inline Color                    button{ 255, 255, 255,   0 };
-        static inline Color              button_hover{ 255, 255, 255,  13 };
-        static inline Color              button_press{ 255, 255, 255,  26 };
+	static void Load(const std::string& path) 
+	{
+        // Clear the current colors
+        m_Colors.clear();
 
-        static inline Color   disabled_button_text{ 179, 179, 179, 255 };
-        static inline Color disabled_keycombo_text{  77,  77,  77, 255 };
-        static inline Color        disabled_button{ 255, 255, 255,   0 };
-        static inline Color  disabled_button_hover{ 255, 255, 255,   0 };
-        static inline Color  disabled_button_press{ 255, 255, 255,   0 };
-    };
+		// Open the file
+		std::ifstream file; 
+		file.open(path, std::ios::in);
 
-    struct TitleBar
-    {
-        static inline Color                background{  25,  25,  25, 255 };
-                                     
-        static inline Color                      text{ 179, 179, 179, 255 };
-                                                                       
-        static inline Color             button_border{  64,  64,  64, 255 };
-        static inline Color               button_text{ 255, 255, 255, 255 };
-        static inline Color                    button{ 255, 255, 255,   0 };
-        static inline Color              button_hover{ 255, 255, 255,  12 };
-        static inline Color              button_press{  18,  18,  23, 255 };
-    };
+		// Check if it's open
+		if (!file.is_open())
+		{
+			LOG("Could not open file at: " << path);
+			return;
+		}
 
-    struct View
-    {
-        static inline Color                background{  38,  38,  38, 255};
-    };
+		// Go through all lines of the file
+		std::string line;
+        while (std::getline(file, line))
+        {
+            // Skip empty lines
+            while (line.length() == 0)
+                std::getline(file, line);
 
-    struct Arrangement
-    {
-        static inline Color           background_dark{ 0.18, 0.18, 0.18, 1.00 };
-        static inline Color          background_light{ 0.22, 0.22, 0.22, 1.00 };
-        static inline Color                      line{ 0.00, 0.00, 0.00, 0.60 };
+            // interpret the line
+            InterpretLine(line);
+        }
 
-        static inline Color       track_background{ 0.18, 0.18, 0.18, 1.00 };
-    };
+		// Close the file
+		file.close();
+	}
+
+private:
+
+    static void InterpretLine(const std::string& line)
+	{
+        // Take out the comment
+        std::string_view _nc(line.c_str(), line.find_first_of('#'));
+        
+        // Single out the color and the id
+        std::string_view _idstring(line.c_str(), line.find_first_of(':'));
+        std::string_view _color((line.begin() + line.find_first_of(':') + 1).operator->(), line.find_first_of('#') - line.find_first_of(':') - 1);
+        
+        std::string_view _rstring(_color.data(), _color.find_first_of(','));
+        _color.remove_prefix(_color.find_first_of(',') + 1);
+        std::string_view _gstring(_color.data(), _color.find_first_of(','));
+        _color.remove_prefix(_color.find_first_of(',') + 1);
+        std::string_view _bstring(_color.data(), _color.find_first_of(','));
+        _color.remove_prefix(_color.find_first_of(',') + 1);
+        std::string_view _astring(_color.data(), _color.size());
+
+        int _id = atoi(_idstring.data());
+        float _r = atoi(_rstring.data());
+        float _g = atoi(_gstring.data());
+        float _b = atoi(_bstring.data());
+        float _a = atoi(_astring.data());
+        
+        // Insert the color
+        m_Colors.insert({ _id, Color{ _r, _g, _b, _a } });
+	}
+
+
+	static inline std::unordered_map<int, Color> m_Colors;
 };

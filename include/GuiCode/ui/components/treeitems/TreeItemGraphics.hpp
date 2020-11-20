@@ -25,9 +25,9 @@ namespace TreeItemGraphics
         template<>
         static void Render(TreeItem<Normal, TreeItemType::Normal>& b, CommandCollection& d)
         {
-            Color _c2 = Theme::Menu::button_text * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            Color _c3 = Theme::Menu::keycombo_text * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            Color _c1 = b.Hovering() ? Theme::Menu::button_hover : Theme::Menu::button;
+            Color _c2 = Theme::Get(Theme::MENU_BUTTON_TEXT) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c3 = Theme::Get(Theme::MENU_BUTTON_DARKER_TEXT) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c1 = Theme::Get(b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
 
@@ -52,9 +52,9 @@ namespace TreeItemGraphics
         template<>
         static void Render(TreeItem<Normal, TreeItemType::Folder>& b, CommandCollection& d)
         {
-            Color _c2 = Theme::Menu::button_text * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            Color _c3 = Theme::Menu::keycombo_text * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            Color _c1 = b.Hovering() ? Theme::Menu::button_hover : Theme::Menu::button;
+            Color _c2 = Theme::Get(Theme::MENU_BUTTON_TEXT) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c3 = Theme::Get(Theme::MENU_BUTTON_DARKER_TEXT) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c1 = Theme::Get(b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.X(), b.Y() + b.Height() - b.ActualHeight(), b.Width(), b.ActualHeight());
 

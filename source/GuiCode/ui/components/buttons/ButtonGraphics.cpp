@@ -16,42 +16,42 @@ namespace ButtonGraphics
     {
         int _padding = 20;
         Color _c1;
-        Color _c2 = (b.Disabled() ? Theme::Menu::disabled_button_text : Theme::Menu::button_text) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-        Color _c3 = (b.Disabled() ? Theme::Menu::disabled_keycombo_text : Theme::Menu::keycombo_text) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+        Color _c2 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_TEXT : Theme::MENU_BUTTON_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+        Color _c3 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_DARKER_TEXT: Theme::MENU_BUTTON_DARKER_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
 
         // TODO: get rid of these ugly ass dynamic casts
         if (dynamic_cast<::ButtonType::Toggle*>(&b) != nullptr)
         {
-            _c1 = b.Disabled() ?
-                b.Hovering() ? Theme::Menu::disabled_button_hover : Theme::Menu::disabled_button
+            _c1 = Theme::Get(b.Disabled() ?
+                b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
                 :
-                b.Hovering() ? Theme::Menu::button_hover : Theme::Menu::button;
+                b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
 
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
 
             if (b.Active())
             {
-                d.Command<Fill>(Theme::Menu::button_press);
+                d.Command<Fill>(Theme::Get(Theme::MENU_BUTTON_BACKGROUND_PRESS));
                 int _p = 2;
                 d.Command<Quad>(b.Position() + Vec2<int>{ _p, _p }, Vec2<int>{ b.Size().y - _p * 2, b.Size().y - _p * 2 });
             }
         }
         else if (dynamic_cast<::ButtonType::Hover*>(&b) != nullptr)
         {
-            _c1 = b.Disabled() ?
-                b.Hovering() ? Theme::Menu::disabled_button_hover : Theme::Menu::disabled_button
+            _c1 = Theme::Get(b.Disabled() ?
+                b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
                 :
-                b.Hovering() ? Theme::Menu::button_hover : Theme::Menu::button;
+                b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
         }
         else
         {
-            _c1 = b.Disabled() ?
-                b.Active() ? Theme::Menu::disabled_button_press : b.Hovering() ? Theme::Menu::disabled_button_hover : Theme::Menu::disabled_button
+            _c1 = Theme::Get(b.Disabled() ?
+                b.Active() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
                 :
-                b.Active() ? Theme::Menu::button_press : b.Hovering() ? Theme::Menu::button_hover : Theme::Menu::button;
+                b.Active() ? Theme::MENU_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER: Theme::MENU_BUTTON_BACKGROUND);
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
         }
@@ -84,12 +84,12 @@ namespace ButtonGraphics
 
     void TitleMenu::Render(ButtonBase& b, CommandCollection& d)
     {
-        Color _c1 = b.Active() ? Theme::TitleBar::button_press : b.Hovering() ? Theme::TitleBar::button_hover : Theme::TitleBar::button;
-        Color _c2 = Theme::TitleBar::button_text * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+        Color _c1 = Theme::Get(b.Active() ? Theme::MENU_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
+        Color _c2 = Theme::Get(Theme::MENU_BUTTON_TEXT) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
         float _padding = 20;
         if (b.Active())
         {
-            d.Command<Fill>(Theme::TitleBar::button_border);
+            d.Command<Fill>(Theme::Get(Theme::MENU_BORDER));
             d.Command<Quad>(b.X() - 1, b.Y(), b.Width() + 2, b.Height());
         }
         d.Command<Fill>(_c1);

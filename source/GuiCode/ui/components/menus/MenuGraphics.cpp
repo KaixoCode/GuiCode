@@ -48,10 +48,10 @@ namespace MenuGraphics
         int _iy = _y;
         int _mw = 0;
 
-        d.Command<Fill>(Theme::Menu::border);
+        d.Command<Fill>(Theme::Get(Theme::MENU_BORDER));
         d.Command<Quad>(b.X() - 1, b.Y() - 1, b.Width() + 2, b.Height() + 2);
 
-        d.Command<Fill>(Theme::Menu::background);
+        d.Command<Fill>(Theme::Get(Theme::MENU_BACKGROUND));
         d.Command<Quad>(b.X(), b.Y(), b.Width(), b.Height());
 
         for (auto& _item : _menuItems)

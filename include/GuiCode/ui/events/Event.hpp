@@ -121,6 +121,7 @@ public:
         CTRL_X = ('X' << 8) | Event::Mod::CONTROL,
         CTRL_Y = ('Y' << 8) | Event::Mod::CONTROL,
         CTRL_Z = ('Z' << 8) | Event::Mod::CONTROL,
+        CTRL_COMMA = (188 << 8) | Event::Mod::CONTROL,
         CTRL_SHIFT_S = ('S' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         CTRL_SHIFT_W = ('W' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         ALT_F4 = (VK_F4 << 8) | Event::Mod::ALT,
@@ -163,7 +164,7 @@ public:
             bool _s = _value & Event::Mod::SHIFT;
             bool _a = _value & Event::Mod::ALT;
             int _l = (_value & 0xffffff00) >> 8;
-            bool _f = _l >= 0x70;
+            bool _f = _l >= 0x70 && _l <= 0x7B;
             
             std::string _str;
             _str.reserve(_c ? _ctrl.size() : 0 + _s ? _shift.size() : 0 + _a ? _alt.size() : 0 + _f ? 2 : 1);
@@ -173,6 +174,7 @@ public:
             if (_a) _str += _alt;
             if (_f)
                 _str = _str + "F" + std::to_string(_l - 0x6F);
+            if (_l == 188) _str += ',';
             else
                 _str += static_cast<char>(_l);
 

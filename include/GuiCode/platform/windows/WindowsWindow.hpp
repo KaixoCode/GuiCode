@@ -1,24 +1,26 @@
 #include "GuiCode/ui/window/WindowBase.hpp"
 
+class WindowsWindow;
 class WindowsWindow : public WindowBase
 {
 public:
-    WindowsWindow(const std::string& name, const int width, const int height);
+    WindowsWindow(const std::string& name, int width, int height, bool child);
     ~WindowsWindow() 
     {
         if (--m_WindowCount == 0)
             glfwTerminate();
     }
     
-    auto Size(int w, int h)  -> void override { glfwSetWindowSize(*this, w, h); }
-    auto Size(Vec2<int> s)   -> void override { glfwSetWindowSize(*this, s.width, s.height); }
-    auto Maximize()          -> void override { glfwMaximizeWindow(*this); }
-    auto Restore()           -> void override { glfwRestoreWindow(*this); }
-    auto Iconify()           -> void override { glfwIconifyWindow(*this); }
-    auto Close()             -> void override { glfwSetWindowShouldClose(*this, GL_TRUE); }
-    auto Show()              -> void override { ShowWindow(GetWin32Handle(), SW_SHOW); }
-    auto Hide()              -> void override { ShowWindow(GetWin32Handle(), SW_HIDE); }
-    auto ShouldClose(bool b) -> void override { glfwSetWindowShouldClose(m_Window, b); };
+    auto Size(int w, int h)    -> void override { glfwSetWindowSize(*this, w, h); }
+    auto Size(Vec2<int> s)     -> void override { glfwSetWindowSize(*this, s.width, s.height); }
+    auto Location(Vec2<int> s) -> void override { glfwSetWindowPos(*this, s.x, s.y); }
+    auto Maximize()            -> void override { glfwMaximizeWindow(*this); }
+    auto Restore()             -> void override { glfwRestoreWindow(*this); }
+    auto Iconify()             -> void override { glfwIconifyWindow(*this); }
+    auto Close()               -> void override { glfwSetWindowShouldClose(*this, GL_TRUE); }
+    auto Show()                -> void override { ShowWindow(GetWin32Handle(), SW_SHOW); }
+    auto Hide()                -> void override { ShowWindow(GetWin32Handle(), SW_HIDE); }
+    auto ShouldClose(bool b)   -> void override { glfwSetWindowShouldClose(m_Window, b); };
 
     operator    GLFWwindow* ()   const { return GetWindow(); }
     GLFWwindow* GetWindow()      const { return m_Window; }
@@ -64,7 +66,7 @@ private:
 
     static LRESULT SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
     static int m_WindowCount, m_WindowIdCounter;
-    static GLFWwindow* m_MainWindow;
+    static WindowsWindow* m_MainWindow;
 };
 
 

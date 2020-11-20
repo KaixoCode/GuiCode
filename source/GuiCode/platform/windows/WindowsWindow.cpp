@@ -5,9 +5,9 @@
 
 int WindowsWindow::m_WindowCount = 0;
 int WindowsWindow::m_WindowIdCounter = 0;
-GLFWwindow* WindowsWindow::m_MainWindow = nullptr;
+WindowsWindow* WindowsWindow::m_MainWindow = nullptr;
 
-WindowsWindow::WindowsWindow(const std::string& name, const int width, const int height)
+WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool child)
     : WindowBase(name, width, height)
 {
     m_Projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
@@ -20,10 +20,16 @@ WindowsWindow::WindowsWindow(const std::string& name, const int width, const int
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_FLOATING, child);
+    glfwWindowHint(GLFW_RESIZABLE, !child);
     //glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    m_Window = glfwCreateWindow(55, 55, name.c_str(), NULL, WindowsWindow::m_MainWindow);
+    if (WindowsWindow::m_MainWindow != nullptr)
+        m_Window = glfwCreateWindow(55, 55, name.c_str(), NULL, WindowsWindow::m_MainWindow->GetWindow());
+    else 
+        m_Window = glfwCreateWindow(55, 55, name.c_str(), NULL, NULL);
+
     m_WindowId = m_WindowIdCounter++;
     if (&m_Window == NULL)
     {
@@ -32,10 +38,19 @@ WindowsWindow::WindowsWindow(const std::string& name, const int width, const int
             glfwTerminate();
     }
 
+    if (WindowsWindow::m_MainWindow != nullptr && child)
+    {
+        //SetParent(GetWin32Handle(), WindowsWindow::m_MainWindow->GetWin32Handle());
+        //long style = GetWindowLong(GetWin32Handle(), GWL_STYLE);
+        //style &= ~WS_POPUP; // remove popup style 
+        //style |= WS_CHILDWINDOW; // add childwindow style
+        //SetWindowLong(GetWin32Handle(), GWL_STYLE, style);
+    }
+
     glfwMakeContextCurrent(*this);
 
     if (m_WindowCount == 0)
-        WindowsWindow::m_MainWindow = m_Window;
+        WindowsWindow::m_MainWindow = this;
 
     if (m_WindowCount == 0 && !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -110,7 +125,7 @@ void WindowsWindow::Render(CommandCollection& d)
     using namespace Graphics;
     d.Command<Clip>(0, 0, Width(), Height());
     d.Command<Type::Viewport>(0, 0, Width(), Height());
-    d.Command<Fill>(Theme::Window::background);
+    d.Command<Fill>(Theme::Get(Theme::WINDOW_BACKGROUND));
     d.Command<Quad>(0, 0, Width(), Height());
     WindowBase::Render(d);
 }
@@ -290,6 +305,12 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 
     switch (uMsg)
     {
+    case WM_WINDOWPOSCHANGED:
+    {
+        if (IsWindowVisible(hWnd) == true)
+            SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
+    }
+    break;
     case WM_KEYDOWN:
     case WM_KEYUP:
     {
@@ -299,7 +320,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             | ((GetKeyState(VK_NUMLOCK) & 0x8000) ? Event::Mod::NUM_LOCK : 0)
             | ((GetKeyState(VK_CAPITAL) & 0x8000) ? Event::Mod::CAPS_LOCK : 0);
 
-        _self->KeyCallback(_self, wParam, 0, uMsg == WM_KEYDOWN ? Event::Type::KeyPressed : Event::Type::KeyReleased, _mod);
+        _self->KeyCallback(_self, wParam, 0, uMsg == WM_KEYDOWN || uMsg == WM_CHAR ? Event::Type::KeyPressed : Event::Type::KeyReleased, _mod);
         break;
     }
     case WM_MOUSEWHEEL:

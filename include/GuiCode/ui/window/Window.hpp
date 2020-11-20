@@ -12,7 +12,7 @@ using WindowType = WindowsWindow;
 
 struct Window : public WindowType
 {
-    Window(const std::string& name, const int width, const int height)
-        : WindowType(name, width, height)
+    Window(const std::string& name, int width, int height, bool child)
+        : WindowType(name, width, height, child)
     {}
 };
