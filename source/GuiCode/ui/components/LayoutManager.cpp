@@ -44,6 +44,4 @@ void LayoutManager::Update(const Vec4<int>& dim, ComponentCollection& components
     else if (m_Layout == Layout::Stack) Update<Layout::Stack>(dim, components);
     else if (m_Layout == Layout::Border) Update<Layout::Border>(dim, components);
     m_MousePress = Event::MouseButton::NONE;
-    m_PMouseX = m_MouseX;
-    m_PMouseY = m_MouseY;
 }

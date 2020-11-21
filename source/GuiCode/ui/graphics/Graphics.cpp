@@ -105,7 +105,7 @@ namespace Graphics
             case Text: m_Text(a->text, a->position.x, a->position.y); break;
             case Ellipse: m_Ellipse(a->dimension); break;
             case Triangle: m_Triangle(a->dimension, a->rotation); break;
-            case Clip: glEnable(GL_SCISSOR_TEST); glScissor(a->dimension.x, a->dimension.y, a->dimension.z, a->dimension.w); break;
+            case Clip: glEnable(GL_SCISSOR_TEST); glScissor(a->dimension.x + m_Matrix[3][0], a->dimension.y + m_Matrix[3][1], a->dimension.z, a->dimension.w); break;
             case Viewport: glViewport(a->dimension.x, a->dimension.y, a->dimension.z, a->dimension.w); break;
             case ClearClip: glDisable(GL_SCISSOR_TEST); break;
             case Translate: m_Translate(a->translate); break;

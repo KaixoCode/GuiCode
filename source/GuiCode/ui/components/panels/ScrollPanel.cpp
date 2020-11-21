@@ -62,10 +62,10 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
 
         // If the panel is not being autoresized, set the width/height
         // to the size of this scroll panel.
-        if (!m_Panel->AutoResize().x)
+        if (!m_EnableX)
             m_Panel->Width(Width() - xoff);
 
-        if (!m_Panel->AutoResize().y)
+        if (!m_EnableY)
             m_Panel->Height(Height());
         
         Panel::Update(viewport);
@@ -75,13 +75,14 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
 void ScrollPanel::Render(CommandCollection& d) 
 {
     using namespace Graphics;
-    d.Command<Clip>(X(), Y(), Width(), Height());
     Background(d);
     d.Command<PushMatrix>();
     d.Command<Translate>(Vec2<int>{ X(), Y() });
     if (m_Panel)
     {
+        d.Command<Clip>(0, m_ScrollbarX->Height() * m_ScrollbarX->Visible(), Width() - m_ScrollbarY->Width() * m_ScrollbarY->Visible(), Height() - m_ScrollbarX->Height() * m_ScrollbarX->Visible());
         m_Panel->Render(d);
+        d.Command<Clip>(0, 0, Width(), Height());
         if (m_ScrollbarX->Visible())
             m_ScrollbarX->Render(d);
         if (m_ScrollbarY->Visible())

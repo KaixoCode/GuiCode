@@ -9,11 +9,11 @@ Panel::Panel(Vec2<int> size)
 {
     m_Listener += [this](Event& e)
     {
-        m_LayoutManager.AddEvent(e);
-
         // Make event coords relative to this panel
         if (e.type != Event::Type::KeyPressed && e.type != Event::Type::KeyReleased)
             e.x -= X(), e.y -= Y();
+
+        m_LayoutManager.AddEvent(e);
     };
 
     // TODO: Find a better fix than just updating when mousepressed....

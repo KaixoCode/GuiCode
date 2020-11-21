@@ -25,7 +25,7 @@ namespace ScrollbarGraphics
         static void Render(Scrollbar<Normal, ScrollbarType::Horizontal>& b, CommandCollection& d)
         {
             int _p = 6;
-            int _w = max((b.VisibleRange() - b.Range().start) / (float)(b.Range().end - b.Range().start) * b.Width(), (float)b.MinSize());
+            int _w = max((b.VisibleRange() - b.Range().start) / (float)(b.Range().end - b.Range().start) * b.Width(), (float)b.MinBarSize());
             int _x = (b.Value() - b.Range().start) / (float)(b.Range().end - b.Range().start - b.VisibleRange()) * (b.Width() - _w) + b.X();
             
             if (b.Hovering() && b.Mouse() >= _x && b.Mouse() <= _x + _w)
@@ -45,7 +45,7 @@ namespace ScrollbarGraphics
         static void Render(Scrollbar<Normal, ScrollbarType::Vertical>& b, CommandCollection& d)
         {
             int _p = 6;
-            int _h = max((b.VisibleRange() - b.Range().start) / (float)(b.Range().end - b.Range().start) * b.Height(), (float)b.MinSize());
+            int _h = max((b.VisibleRange() - b.Range().start) / (float)(b.Range().end - b.Range().start) * b.Height(), (float)b.MinBarSize());
             int _y = (b.Value() - b.Range().start) / (float)(b.Range().end - b.Range().start - b.VisibleRange()) * -(b.Height()-_h) + b.Y() + b.Height() - _h;
             
             if (b.Hovering() && b.Mouse() >= _y && b.Mouse() <= _y + _h)

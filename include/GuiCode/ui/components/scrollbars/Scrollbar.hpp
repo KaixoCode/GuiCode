@@ -16,7 +16,7 @@ public:
     auto Value(int v)               -> void const { m_Value = constrain(v, m_Range.start, m_Range.end - m_VisibleRange); }
     auto VisibleRange(int v)       -> void const { m_VisibleRange = v; ConstrainValue(); }
 
-    int       MinSize()      const { return 40; }
+    int       MinBarSize()   const { return 40; }
     int       Value()        const { return m_Value; }
     int       Mouse()        const { return m_Mouse; }
     int       VisibleRange() const { return m_VisibleRange; }
