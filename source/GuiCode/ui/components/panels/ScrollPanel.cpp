@@ -37,6 +37,7 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
 {
     if (m_Panel)
     {
+        Panel::Update(viewport);
         int yw = m_ScrollbarY->Width();
         int xh = m_ScrollbarX->Height();
 
@@ -68,19 +69,33 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
         if (!m_EnableY)
             m_Panel->Height(Height());
         
-        Panel::Update(viewport);
+        
+
+        int _nx = min(-m_ScrollbarX->Value(), 0);
+        int _ny = Height() - m_Panel->Height() + m_ScrollbarY->Value();
+        if (m_ScrollbarY->NotNecessary())
+            _ny = Height() - m_Panel->Height();
+
+
+
+        m_Panel->Position({ _nx, _ny });
     }
 }
 
 void ScrollPanel::Render(CommandCollection& d) 
 {
     using namespace Graphics;
-    Background(d);
+    d.Command<Clip>(X(), Y(), Width(), Height());
+    if (!m_TranslateBackground)
+        Background(d);
     d.Command<PushMatrix>();
     d.Command<Translate>(Vec2<int>{ X(), Y() });
     if (m_Panel)
     {
         d.Command<Clip>(0, m_ScrollbarX->Height() * m_ScrollbarX->Visible(), Width() - m_ScrollbarY->Width() * m_ScrollbarY->Visible(), Height() - m_ScrollbarX->Height() * m_ScrollbarX->Visible());
+        if (m_TranslateBackground)
+            Background(d);
+
         m_Panel->Render(d);
         d.Command<Clip>(0, 0, Width(), Height());
         if (m_ScrollbarX->Visible())

@@ -52,9 +52,14 @@ void Panel::Update(const Vec4<int>& viewport)
 void Panel::Render(CommandCollection& d)
 {
     using namespace Graphics;
-    Background(d);
     d.Command<PushMatrix>();
+    if (!m_TranslateBackground)
+        Background(d);
+
     d.Command<Translate>(Vec2<int>{ X(), Y() });
+    if (m_TranslateBackground)
+        Background(d);
+
     Container::Render(d);
     d.Command<PopMatrix>();
 }

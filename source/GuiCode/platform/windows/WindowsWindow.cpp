@@ -331,7 +331,12 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             _x = _rect.left, _y = _rect.top;
 
         // TODO: translate these mod params to Event params
-        int _mod = GET_KEYSTATE_WPARAM(wParam);
+        int _win32mod = GET_KEYSTATE_WPARAM(wParam);
+        int _mod = ((_win32mod & 0x0008) ? Event::Mod::CONTROL : 0)
+            | ((_win32mod & 0x0001) ? Event::Mod::LEFT : 0)
+            | ((_win32mod & 0x0010) ? Event::Mod::MIDDLE: 0)
+            | ((_win32mod & 0x0002) ? Event::Mod::RIGHT : 0)
+            | ((_win32mod & 0x0004) ? Event::Mod::SHIFT: 0);
         int _amount = GET_WHEEL_DELTA_WPARAM(wParam);
         int _xPos = GET_X_LPARAM(lParam);
         int _yPos = GET_Y_LPARAM(lParam);

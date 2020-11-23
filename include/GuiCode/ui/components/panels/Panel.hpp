@@ -11,7 +11,8 @@ class Panel : public Container
 public:
     Panel(Vec2<int> size = { 40, 70 });
 
-    auto Background(const Color& c) -> void { m_Background = c; };
+    auto Background(const Color& c)  -> void { m_Background = c; };
+    auto TranslateBackground(bool t) -> void { m_TranslateBackground = t; }
 
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection& d) override;
@@ -23,8 +24,8 @@ public:
     void AutoResize(bool rx, bool ry) { m_AutoResizeX = rx, m_AutoResizeY = ry; };
     Vec2<bool> AutoResize() const { return { m_AutoResizeX, m_AutoResizeY }; };
 
-private:
+protected:
     ::Color m_Background = { 0, 0, 0, 0 };
     LayoutManager m_LayoutManager;
-    bool m_AutoResizeX = false, m_AutoResizeY = false;
+    bool m_AutoResizeX = false, m_AutoResizeY = false, m_TranslateBackground = false;
 };

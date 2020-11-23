@@ -1,5 +1,6 @@
 #pragma once
 #include "GuiCode/ui/components/panels/Panel.hpp"
+#include "GuiCode/ui/components/panels/ZoomPanel.hpp"
 #include "GuiCode/ui/components/scrollbars/Scrollbar.hpp"
 #include "GuiCode/ui/components/scrollbars/ScrollbarType.hpp"
 #include "GuiCode/ui/components/scrollbars/ScrollbarGraphics.hpp"
@@ -18,19 +19,26 @@ public:
 
     void EnableScrollbars(bool x, bool y) { m_EnableX = x, m_EnableY = y; }
 
+    Vec2<int> Scrolled() const { return { m_ScrollbarX->Value(), m_ScrollbarY->Value() }; }
+
     template<typename T, typename ...Args>
     T& Component(Args&&... args)
     {
         if (m_Panel != nullptr)
             return dynamic_cast<T&>(*m_Panel);
 
-        m_Panel = &Emplace<T>(std::forward<Args>(args)...);
+        auto& _t = Emplace<T>(std::forward<Args>(args)...);
+        m_Panel = &_t;
         m_ScrollbarX = &Emplace<Scrollbar<ScrollbarGraphics::Normal, ScrollbarType::Horizontal>>();
         m_ScrollbarY = &Emplace<Scrollbar<ScrollbarGraphics::Normal, ScrollbarType::Vertical>>();
-        return dynamic_cast<T&>(*m_Panel);
+        
+        if constexpr (std::is_base_of<ZoomPanel, T>::value)
+            _t.SetScrollbars(m_ScrollbarX, m_ScrollbarY);
+        
+        return _t;
     }
 
-private:
+protected:
     ScrollbarBase* m_ScrollbarX{ 0 };
     ScrollbarBase* m_ScrollbarY{ 0 };
     ::Panel* m_Panel{ 0 };
