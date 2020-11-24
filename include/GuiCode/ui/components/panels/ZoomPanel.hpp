@@ -14,6 +14,7 @@ public:
 	auto SetScrollbars(ScrollbarBase* x = nullptr, ScrollbarBase* y = nullptr) -> void { m_ScrollbarX = x, m_ScrollbarY = y; }
 	
 	double GetZoom() const { return m_Zoom; }
+	Vec2<double> ZoomRange() const { return { m_MinZoom, m_MaxZoom }; }
 
 	void Update(const Vec4<int>& viewport) override;
 
