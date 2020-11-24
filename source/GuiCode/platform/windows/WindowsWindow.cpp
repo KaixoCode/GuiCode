@@ -7,7 +7,7 @@ int WindowsWindow::m_WindowCount = 0;
 int WindowsWindow::m_WindowIdCounter = 0;
 WindowsWindow* WindowsWindow::m_MainWindow = nullptr;
 
-WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool child)
+WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool resizable, bool shadow)
     : WindowBase(name, width, height)
 {
     m_Projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
@@ -20,8 +20,8 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_FLOATING, child);
-    glfwWindowHint(GLFW_RESIZABLE, !child);
+    glfwWindowHint(GLFW_FLOATING, resizable);
+    glfwWindowHint(GLFW_RESIZABLE, !resizable);
     //glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
@@ -38,13 +38,11 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
             glfwTerminate();
     }
 
-    if (WindowsWindow::m_MainWindow != nullptr && child)
+    if (WindowsWindow::m_MainWindow != nullptr && !shadow)
     {
-        //SetParent(GetWin32Handle(), WindowsWindow::m_MainWindow->GetWin32Handle());
-        //long style = GetWindowLong(GetWin32Handle(), GWL_STYLE);
-        //style &= ~WS_POPUP; // remove popup style 
-        //style |= WS_CHILDWINDOW; // add childwindow style
-        //SetWindowLong(GetWin32Handle(), GWL_STYLE, style);
+        long style = GetWindowLong(GetWin32Handle(), GWL_EXSTYLE);
+        style = style & ~WS_EX_APPWINDOW | WS_EX_TOOLWINDOW; 
+        SetWindowLong(GetWin32Handle(), GWL_EXSTYLE, style);
     }
 
     glfwMakeContextCurrent(*this);
@@ -90,7 +88,9 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     SetWindowSubclass(GetWin32Handle(), &SubClassProc, m_WindowId, (DWORD_PTR) static_cast<void*>(this));
 
     // Set the margins of the Win32 window.
-    const MARGINS _margins = { 1, 1, 1, 1 };
+    MARGINS _margins = { 1, 1, 1, 1 };
+    if (!shadow)
+        _margins = { 0, 0, 0, 0 };
     DwmExtendFrameIntoClientArea(GetWin32Handle(), &_margins);
 }
 

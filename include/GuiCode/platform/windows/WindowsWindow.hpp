@@ -4,7 +4,7 @@ class WindowsWindow;
 class WindowsWindow : public WindowBase
 {
 public:
-    WindowsWindow(const std::string& name, int width, int height, bool child);
+    WindowsWindow(const std::string& name, int width, int height, bool resizable, bool shadow);
     ~WindowsWindow() 
     {
         if (--m_WindowCount == 0)
