@@ -10,9 +10,7 @@ class Gui
 {
 public:
 	Gui()
-	{
-		RightClickMenu::Get().Hide();
-	}
+	{}
 
 	template<typename T, typename ...Args>
 	T& AddWindow(Args...args)
@@ -20,7 +18,10 @@ public:
 		auto& _w = m_Windows.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
 		static bool _init = false;
 		if (!_init)
+		{
 			Graphics::Init();
+			RightClickMenu::Get().Hide();
+		}
 		_init = true;
 		return *dynamic_cast<T*>(_w.get());;
 	}

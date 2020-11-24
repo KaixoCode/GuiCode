@@ -39,7 +39,7 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
             glfwTerminate();
     }
 
-    if (WindowsWindow::m_MainWindow != nullptr && !decorated)
+    if (!decorated)
     {
         long style = GetWindowLong(GetWin32Handle(), GWL_EXSTYLE);
         style = style & ~WS_EX_APPWINDOW | WS_EX_TOOLWINDOW; 
