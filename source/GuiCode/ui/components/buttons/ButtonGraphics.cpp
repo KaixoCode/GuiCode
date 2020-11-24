@@ -73,9 +73,9 @@ namespace ButtonGraphics
     void SubMenu::Render(ButtonBase& b, CommandCollection& d)
     {
         Menu::Render(b, d);
-        float _w = 7;
-        float _padding = 4;
-        d.Command<Triangle>(b.X() + b.Width() - _w - _padding, b.Y() + b.Height() / 2 - _w / 2, _w / 2, _w, 0.0f);
+        int _w = 8;
+        int _padding = 4;
+        d.Command<Triangle>(b.X() + b.Width() - _w / 2 - _padding, b.Y() + b.Height() / 2, _w / 2, _w, 0.0f);
     }
     
     // --------------------------------------------------------------------------
@@ -86,7 +86,7 @@ namespace ButtonGraphics
     {
         Color _c1 = Theme::Get(b.Active() ? Theme::MENU_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
         Color _c2 = Theme::Get(Theme::MENU_BUTTON_TEXT) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-        float _padding = 20;
+        int _padding = 20;
         if (b.Active())
         {
             d.Command<Fill>(Theme::Get(Theme::MENU_BORDER));
