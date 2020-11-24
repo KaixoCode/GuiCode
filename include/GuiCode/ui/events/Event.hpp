@@ -1,6 +1,10 @@
 #pragma once
 #include "GuiCode/pch.hpp"
 
+// --------------------------------------------------------------------------
+// -------------------------------- Event -----------------------------------
+// --------------------------------------------------------------------------
+
 struct Event
 {
     enum class Type
@@ -92,6 +96,10 @@ struct Event
     };
 };
 
+// --------------------------------------------------------------------------
+// --------------------------------- Key ------------------------------------
+// --------------------------------------------------------------------------
+
 class Key
 {
 public:
@@ -124,7 +132,7 @@ public:
         CTRL_X = ('X' << 8) | Event::Mod::CONTROL,
         CTRL_Y = ('Y' << 8) | Event::Mod::CONTROL,
         CTRL_Z = ('Z' << 8) | Event::Mod::CONTROL,
-        CTRL_COMMA = (188 << 8) | Event::Mod::CONTROL,
+        CTRL_COMMA = (188 << 8) | Event::Mod::CONTROL, // TODO: This one doesnt work
         CTRL_SHIFT_S = ('S' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         CTRL_SHIFT_W = ('W' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         ALT_F4 = (VK_F4 << 8) | Event::Mod::ALT,

@@ -7,7 +7,7 @@ int WindowsWindow::m_WindowCount = 0;
 int WindowsWindow::m_WindowIdCounter = 0;
 WindowsWindow* WindowsWindow::m_MainWindow = nullptr;
 
-WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool resizable, bool shadow)
+WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool resizable, bool decorated)
     : WindowBase(name, width, height)
 {
     m_Projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
@@ -23,6 +23,7 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     glfwWindowHint(GLFW_FLOATING, resizable);
     glfwWindowHint(GLFW_RESIZABLE, !resizable);
     //glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
+    glfwWindowHint(GLFW_DECORATED, decorated);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     if (WindowsWindow::m_MainWindow != nullptr)
@@ -38,7 +39,7 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
             glfwTerminate();
     }
 
-    if (WindowsWindow::m_MainWindow != nullptr && !shadow)
+    if (WindowsWindow::m_MainWindow != nullptr && !decorated)
     {
         long style = GetWindowLong(GetWin32Handle(), GWL_EXSTYLE);
         style = style & ~WS_EX_APPWINDOW | WS_EX_TOOLWINDOW; 
@@ -89,8 +90,8 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
 
     // Set the margins of the Win32 window.
     MARGINS _margins = { 1, 1, 1, 1 };
-    if (!shadow)
-        _margins = { 0, 0, 0, 0 };
+    //if (!shadow)
+    //    _margins = { 0, 0, 0, 0 };
     DwmExtendFrameIntoClientArea(GetWin32Handle(), &_margins);
 }
 

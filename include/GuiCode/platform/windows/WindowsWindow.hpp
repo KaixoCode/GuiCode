@@ -1,10 +1,14 @@
 #include "GuiCode/ui/window/WindowBase.hpp"
 
+// --------------------------------------------------------------------------
+// -------------------------- Windows Window --------------------------------
+// --------------------------------------------------------------------------
+
 class WindowsWindow;
 class WindowsWindow : public WindowBase
 {
 public:
-    WindowsWindow(const std::string& name, int width, int height, bool resizable, bool shadow);
+    WindowsWindow(const std::string& name, int width, int height, bool resizable, bool decorated);
     ~WindowsWindow() 
     {
         if (--m_WindowCount == 0)
@@ -12,7 +16,11 @@ public:
     }
     
     auto Size(int w, int h)    -> void override { glfwSetWindowSize(*this, w, h); }
-    auto Size(Vec2<int> s)     -> void override { glfwSetWindowSize(*this, s.width, s.height); }
+    auto Size(Vec2<int> s)     -> void override 
+    { 
+        RECT rect{Location().x, Location().y, Location().x + s.width, Location().y + s.height}; 
+        AdjustWindowRect(&rect, GetWindowStyle(GetWin32Handle()), false); 
+    }
     auto Location(Vec2<int> s) -> void override { glfwSetWindowPos(*this, s.x, s.y); }
     auto Maximize()            -> void override { glfwMaximizeWindow(*this); }
     auto Restore()             -> void override { glfwRestoreWindow(*this); }

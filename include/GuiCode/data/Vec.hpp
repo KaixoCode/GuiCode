@@ -89,10 +89,25 @@ struct Vec3
 template<typename T>
 struct Vec4
 {
-    union { T x, r; };
-    union { T y, g; };
-    union { T z, b, width; };
-    union { T w, a, height; };
+    union 
+    {
+        Vec2<T> position;
+        struct
+        {
+            union { T x, r; };
+            union { T y, g; };
+        };
+    };
+    
+    union 
+    {
+        Vec2<T> size;
+        struct
+        {
+            union { T z, b, width; };
+            union { T w, a, height; };
+        };
+    };
 
     Vec4 operator -() const { return { -x, -y, -z }; }
     Vec4 operator -(const Vec4& other) const { return { x - other.x, y - other.y, z - other.z, w - other.w }; }

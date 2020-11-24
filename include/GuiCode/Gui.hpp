@@ -1,10 +1,19 @@
+#pragma once
 #include "GuiCode/ui/window/WindowBase.hpp"
+#include "GuiCode/RightClickMenu.hpp"
 
-
+// --------------------------------------------------------------------------
+// -------------------------------- Gui -------------------------------------
+// --------------------------------------------------------------------------
 
 class Gui
 {
 public:
+	Gui()
+	{
+		RightClickMenu::Get().Hide();
+	}
+
 	template<typename T, typename ...Args>
 	T& AddWindow(Args...args)
 	{
@@ -29,10 +38,11 @@ public:
 				_running = false;
 		}
 
+		RightClickMenu::Get().Loop();
+
 		return _running;
 	}
 
 private:
 	std::vector<std::unique_ptr<WindowBase>> m_Windows;
-
 };
