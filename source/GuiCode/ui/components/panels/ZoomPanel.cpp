@@ -29,7 +29,7 @@ ZoomPanel::ZoomPanel()
 void ZoomPanel::Update(const Vec4<int>& viewport)
 {
 	// Smooth out the zooming
-	double _r = 0.7;
+	double _r = 0.5;
 	double _pzoom = m_Zoom;
 	m_Zoom = m_Zoom * (1.0 - _r) + m_TargetZoom * _r;
 	double _delta = m_Zoom / _pzoom;
