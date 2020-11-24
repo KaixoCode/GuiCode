@@ -320,7 +320,8 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             | ((GetKeyState(VK_NUMLOCK) & 0x8000) ? Event::Mod::NUM_LOCK : 0)
             | ((GetKeyState(VK_CAPITAL) & 0x8000) ? Event::Mod::CAPS_LOCK : 0);
 
-        _self->KeyCallback(_self, wParam, 0, uMsg == WM_KEYDOWN || uMsg == WM_CHAR ? Event::Type::KeyPressed : Event::Type::KeyReleased, _mod);
+        int _repeat = (lParam & 0x40000000);
+        _self->KeyCallback(_self, wParam, _repeat, uMsg == WM_KEYDOWN || uMsg == WM_CHAR ? Event::Type::KeyPressed : Event::Type::KeyReleased, _mod);
         break;
     }
     case WM_MOUSEWHEEL:
@@ -330,7 +331,6 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
         if (GetWindowRect(hWnd, &_rect))
             _x = _rect.left, _y = _rect.top;
 
-        // TODO: translate these mod params to Event params
         int _win32mod = GET_KEYSTATE_WPARAM(wParam);
         int _mod = ((_win32mod & 0x0008) ? Event::Mod::CONTROL : 0)
             | ((_win32mod & 0x0001) ? Event::Mod::LEFT : 0)
@@ -439,11 +439,11 @@ void WindowsWindow::MouseWheelCallback(WindowsWindow* window, int amount, int mo
     _self->m_EventQueue.emplace(Event::Type::MouseWheel, x, y, amount, mod);
 }
 
-void WindowsWindow::KeyCallback(WindowsWindow* window, int key, int scancode, Event::Type action, int mod)
+void WindowsWindow::KeyCallback(WindowsWindow* window, int key, int repeat, Event::Type action, int mod)
 {
     auto _self = window;
 
-    _self->m_EventQueue.emplace(action, key, mod);
+    _self->m_EventQueue.emplace(action, key, mod, repeat);
 }
 
 void WindowsWindow::WindowSizeCallback(WindowsWindow* window, int width, int height)

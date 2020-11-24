@@ -25,7 +25,11 @@ struct Event
     Event(Type t, int x, int y)
         : type(t), x(x), y(y)
     {}
-    
+
+    Event(Type t, int x, int y, int repeat)
+        : type(t), x(x), y(y), repeat(repeat)
+    {}
+
     Event(Type t, int x, int y, MouseButton b)
         : type(t), x(x), y(y), button(b)
     {}
@@ -42,7 +46,7 @@ struct Event
     // ---------------------------- Key Events ----------------------------------
     // --------------------------------------------------------------------------
 
-    struct KeyPressed { int key; int keymod; int a, b; };
+    struct KeyPressed { int key; int keymod; int repeat, b; };
     struct KeyReleased { int key; int keymod; int a, b; };
 
     // --------------------------------------------------------------------------
@@ -67,7 +71,7 @@ struct Event
         {
             union { int key, x; };
             union { int keymod; int y; };
-            union { MouseButton button; int amount; };
+            union { MouseButton button; int amount, repeat; };
             union { int mod; int wheelmod; };
         };
 

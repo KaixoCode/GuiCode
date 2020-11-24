@@ -52,7 +52,6 @@ enum struct Align
     CENTER, LEFT, RIGHT, TOP, BOTTOM
 };
 
-
 #define M_PI 3.14159265359
 
 #define DEBUG 1
