@@ -25,6 +25,11 @@ public:
         MENU_DISABLED_BUTTON_BACKGROUND_PRESS = 21,
 
         VIEW_BACKGROUND = 100,
+        ARRANGEMENT_DARKER = 1000,
+        ARRANGEMENT_LIGHTER = 1001,
+        ARRANGEMENT_LINE_1 = 1002,
+        ARRANGEMENT_LINE_2 = 1003,
+        ARRANGEMENT_LINE_3 = 1004,
     };
 
     static Color Get(int c) { return m_Colors.find(c) == m_Colors.end() ? Color{ 0,0,0,0 } : m_Colors[c]; }
