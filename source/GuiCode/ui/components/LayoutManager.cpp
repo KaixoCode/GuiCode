@@ -36,12 +36,3 @@ LayoutManager::LayoutManager()
         m_MouseDrag = e.button;
     };
 }
-
-void LayoutManager::Update(const Vec4<int>& dim, ComponentCollection& components)
-{
-    m_Cursor = -1;
-    if (m_Layout == Layout::Grid) Update<Layout::Grid>(dim, components);
-    else if (m_Layout == Layout::Stack) Update<Layout::Stack>(dim, components);
-    else if (m_Layout == Layout::Border) Update<Layout::Border>(dim, components);
-    m_MousePress = Event::MouseButton::NONE;
-}

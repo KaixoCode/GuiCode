@@ -15,18 +15,23 @@ struct LayoutManager
 
     int Cursor() { return m_Cursor; }
     
-    void Update(const Vec4<int>& dim, ComponentCollection& components);
+    template<typename TypeCollection>
+    void Update(const Vec4<int>& dim, TypeCollection& components) 
+    {
+        m_Cursor = -1;
+        if (m_Layout == Layout::Grid) UpdateLayoutGrid(dim, components);
+        else if (m_Layout == Layout::Stack) UpdateLayoutStack(dim, components);
+        else if (m_Layout == Layout::Border) UpdateLayoutBorder(dim, components);
+        m_MousePress = Event::MouseButton::NONE;
+    }
 
     ::Layout Layout() const{ return m_Layout; }
 
     template<Layout::Type T, typename ...Args>
     void Layout(Args&& ...args) { m_Layout = ::Layout{ T, args... }; }
 
-    template<Layout::Type T>
-    void Update(const Vec4<int>& dim, ComponentCollection& components) {};
-
-    template<>
-    void Update<Layout::Grid>(const Vec4<int>& dim, ComponentCollection& components)
+    template<typename TypeCollection>
+    void UpdateLayoutGrid(const Vec4<int>& dim, TypeCollection& components)
     {
         Layout::GridLayout& _grid = m_Layout.grid;
         
@@ -54,8 +59,8 @@ struct LayoutManager
         }
     }
 
-    template<>
-    void Update<Layout::Border>(const Vec4<int>& dim, ComponentCollection& components)
+    template<typename TypeCollection>
+    void UpdateLayoutBorder(const Vec4<int>& dim, TypeCollection& components)
     {
         Layout::BorderLayout& _border = m_Layout.border;
 
@@ -301,8 +306,8 @@ struct LayoutManager
         }
     }
 
-    template<>
-    void Update<Layout::Stack>(const Vec4<int>& dim, ComponentCollection& components)
+    template<typename TypeCollection>
+    void UpdateLayoutStack(const Vec4<int>& dim, TypeCollection& components)
     {
         Layout::StackLayout& _stack = m_Layout.stack;
 
