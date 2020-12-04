@@ -21,6 +21,8 @@ public:
 
     Vec2<int> Scrolled() const { return { m_ScrollbarX->Value(), m_ScrollbarY->Value() }; }
 
+    ::Panel& Component() const { return *m_Panel; }
+
     template<typename T, typename ...Args>
     T& Component(Args&&... args)
     {
