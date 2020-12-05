@@ -15,7 +15,7 @@ namespace ButtonGraphics
     void TitleMenu::Render(ButtonBase& b, CommandCollection& d)
     {
         Color _c1 = Theme::Get(b.Active() ? Theme::MENU_BACKGROUND : b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
-        Color _c2 = Theme::Get(Theme::MENU_BUTTON_TEXT) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+        Color _c2 = Theme::Get(Theme::MENU_BUTTON_TEXT);
         int _padding = 20;
         if (b.Active())
         {
