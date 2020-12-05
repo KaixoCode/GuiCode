@@ -274,7 +274,7 @@ namespace Graphics
 
         else
         {
-            float _vertices[] = { 0.0f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f };
+            float _vertices[] = { -.5f, -.5f, .5f, -.5f, .5f, .5f, -.5f, .5f };
             unsigned int _indices[] = { 0, 1, 3, 1, 2, 3 };
 
             glGenVertexArrays(1, &_VAO);
@@ -304,7 +304,8 @@ namespace Graphics
         _shader.SetMat4("view", m_Matrix);
         _shader.SetMat4("projection", m_Projection);
         _shader.SetVec4("color", m_Fill);
-        _shader.SetVec4("dimensions", dim);
+        glm::vec4 _dim{ dim.x + m_Matrix[3][0], dim.y + m_Matrix[3][1], dim.z, dim.w };
+        _shader.SetVec4("dimensions", _dim);
 
         glBindVertexArray(_VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);

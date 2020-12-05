@@ -9,8 +9,8 @@ void main()
 {
     vec2 pos = gl_FragCoord.xy;
 
-    float x = dimensions.x + dimensions.z / 2;
-    float y = dimensions.y + dimensions.w / 2;
+    float x = dimensions.x;
+    float y = dimensions.y;
 
     float r = (pow(pos.x - x, 2) / pow(dimensions.z / 2, 2)) + (pow(pos.y - y, 2) / pow(dimensions.w / 2, 2));
 
