@@ -15,6 +15,7 @@ struct Vec2
     Vec2 operator *(T other) { return { x * other, y * other }; }
     Vec2 operator /(T other) { return { x / other, y / other }; }
     Vec2 operator +(T other) { return { x + other, y + other }; }
+    Vec2 operator -(T other) { return { x - other, y - other }; }
     Vec2& operator =(const Vec2& other) { x = other.x, y = other.y; return *this; }
     Vec2& operator+=(const Vec2& other) { x += other.x; y += other.y; return *this; }
     Vec2& operator-=(const Vec2& other) { x -= other.x; y -= other.y; return *this; }
