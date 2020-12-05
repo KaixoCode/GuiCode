@@ -16,11 +16,7 @@ public:
     }
     
     auto Size(int w, int h)    -> void override { glfwSetWindowSize(*this, w, h); }
-    auto Size(Vec2<int> s)     -> void override 
-    { 
-        RECT rect{Location().x, Location().y, Location().x + s.width, Location().y + s.height}; 
-        AdjustWindowRect(&rect, GetWindowStyle(GetWin32Handle()), false); 
-    }
+    auto Size(Vec2<int> s)     -> void override { glfwSetWindowSize(*this, s.width, s.height); }
     auto Location(Vec2<int> s) -> void override { glfwSetWindowPos(*this, s.x, s.y); }
     auto Maximize()            -> void override { glfwMaximizeWindow(*this); }
     auto Restore()             -> void override { glfwRestoreWindow(*this); }
