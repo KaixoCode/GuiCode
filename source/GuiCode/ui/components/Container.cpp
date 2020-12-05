@@ -124,3 +124,16 @@ void Container::Determine(Event& e)
         }
     }
 }
+
+void Container::Remove(int index)
+{
+    // Make sure hovering and focussed dont point to nothing
+    auto& a = m_Components.at(index);
+    if (a.get() == m_Hovering)
+        m_Hovering = nullptr;
+
+    if (a.get() == m_Focussed)
+        m_Focussed = nullptr;
+
+    m_Components.erase(m_Components.begin() + index);
+}

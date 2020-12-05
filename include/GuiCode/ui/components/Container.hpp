@@ -27,6 +27,8 @@ public:
         return *dynamic_cast<T*>(_t.get());
     }
 
+    void Remove(int index);
+
     int Cursor() const override { return m_Hovering ? m_Hovering->Cursor() : m_Cursor; }
 
     void Clear() { m_Components.clear(); m_Hovering = nullptr, m_Focussed = nullptr; }
