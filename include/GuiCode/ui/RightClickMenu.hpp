@@ -26,6 +26,12 @@ public:
 		MenuFrame::Loop();
 	}
 
+	void Close()
+	{
+		SetMenu(nullptr);
+		Hide();
+	}
+
 	void Open(MenuBase* menu)
 	{
 		// TODO: abstract this OS specific code away

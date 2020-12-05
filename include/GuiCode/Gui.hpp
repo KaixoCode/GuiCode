@@ -1,6 +1,6 @@
 #pragma once
 #include "GuiCode/ui/window/WindowBase.hpp"
-#include "GuiCode/RightClickMenu.hpp"
+#include "GuiCode/ui/RightClickMenu.hpp"
 
 // --------------------------------------------------------------------------
 // -------------------------------- Gui -------------------------------------
