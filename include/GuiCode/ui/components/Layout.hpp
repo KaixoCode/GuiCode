@@ -8,7 +8,7 @@ struct Layout
 {
     enum Type 
     {
-        Grid, Stack, Border, Free
+        Grid, Stack, SidewaysStack, Border, Free
     };
 
     enum class Hint

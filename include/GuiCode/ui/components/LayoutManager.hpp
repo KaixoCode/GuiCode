@@ -21,6 +21,7 @@ struct LayoutManager
         m_Cursor = -1;
         if (m_Layout == Layout::Grid) UpdateLayoutGrid(dim, components);
         else if (m_Layout == Layout::Stack) UpdateLayoutStack(dim, components);
+        else if (m_Layout == Layout::SidewaysStack) UpdateLayoutSidewaysStack(dim, components);
         else if (m_Layout == Layout::Border) UpdateLayoutBorder(dim, components);
         m_MousePress = Event::MouseButton::NONE;
     }
@@ -339,6 +340,29 @@ struct LayoutManager
         }
         m_BiggestX = dim.x + dim.width;
         m_BiggestY = _y;
+    }
+
+    template<typename TypeCollection>
+    void UpdateLayoutSidewaysStack(const Vec4<int>& dim, TypeCollection& components)
+    {
+        Layout::StackLayout& _stack = m_Layout.stack;
+
+        int _padding = _stack.padding;
+        int _x = dim.x + _padding;
+        size_t _size = components.size();
+        for (int _i = _size - 1; _i >= 0; _i--)
+        {
+            auto& _c = components[_i];
+            if (!_c->Visible())
+                continue;
+
+            int _y = dim.y + _padding;
+            _c->Position({ _x, _y });
+            _c->Height(dim.height - 2 * _padding);
+            _x += _c->Width() + _padding;
+        }
+        m_BiggestX = _x;
+        m_BiggestY = dim.y + dim.height;
     }
 
     Vec2<int> BiggestCoords() { return { m_BiggestX, m_BiggestY }; }
