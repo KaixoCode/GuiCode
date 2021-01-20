@@ -438,7 +438,7 @@ namespace Graphics
             if (m_TextAlign.y == Align::CENTER)
                 _ypos -= 0.5 * _totalHeight * _scale;
             else if (m_TextAlign.y == Align::TOP)
-                _ypos += _totalHeight * _scale;
+                _ypos -= (_totalHeight / 0.7) * _scale;
 
             float _w = _ch.Size.x * _scale;
             float _h = _ch.Size.y * _scale;
