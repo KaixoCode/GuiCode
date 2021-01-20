@@ -19,6 +19,7 @@ public:
     virtual auto Enable()           -> void { m_Enabled = true; }
     virtual auto Disable()          -> void { m_Enabled = false; }
     virtual auto Active(bool a)     -> void { m_Active = a; }
+    virtual auto Name(const std::string& a)     -> void { m_Name = a; }
 
     virtual bool Enabled()    const { return m_Enabled; }
     virtual bool Disabled()   const { return !m_Enabled; }

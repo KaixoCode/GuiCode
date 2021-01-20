@@ -57,7 +57,39 @@ namespace ButtonGraphics
         };
 
         template<>
-        static void Render<ButtonType::Toggle>(ButtonType::Toggle& b, CommandCollection& d)
+        static void Render<Button<Menu, ButtonType::List>>(Button<Menu, ButtonType::List>& b, CommandCollection& d)
+        {
+            int _padding = 20;
+            Color _c1;
+            Color _c2 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_TEXT : Theme::MENU_BUTTON_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c3 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_DARKER_TEXT : Theme::MENU_BUTTON_DARKER_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+
+            _c1 = Theme::Get(b.Disabled() ?
+                b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
+                :
+                b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
+
+            d.Command<Fill>(_c1);
+            d.Command<Quad>(b.Position(), b.Size());
+
+            if (b.Selected())
+            {
+                d.Command<Fill>(Theme::Get(Theme::MENU_BUTTON_BACKGROUND_PRESS));
+                int _p = 2;
+                d.Command<Quad>(b.Position() + Vec2<int>{ _p, _p }, Vec2<int>{ b.Size().y - _p * 2, b.Size().y - _p * 2 });
+            }
+            d.Command<Font>(Fonts::Gidole14, 14);
+            d.Command<Fill>(_c2);
+            d.Command<TextAlign>(Align::LEFT, Align::CENTER);
+            d.Command<Text>(&b.Name(), _padding + b.X() + 6, b.Y() + b.Height() / 2);
+            d.Command<Fill>(_c3);
+            d.Command<TextAlign>(Align::RIGHT, Align::CENTER);
+            if (b.KeyCombo() != Key::NONE)
+                d.Command<Text>(&b.KeyCombo().ToString(), b.X() + b.Width() - 6, b.Y() + b.Height() / 2);
+        };
+
+        template<>
+        static void Render<Button<Menu, ButtonType::Toggle>>(Button<Menu, ButtonType::Toggle>& b, CommandCollection& d)
         {
             int _padding = 20;
             Color _c1;
@@ -89,7 +121,7 @@ namespace ButtonGraphics
         };
 
         template<>
-        static void Render<ButtonType::Hover>(ButtonType::Hover& b, CommandCollection& d)
+        static void Render<Button<Menu, ButtonType::Hover>>(Button<Menu, ButtonType::Hover>& b, CommandCollection& d)
         {
             int _padding = 20;
             Color _c1;

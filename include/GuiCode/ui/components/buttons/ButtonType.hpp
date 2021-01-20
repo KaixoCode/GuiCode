@@ -26,6 +26,51 @@ namespace ButtonType
     };
 
     // --------------------------------------------------------------------------
+    // -------------------------------- List ------------------------------------
+    // --------------------------------------------------------------------------
+    // ---------- Normal button behaviour, press to trigger callback ------------
+    // --------------------------------------------------------------------------
+
+    class List : public Normal
+    {
+    public:
+        List(Callback c = []() {}, const std::string& name = "Button",
+            Vec2<int> size = { 70, 40 }, int id = 0, Key key = Key::NONE)
+            : Normal(c, name, size, key), m_Id(id)
+        {
+            m_Listener += [this](Event::MouseReleased& event)
+            {
+                if (event.button == Event::MouseButton::LEFT)
+                {
+                    if (!Disabled() && Component::WithinBounds({ event.x, event.y }))
+                    {
+                        for (auto& _l : m_Lists[m_Id])
+                            _l->Selected(false);
+                        
+                        Selected(true);
+                        LOG(Selected());
+                    }
+                }
+            };
+
+            auto& _exists = m_Lists.find(id);
+            if (_exists == m_Lists.end())
+                m_Lists.emplace(id, std::vector<List*>());
+   
+            m_Lists[id].push_back(this);
+        };
+
+        void Selected(bool b) { m_Selected = b; }
+        bool Selected() { return m_Selected; }
+
+    private:
+        static inline std::unordered_map<int, std::vector<List*>> m_Lists;
+        bool m_Selected = false;
+        int m_Id = 0;
+        Callback m_Callback;
+    };
+
+    // --------------------------------------------------------------------------
     // ------------------------------- Toggle -----------------------------------
     // --------------------------------------------------------------------------
     // - Clicking the button toggles the active state, can be linked to a bool --

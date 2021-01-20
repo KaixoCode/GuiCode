@@ -36,12 +36,6 @@ public:
 	{
 		// TODO: abstract this OS specific code away
 
-		// Change the capture to this window to make sure 
-		// when releasing the mouse it doesn't immediatly
-		// unfocus this window and close it.
-		ReleaseCapture();
-		SetCapture(Get().GetWin32Handle());
-
 		// Set the menu
 		Component(menu);
 
@@ -49,6 +43,12 @@ public:
 		POINT point; GetCursorPos(&point);
 		Location({ point.x, point.y });
 		Show();
+
+		// Change the capture to this window to make sure 
+		// when releasing the mouse it doesn't immediatly
+		// unfocus this window and close it.
+		ReleaseCapture();
+		SetCapture(Get().GetWin32Handle());
 	}
 
 private:
