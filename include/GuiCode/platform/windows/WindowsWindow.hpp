@@ -11,6 +11,7 @@ public:
     WindowsWindow(const std::string& name, int width, int height, bool resizable, bool decorated);
     ~WindowsWindow() 
     {
+        SetWindowSubclass(GetWin32Handle(), &SubClassProc, m_WindowId, (DWORD_PTR) static_cast<void*>(nullptr));
         if (--m_WindowCount == 0)
             glfwTerminate();
     }
