@@ -52,7 +52,22 @@ public:
 	}
 
 private:
+	bool m_Pressed = false; 
+
 	RightClickMenu()
 		: ComponentFrame("", 50, 50)
-	{}
+	{
+		m_Listener += [this](Event::MousePressed& e)
+		{
+			m_Pressed = true;
+		};
+
+		m_Listener += [this](Event::MouseReleased& e)
+		{
+			if (m_Pressed)
+				Close();
+
+			m_Pressed = false;
+		};
+	}
 };
