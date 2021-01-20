@@ -20,8 +20,8 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_FLOATING, resizable);
-    glfwWindowHint(GLFW_RESIZABLE, !resizable);
+    //glfwWindowHint(GLFW_FLOATING, !resizable);
+    glfwWindowHint(GLFW_RESIZABLE, resizable);
     //glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
     glfwWindowHint(GLFW_DECORATED, decorated);
     glfwWindowHint(GLFW_SAMPLES, 4);
@@ -205,6 +205,8 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 {
     static bool _resizing = true;
     WindowsWindow* _self = (WindowsWindow*)dwRefData;
+    if (_self == nullptr)
+        return 0;
     bool _fCallDWP = true;
     LRESULT _lRet = 0;
 

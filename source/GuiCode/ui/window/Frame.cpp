@@ -7,12 +7,22 @@ void Frame::Update(const Vec4<int>& viewport)
     int _offset = _maxi ? -8 : 0;
     m_Panel->Size({ Width(), Height() - 32 + _offset });
     m_Panel->Position({ 0, 0 });
-    m_MaxiButton1->Visible(_maxi);
-    m_MaxiButton2->Visible(!_maxi);
-    m_MaxiButton1->Position({ Width() - 92 + _offset, Height() - 32 + _offset });
-    m_MaxiButton2->Position({ Width() - 92 + _offset, Height() - 32 + _offset });
-    m_CloseButton->Position({ Width() - 46 + _offset, Height() - 32 + _offset });
-    m_MinimButton->Position({ Width() - 138 + _offset, Height() - 32 + _offset });
+    int _x = Width() - 46 + _offset;
+    m_CloseButton->Position({ _x, Height() - 32 + _offset });
+    if (m_Resizable)
+    {
+        _x -= 46;
+        m_MaxiButton1->Visible(_maxi);
+        m_MaxiButton2->Visible(!_maxi);
+        m_MaxiButton1->Position({ _x, Height() - 32 + _offset });
+        m_MaxiButton2->Position({ _x, Height() - 32 + _offset });
+    }
+    else
+    {
+        m_MaxiButton1->Visible(false);
+        m_MaxiButton2->Visible(false);
+    }
+    m_MinimButton->Position({ _x -= 46, Height() - 32 + _offset });
     Window::Update(viewport);
 }
 
