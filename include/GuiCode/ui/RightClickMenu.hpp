@@ -6,7 +6,7 @@
 // --------------------------------------------------------------------------
 
 class RightClickMenu;
-class RightClickMenu : public MenuFrame
+class RightClickMenu : public ComponentFrame
 {
 public:
 
@@ -23,12 +23,12 @@ public:
 		if (GetForegroundWindow() != GetWin32Handle())
 			Hide();
 
-		MenuFrame::Loop();
+		ComponentFrame::Loop();
 	}
 
 	void Close()
 	{
-		SetMenu(nullptr);
+		Component(nullptr);
 		Hide();
 	}
 
@@ -43,7 +43,7 @@ public:
 		SetCapture(Get().GetWin32Handle());
 
 		// Set the menu
-		SetMenu(menu);
+		Component(menu);
 
 		// Show the window at the cursor position
 		POINT point; GetCursorPos(&point);
@@ -53,6 +53,6 @@ public:
 
 private:
 	RightClickMenu()
-		: MenuFrame("", 50, 50)
+		: ComponentFrame("", 50, 50)
 	{}
 };

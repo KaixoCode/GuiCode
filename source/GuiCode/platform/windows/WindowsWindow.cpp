@@ -468,9 +468,8 @@ void WindowsWindow::UpdateCursor(int c)
 
     if (m_GLFWCursor)
         glfwDestroyCursor(m_GLFWCursor);
-
     if (m_Cursorid == -1)
-        glfwSetCursor(*this, NULL);
+        glfwSetCursor(*this, m_GLFWCursor = glfwCreateStandardCursor(GLFW_CURSOR_NORMAL));
     else
         glfwSetCursor(*this,
             (m_GLFWCursor = glfwCreateStandardCursor(m_Cursorid)));

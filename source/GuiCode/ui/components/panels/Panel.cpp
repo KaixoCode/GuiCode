@@ -35,7 +35,8 @@ void Panel::Update(const Vec4<int>& viewport)
 {
     // Step 1 is updating the layout to make sure the positions of all components are correct.
     m_LayoutManager.Update({ 0, 0, Width(), Height() }, m_Components); // Also set the cursor
-    m_Cursor = m_LayoutManager.Cursor() == -1 ? GLFW_CURSOR_NORMAL : m_LayoutManager.Cursor();
+    m_Cursor = m_Pressed && m_LayoutManager.Cursor() == -1 ? GLFW_CURSOR_NORMAL : m_LayoutManager.Cursor();
+    
     // Next: calculate the highest coords and auto resize to those coords if that is enabled.
     if (m_AutoResizeX)
         Width(m_LayoutManager.BiggestCoords().x);

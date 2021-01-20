@@ -5,37 +5,40 @@
 // ------------------------- Menu Frame Panel -------------------------------
 // --------------------------------------------------------------------------
 
-MenuFramePanel::MenuFramePanel()
+ComponentFramePanel::ComponentFramePanel()
 {
     m_Listener += [this](Event& event)
     {
-        if (m_Menu)
-            m_Menu->AddEvent(event);
+        if (m_Component)
+            m_Component->AddEvent(event);
     };
 }
 
-void MenuFramePanel::Update(const Vec4<int>& viewport)
+void ComponentFramePanel::Update(const Vec4<int>& viewport)
 {
     Panel::Update(viewport);
-    if (m_Menu)
-        m_Menu->Update(viewport);
+    if (m_Component)
+    {
+        m_Component->Position({ 0, 0 });
+        m_Component->Update(viewport);
+    }
 }
 
-void MenuFramePanel::Render(CommandCollection& d)
+void ComponentFramePanel::Render(CommandCollection& d)
 {
     Panel::Render(d);
-    if (m_Menu)
-        m_Menu->Render(d);
+    if (m_Component)
+        m_Component->Render(d);
 }
 
 // --------------------------------------------------------------------------
 // ----------------------------- Menu Frame ---------------------------------
 // --------------------------------------------------------------------------
 
-void MenuFrame::Update(const Vec4<int>& viewport)
+void ComponentFrame::Update(const Vec4<int>& viewport)
 {
-    if (m_Menu)
-        Size(m_Menu->Width(), m_Menu->Height());
+    if (m_Component)
+        Size(m_Component->Width(), m_Component->Height());
 
     m_Panel->Size({ Width(), Height() });
     m_Panel->Position({ 0, 0 });
@@ -43,13 +46,13 @@ void MenuFrame::Update(const Vec4<int>& viewport)
     Window::Update(viewport);
 }
 
-void MenuFrame::Render(CommandCollection& d)
+void ComponentFrame::Render(CommandCollection& d)
 {
     Window::Render(d);
 }
 
-void MenuFrame::SetMenu(MenuBase* menu)
+void ComponentFrame::Component(::Component* component)
 {
-    m_Panel->SetMenu(menu);
-    m_Menu = menu;
+    m_Panel->Component(component);
+    m_Component = component;
 }

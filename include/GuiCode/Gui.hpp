@@ -1,6 +1,7 @@
 #pragma once
 #include "GuiCode/ui/window/WindowBase.hpp"
 #include "GuiCode/ui/RightClickMenu.hpp"
+#include "GuiCode/ui/Dragging.hpp"
 
 // --------------------------------------------------------------------------
 // -------------------------------- Gui -------------------------------------
@@ -21,6 +22,7 @@ public:
 		{
 			Graphics::Init();
 			RightClickMenu::Get().Hide();
+			Dragging::Get().Hide();
 		}
 		_init = true;
 		return *dynamic_cast<T*>(_w.get());;
@@ -40,6 +42,7 @@ public:
 		}
 
 		RightClickMenu::Get().Loop();
+		Dragging::Get().Loop();
 
 		return _running;
 	}

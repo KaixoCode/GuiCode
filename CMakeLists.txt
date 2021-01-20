@@ -44,7 +44,6 @@ target_link_libraries(GuiCode
   glfw
   GLAD
   freetype
-  ModuleBase
   comctl32
   propsys
   dwmapi

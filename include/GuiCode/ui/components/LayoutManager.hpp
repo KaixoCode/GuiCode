@@ -13,7 +13,7 @@ struct LayoutManager
 
     void AddEvent(Event& e) { m_Listener.AddEvent(e); }
 
-    int Cursor() { return m_Cursor; }
+    int Cursor() const { return m_Cursor; }
     
     template<typename TypeCollection>
     void Update(const Vec4<int>& dim, TypeCollection& components) 
@@ -91,7 +91,10 @@ struct LayoutManager
         {
             // If resizing this component
             if (m_Dragging == 1)
+            {
+                m_Cursor = GLFW_RESIZE_NS_CURSOR;
                 _north->Height(m_Constrain(m_PDragVal - m_MouseY + m_PMouseY, _north->MinHeight(), _north->MaxHeight()));
+            }
 
             // Dimensions
             _northHeight += _north->Height() + _p;
@@ -124,7 +127,10 @@ struct LayoutManager
         {
             // If resizing this component
             if (m_Dragging == 2)
+            {
+                m_Cursor = GLFW_RESIZE_NS_CURSOR;
                 _south->Height(m_Constrain(m_PDragVal + m_MouseY - m_PMouseY, _south->MinHeight(), _south->MaxHeight()));
+            }
 
             // Dimensions
             _southHeight += _south->Height() + _p;
@@ -157,7 +163,10 @@ struct LayoutManager
         {
             // If resizing this component
             if (m_Dragging == 3)
+            {
+                m_Cursor = GLFW_RESIZE_EW_CURSOR;
                 _east->Width(m_Constrain(m_PDragVal - m_MouseX + m_PMouseX, _east->MinWidth(), _east->MaxWidth()));
+            }
 
             // Dimensions
             _eastWidth += _east->Width() + _p;
@@ -190,7 +199,10 @@ struct LayoutManager
         {
             // If resizing this component
             if (m_Dragging == 4)
+            {
+                m_Cursor = GLFW_RESIZE_EW_CURSOR;
                 _west->Width(m_Constrain(m_PDragVal + m_MouseX - m_PMouseX, _west->MinWidth(), _west->MaxWidth()));
+            }
 
             // Dimensions
             _westWidth += _west->Width() + _p;

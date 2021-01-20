@@ -7,7 +7,14 @@ Container::Container(Vec2<int> size)
     // inside this container.
     m_Listener += [this](Event& e)
     {
+        if (e.type == Event::Type::MousePressed)
+            m_Pressed = true;
+
+        if (e.type == Event::Type::MouseReleased)
+            m_Pressed = false;
+
         Event _copy = e;
+        Event _copy2 = e;
 
         if (e.type == Event::Type::KeyPressed)
         {
@@ -37,13 +44,16 @@ Container::Container(Vec2<int> size)
         }
 
         // If the mouse moved or pressed, update the hovering and focussed
-        if (e.type == Event::Type::MouseMoved || e.type == Event::Type::MousePressed)
+        if (e.type == Event::Type::MouseDragged || e.type == Event::Type::MouseMoved || e.type == Event::Type::MousePressed)
             this->Determine(e);
 
         // Send events to hovering and focussed if it's not the same component.
-        if (m_Hovering) m_Hovering->AddEvent(_copy);
-        //if (m_Hovering != m_Focussed && m_Focussed) m_Focussed->AddEvent(_copy);
-
+        if (m_Hovering) 
+            m_Hovering->AddEvent(_copy);
+        
+        if (m_Hovering != m_Focussed && m_Focussed) 
+            m_Focussed->AddEvent(_copy2);
+        
         // If the mouse is released update the hovering and focussed after sending the events.
         if (e.type == Event::Type::MouseReleased)
             this->Determine(e);

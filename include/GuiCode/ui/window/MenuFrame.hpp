@@ -7,30 +7,30 @@
 // ------------------------- Menu Frame Panel -------------------------------
 // --------------------------------------------------------------------------
 
-class MenuFramePanel : public Panel
+class ComponentFramePanel : public Panel
 {
 public:
-    MenuFramePanel();
+    ComponentFramePanel();
 
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection& d) override;
 
-    auto SetMenu(MenuBase* menu) -> void { m_Menu = menu; }
+    auto Component(::Component* c) -> void { m_Component = c; }
 
 private:
-    MenuBase* m_Menu = nullptr;
+    ::Component* m_Component = nullptr;
 };
 
 // --------------------------------------------------------------------------
 // ----------------------------- Menu Frame ---------------------------------
 // --------------------------------------------------------------------------
 
-class MenuFrame : public Window
+class ComponentFrame : public Window
 {
 public:
-    MenuFrame(const std::string& name, const int width, const int height)
+    ComponentFrame(const std::string& name, const int width, const int height)
         : Window(name, width, height, true, false),
-        m_Panel(&Emplace<::MenuFramePanel>())
+        m_Panel(&Emplace<::ComponentFramePanel>())
     {}
 
     void Update(const Vec4<int>& viewport) override;
@@ -38,9 +38,10 @@ public:
     
     ::Panel& Panel() { return *m_Panel; }
 
-    void SetMenu(MenuBase* menu);
-
+    void Component(::Component* c);
+    ::Component* Component() const { return m_Component; }
+        
 private:
-    ::MenuFramePanel* m_Panel;
-    MenuBase* m_Menu = nullptr;
+    ::ComponentFramePanel* m_Panel;
+    ::Component* m_Component = nullptr;
 };

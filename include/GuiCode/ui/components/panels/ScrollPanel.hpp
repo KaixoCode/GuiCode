@@ -46,7 +46,8 @@ protected:
     ::Panel* m_Panel{ 0 };
 
     bool m_EnableX = true,
-        m_EnableY = true;
+        m_EnableY = true,
+        m_Dragging = false;
 
     int m_PMouseX = 0, 
         m_PMouseY = 0,

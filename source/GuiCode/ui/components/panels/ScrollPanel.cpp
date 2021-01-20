@@ -19,11 +19,17 @@ ScrollPanel::ScrollPanel()
         m_PMouseY = e.y;
         m_PValX = m_ScrollbarX->Value();
         m_PValY = m_ScrollbarY->Value();
+        m_Dragging = true;
+    };
+
+    m_Listener += [this](Event::MouseReleased& e)
+    {
+        m_Dragging = false;
     };
 
     m_Listener += [this](Event::MouseDragged& e)
     {
-        if (e.button == Event::MouseButton::MIDDLE)
+        if (m_Dragging && e.button == Event::MouseButton::MIDDLE)
         {
             if (m_ScrollbarY->Visible())
                 m_ScrollbarY->Value(m_PValY + e.y - m_PMouseY);
