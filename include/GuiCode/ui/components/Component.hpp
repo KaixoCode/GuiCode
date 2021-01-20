@@ -4,14 +4,17 @@
 #include "GuiCode/ui/events/EventListener.hpp"
 #include "GuiCode/ui/components/Layout.hpp"
 
-class Component 
+class Component
 {
 public:
     Component()
     {}
 
     Component(Vec2<int> size)
-        : m_Size(size) 
+        : m_Size(size)
+    {}
+
+    virtual ~Component()
     {}
 
     virtual auto Position(const Vec2<int>& pos) -> void { m_Pos = pos; }
