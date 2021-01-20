@@ -53,7 +53,7 @@ namespace Graphics
     
     enum Fonts
     {
-        Gidole, Gidole14
+        Gidole, Gidole14, Gidole16
     };
 
     void LoadFont(const std::string& path, Fonts name);

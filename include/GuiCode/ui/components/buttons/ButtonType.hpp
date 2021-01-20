@@ -63,6 +63,15 @@ namespace ButtonType
         void Selected(bool b) { m_Selected = b; }
         bool Selected() { return m_Selected; }
 
+        static inline int NewKey()
+        {
+            int key = std::rand();
+            while (m_Lists.find(key) != m_Lists.end())
+                key = std::rand();
+
+            return key;
+        }
+
     private:
         static inline std::unordered_map<int, std::vector<List*>> m_Lists;
         bool m_Selected = false;

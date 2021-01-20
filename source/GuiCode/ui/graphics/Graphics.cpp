@@ -38,6 +38,7 @@ namespace Graphics
     {
         Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole);
         Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole14, 14);
+        Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole16, 16);
         Textures::FileIcon.SetTexture(ASSET(textures/file.png));
         Textures::AudioFileIcon.SetTexture(ASSET(textures/audiofile.png));
         Textures::FolderIcon.SetTexture(ASSET(textures/folder.png));
@@ -64,7 +65,7 @@ namespace Graphics
     // --------------------------- Basic Shapes ---------------------------------
     // --------------------------------------------------------------------------
 
-    void m_Quad(const glm::vec4& dim);
+    void m_Quad(const glm::vec4& dim, float rotation);
     void m_TexturedQuad(unsigned int texture, const glm::vec4& dim);
     void m_Ellipse(const glm::vec4& dim);
     void m_Triangle(const glm::vec4& dim, float rotation);
@@ -100,7 +101,7 @@ namespace Graphics
             case TextAlign: m_TextAlign = a->align; break;
             case FontSize: m_FontSize = a->fontSize; break;
             case Font: m_Font = (Fonts)a->font, m_FontSize = a->fontSize; break;
-            case Quad: m_Quad(a->dimension); break;
+            case Quad: m_Quad(a->dimension, a->rotation); break;
             case TexturedQuad: m_TexturedQuad(a->texture, a->textureDimension); break;
             case Text: m_Text(a->text, a->position.x, a->position.y); break;
             case Ellipse: m_Ellipse(a->dimension); break;
@@ -130,7 +131,7 @@ namespace Graphics
 
 
 
-    void m_Quad(const glm::vec4& dim)
+    void m_Quad(const glm::vec4& dim, float rotation)
     {
         static Shader _shader
         {
@@ -173,8 +174,10 @@ namespace Graphics
         _shader.Use();
         glm::mat4 _model{ 1.0f };
         _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
+        _model = glm::translate(_model, glm::vec3{ dim.z / 2, dim.w / 2, 0 });
+        _model = glm::rotate(_model, glm::radians(rotation), glm::vec3{ 0, 0, 1 });
+        _model = glm::translate(_model, glm::vec3{ -dim.z/2, -dim.w/2, 0 });
         _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
-
 
         _shader.SetMat4("model", _model);
         _shader.SetMat4("view", m_Matrix);

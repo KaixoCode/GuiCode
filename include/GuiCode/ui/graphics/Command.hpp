@@ -50,9 +50,9 @@ namespace Graphics
         CommandBase(int t, float s) : font(t), fontSize(s) {}
 
         // Quad/Ellipse
-        CommandBase(int x, int y, int w, int h) : dimension({ x, y, w, h }) {}
-        CommandBase(const Vec4<int>& d) : dimension(d) {}
-        CommandBase(const Vec2<int>& d1, const Vec2<int>& d2) : dimension({ d1.x, d1.y, d2.x, d2.y }) {}
+        CommandBase(int x, int y, int w, int h) : dimension({ x, y, w, h }), rotation(0) {}
+        CommandBase(const Vec4<int>& d) : dimension(d), rotation(0) {}
+        CommandBase(const Vec2<int>& d1, const Vec2<int>& d2) : dimension({ d1.x, d1.y, d2.x, d2.y }), rotation(0) {}
 
         // Textured Quad
         CommandBase(int t, int x, int y, int w, int h) : texture(t), textureDimension({ x, y, w, h }) {}
