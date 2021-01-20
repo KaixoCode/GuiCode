@@ -36,6 +36,10 @@ public:
     void Render(CommandCollection& d) override;
     void Update(const Vec4<int>& viewport) override;
 
+    void Erase(ComponentCollection::const_iterator& i) { m_Components.erase(i); m_Hovering = nullptr, m_Focussed = nullptr; }
+
+    const ComponentCollection const& Components() const { return m_Components; }
+
 protected:
     ComponentCollection m_Components;
     Component* m_Focussed = 0;
