@@ -17,11 +17,11 @@ public:
     auto VisibleRange(int v)       -> void { m_VisibleRange = v; ConstrainValue(); }
 
     virtual int MinBarSize()   const { return 40; }
-    int Value()                const { return m_Value; }
-    int       Mouse()          const { return m_Mouse; }
-    int       VisibleRange()   const { return m_VisibleRange; }
-    Vec2<int> Range()          const { return m_Range; }
-    bool      NotNecessary()   const { return m_VisibleRange >= m_Range.end - m_Range.start; }
+    int         Value()        const { return m_Value; }
+    int         Mouse()        const { return m_Mouse; }
+    int         VisibleRange() const { return m_VisibleRange; }
+    Vec2<int>   Range()        const { return m_Range; }
+    bool        NotNecessary() const { return m_VisibleRange >= m_Range.end - m_Range.start; }
     virtual bool Hovering()    const { return m_Hovering; }
 
     void Update(const Vec4<int>& viewport) override;
