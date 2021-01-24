@@ -28,4 +28,21 @@ namespace MenuAccessories
             m_PaddingY,
             m_Stroke;
     };
+
+    class VerticalDivider : public Component
+    {
+    public:
+        VerticalDivider(int size, int stroke, int paddingx, int paddingy)
+            : m_Size(size), m_PaddingX(paddingx), m_PaddingY(paddingy), m_Stroke(stroke), Component({ stroke + paddingx * 2, size })
+        {}
+
+        void Render(CommandCollection&) override;
+        bool WithinBounds(const Vec2<int>&) const override { return false; }
+
+    private:
+        int m_Size,
+            m_PaddingX,
+            m_PaddingY,
+            m_Stroke;
+    };
 }

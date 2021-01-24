@@ -17,6 +17,8 @@ namespace ScrollbarType
     public:
         Vertical();
     
+        virtual bool Hovering() const override { return m_Hovering | m_Dragging; }
+
     private:
         bool m_Dragging = false;
     };
@@ -29,6 +31,8 @@ namespace ScrollbarType
     {
     public:
         Horizontal();
+
+        virtual bool Hovering() const override { return m_Hovering | m_Dragging; }
 
     private:
         bool m_Dragging = false;

@@ -64,6 +64,11 @@ namespace ScrollbarType
                 m_Dragging = true;
         };
 
+        m_Listener += [this](Event::MouseReleased& e)
+        {
+            m_Dragging = false;
+        };
+
         m_Listener += [this](Event::MouseMoved& e)
         {
             m_Mouse = e.x;
