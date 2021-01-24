@@ -19,7 +19,7 @@ namespace ScrollbarType
     
         virtual bool Hovering() const override { return m_Hovering | m_Dragging; }
 
-    private:
+    protected:
         bool m_Dragging = false;
     };
 
@@ -34,7 +34,7 @@ namespace ScrollbarType
 
         virtual bool Hovering() const override { return m_Hovering | m_Dragging; }
 
-    private:
+    protected:
         bool m_Dragging = false;
     };
 }
