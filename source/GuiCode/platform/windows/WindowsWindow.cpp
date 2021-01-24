@@ -419,6 +419,10 @@ void WindowsWindow::MouseButtonCallback(WindowsWindow* window, Event::MouseButto
 {
     auto _self = window;
 
+    if (action == Event::Type::MouseReleased && _self->m_MousePressed != Event::MouseButton::NONE
+        && _self->m_PressMouseX == _self->m_MouseX && _self->m_PressMouseY == _self->m_MouseY)
+        _self->m_EventQueue.emplace(Event::Type::MouseClicked, _self->m_MouseX, _self->m_MouseY, button, mod);
+
     if (action == Event::Type::MousePressed)
     {
         _self->m_PressMouseX = _self->m_MouseX;
@@ -427,10 +431,6 @@ void WindowsWindow::MouseButtonCallback(WindowsWindow* window, Event::MouseButto
     }
     else
         _self->m_MousePressed = Event::MouseButton::NONE;
-
-    if (action == Event::Type::MouseReleased && _self->m_MousePressed != Event::MouseButton::NONE
-        && _self->m_PressMouseX == _self->m_MouseX && _self->m_PressMouseY == _self->m_MouseY)
-        _self->m_EventQueue.emplace(Event::Type::MouseClicked, _self->m_MouseX, _self->m_MouseY, button, mod);
 
     _self->m_EventQueue.emplace(action, _self->m_MouseX, _self->m_MouseY, button, mod);
 }
