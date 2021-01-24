@@ -40,6 +40,7 @@ public:
     bool        ShouldClose()    const override { return glfwWindowShouldClose(m_Window); };
 
     void Loop() override;
+    void WindowsLoop();
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection&) override;
 

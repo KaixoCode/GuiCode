@@ -1,7 +1,15 @@
 #include "GuiCode/ui/graphics/Graphics.hpp"
+#include "GuiCode/ui/graphics/Theme.hpp"
 
+#ifdef _DEBUG
 #define SHADER(a) ABSOLUTE_SHADER_PATH###a
 #define ASSET(a) ABSOLUTE_ASSETS_PATH###a
+#define THEME(a) ABSOLUTE_THEMES_PATH###a
+#else
+#define SHADER(a) "./shaders/"###a
+#define ASSET(a) "./assets/"###a
+#define THEME(a) "./themes/"###a
+#endif
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
@@ -36,6 +44,7 @@ namespace Graphics
 
     void Init()
     {
+        Theme::Load(THEME(dark));
         Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole);
         Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole14, 14);
         Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole16, 16);

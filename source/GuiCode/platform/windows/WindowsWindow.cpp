@@ -134,7 +134,12 @@ void WindowsWindow::Render(CommandCollection& d)
 void WindowsWindow::Loop()
 {
     glfwMakeContextCurrent(*this);
+    WindowsLoop();
+    glfwPollEvents();
+}
 
+void WindowsWindow::WindowsLoop()
+{
     Graphics::CurrentWindow(m_WindowId);
     Graphics::WindowFocused(GetForegroundWindow() == GetWin32Handle());
     Graphics::SetProjection(m_Projection);
@@ -149,7 +154,6 @@ void WindowsWindow::Loop()
 
     glfwSwapBuffers(*this);
     
-    glfwPollEvents();
 }
 
 // Hit test the frame for resizing and moving.
@@ -458,7 +462,7 @@ void WindowsWindow::WindowSizeCallback(WindowsWindow* window, int width, int hei
 
     _self->m_Projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
 
-    _self->Loop();
+    _self->WindowsLoop();
 }
 
 void WindowsWindow::UpdateCursor(int c)
