@@ -72,7 +72,7 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
             m_Panel->Width(Width() - xoff);
 
         if (!m_EnableY)
-            m_Panel->Height(Height());
+            m_Panel->Height(Height() - yoff);
         
         Panel::Update(viewport);
 

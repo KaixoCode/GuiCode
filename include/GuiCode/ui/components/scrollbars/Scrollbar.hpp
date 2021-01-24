@@ -11,18 +11,18 @@ class ScrollbarBase : public Component
 public:
     ScrollbarBase();
 
-    auto Range(const Vec2<int>& r) -> void const { m_Range = r; ConstrainValue(); }
-    auto Scroll(int s)               -> void const { m_Value = constrain(s + m_Value, m_Range.start, m_Range.end - m_VisibleRange); }
-    auto Value(int v)               -> void const { m_Value = constrain(v, m_Range.start, m_Range.end - m_VisibleRange); }
-    auto VisibleRange(int v)       -> void const { m_VisibleRange = v; ConstrainValue(); }
+    auto Range(const Vec2<int>& r) -> void { m_Range = r; ConstrainValue(); }
+    auto Scroll(int s)             -> void { m_Value = constrain(s + m_Value, m_Range.start, m_Range.end - m_VisibleRange); }
+    auto Value(int v)              -> void { m_Value = constrain(v, m_Range.start, m_Range.end - m_VisibleRange); }
+    auto VisibleRange(int v)       -> void { m_VisibleRange = v; ConstrainValue(); }
 
-    int       MinBarSize()   const { return 40; }
-    int       Value()        const { return m_Value; }
-    int       Mouse()        const { return m_Mouse; }
-    int       VisibleRange() const { return m_VisibleRange; }
-    Vec2<int> Range()        const { return m_Range; }
-    bool      NotNecessary() const { return m_VisibleRange >= m_Range.end - m_Range.start; }
-    virtual bool Hovering()  const { return m_Hovering; }
+    virtual int MinBarSize()   const { return 40; }
+    int Value()                const { return m_Value; }
+    int       Mouse()          const { return m_Mouse; }
+    int       VisibleRange()   const { return m_VisibleRange; }
+    Vec2<int> Range()          const { return m_Range; }
+    bool      NotNecessary()   const { return m_VisibleRange >= m_Range.end - m_Range.start; }
+    virtual bool Hovering()    const { return m_Hovering; }
 
     void Update(const Vec4<int>& viewport) override;
 
