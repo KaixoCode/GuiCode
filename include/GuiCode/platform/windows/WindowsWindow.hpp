@@ -27,6 +27,7 @@ public:
     auto Hide()                -> void override { ShowWindow(GetWin32Handle(), SW_HIDE); }
     auto ShouldClose(bool b)   -> void override { glfwSetWindowShouldClose(m_Window, b); };
     void Aero(bool b);
+    void Icon(const std::string& path);
 
     operator    GLFWwindow* ()   const { return GetWindow(); }
     GLFWwindow* GetWindow()      const { return m_Window; }

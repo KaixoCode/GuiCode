@@ -41,6 +41,7 @@
 #include <unknwn.h>
 #include <gdiplus.h>
 #include <windowsx.h>
+#define MYWM_NOTIFYICON (WM_APP + 100 )
 
 // Rarely updated local headers
 #include "GuiCode/data/Vec.hpp"

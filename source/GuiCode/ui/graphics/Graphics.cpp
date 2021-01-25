@@ -1,16 +1,6 @@
 #include "GuiCode/ui/graphics/Graphics.hpp"
 #include "GuiCode/ui/graphics/Theme.hpp"
 
-#ifdef _DEBUG
-#define SHADER(a) ABSOLUTE_SHADER_PATH###a
-#define ASSET(a) ABSOLUTE_ASSETS_PATH###a
-#define THEME(a) ABSOLUTE_THEMES_PATH###a
-#else
-#define SHADER(a) "./shaders/"###a
-#define ASSET(a) "./assets/"###a
-#define THEME(a) "./themes/"###a
-#endif
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 
@@ -596,4 +586,17 @@ namespace Graphics
 
         stbi_image_free(_data);
     } 
+
+    Image LoadImageFile(const std::string& path)
+    {
+        Image _image;
+        stbi_set_flip_vertically_on_load(false); // tell stb_image.h to flip loaded texture's on the y-axis.
+        _image.data = stbi_load(path.c_str(), &_image.width, &_image.height, &_image.channels, 0);
+        return _image;
+    }
+
+    void FreeImage(const Image& image)
+    {
+        stbi_image_free(image.data);
+    }
 }

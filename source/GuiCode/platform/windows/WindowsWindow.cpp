@@ -489,7 +489,20 @@ void WindowsWindow::Aero(bool b)
             WINCOMPATTRDATA data = { 19, &policy, sizeof(ACCENTPOLICY) }; // WCA_ACCENT_POLICY=19
             SetWindowCompositionAttribute(GetWin32Handle(), &data);
         }
-    }
 
-    FreeLibrary(_hModule);
+        FreeLibrary(_hModule);
+    }
+}
+
+void WindowsWindow::Icon(const std::string& path)
+{
+    GLFWimage images[1];
+    auto a = Graphics::LoadImageFile(path);
+    images[0].pixels = a.data;
+    images[0].width = a.width;
+    images[0].height = a.height;
+
+    glfwSetWindowIcon(*this, 1, images);
+
+    Graphics::FreeImage(a);
 }
