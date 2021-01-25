@@ -48,6 +48,7 @@ namespace Graphics
         Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole);
         Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole14, 14);
         Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole16, 16);
+
         Textures::FileIcon.SetTexture(ASSET(textures/file.png));
         Textures::AudioFileIcon.SetTexture(ASSET(textures/audiofile.png));
         Textures::FolderIcon.SetTexture(ASSET(textures/folder.png));

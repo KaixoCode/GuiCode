@@ -26,6 +26,7 @@ public:
     auto Show()                -> void override { ShowWindow(GetWin32Handle(), SW_SHOW); }
     auto Hide()                -> void override { ShowWindow(GetWin32Handle(), SW_HIDE); }
     auto ShouldClose(bool b)   -> void override { glfwSetWindowShouldClose(m_Window, b); };
+    void Aero(bool b);
 
     operator    GLFWwindow* ()   const { return GetWindow(); }
     GLFWwindow* GetWindow()      const { return m_Window; }
@@ -38,6 +39,7 @@ public:
     bool        Maximized()      const override { return IsMaximized(GetWin32Handle()); }
     bool        Visible()        const override { return IsWindowVisible(GetWin32Handle()); }
     bool        ShouldClose()    const override { return glfwWindowShouldClose(m_Window); };
+    bool        Aero()           const { return m_Aero; }
 
     void Loop() override;
     void WindowsLoop();
@@ -45,7 +47,8 @@ public:
     void Render(CommandCollection&) override;
 
 private:
-    bool m_InitialResize = true;
+    bool m_InitialResize = true,
+        m_Aero = false;
 
     GLFWwindow* m_Window;
 

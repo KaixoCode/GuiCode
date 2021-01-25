@@ -66,25 +66,6 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
 
     m_WindowCount++;
 
-    // Windows Aero effect on transparent parts
-    //const HINSTANCE _hModule = LoadLibrary(TEXT("user32.dll"));
-    //if (_hModule)
-    //{
-    //    struct ACCENTPOLICY
-    //    { int nAccentState; int nFlags; int nColor; int nAnimationId; };
-    //    struct WINCOMPATTRDATA
-    //    { int nAttribute; PVOID pData; ULONG ulDataSize; };
-    //    typedef BOOL(WINAPI* pSetWindowCompositionAttribute)(HWND, WINCOMPATTRDATA*);
-    //    const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(_hModule, "SetWindowCompositionAttribute");
-    //    if (SetWindowCompositionAttribute)
-    //    {
-    //        ACCENTPOLICY policy = { 3, 0, 0, 0 }; // ACCENT_ENABLE_BLURBEHIND=3...
-    //        WINCOMPATTRDATA data = { 19, &policy, sizeof(ACCENTPOLICY) }; // WCA_ACCENT_POLICY=19
-    //        SetWindowCompositionAttribute(GetWin32Handle(), &data);
-    //    }
-    //    FreeLibrary(_hModule);
-    //}
-
     // Add a subproc to handle some msgs ourselves.
     SetWindowSubclass(GetWin32Handle(), &SubClassProc, m_WindowId, (DWORD_PTR) static_cast<void*>(this));
 
@@ -133,13 +114,13 @@ void WindowsWindow::Render(CommandCollection& d)
 
 void WindowsWindow::Loop()
 {
-    glfwMakeContextCurrent(*this);
     WindowsLoop();
     glfwPollEvents();
 }
 
 void WindowsWindow::WindowsLoop()
 {
+    glfwMakeContextCurrent(*this);
     Graphics::CurrentWindow(m_WindowId);
     Graphics::WindowFocused(GetForegroundWindow() == GetWin32Handle());
     Graphics::SetProjection(m_Projection);
@@ -479,4 +460,36 @@ void WindowsWindow::UpdateCursor(int c)
     else
         glfwSetCursor(*this,
             (m_GLFWCursor = glfwCreateStandardCursor(m_Cursorid)));
+}
+
+
+void WindowsWindow::Aero(bool b)
+{
+    if (m_Aero == b)
+        return;
+
+    m_Aero = b;
+    const HINSTANCE _hModule = LoadLibrary(TEXT("user32.dll"));
+    if (_hModule)
+    {
+        struct ACCENTPOLICY
+        {
+            int nAccentState; int nFlags; int nColor; int nAnimationId;
+        };
+        struct WINCOMPATTRDATA
+        {
+            int nAttribute; PVOID pData; ULONG ulDataSize;
+        };
+        typedef BOOL(WINAPI* pSetWindowCompositionAttribute)(HWND, WINCOMPATTRDATA*);
+        const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(_hModule, "SetWindowCompositionAttribute");
+
+        if (SetWindowCompositionAttribute)
+        {
+            ACCENTPOLICY policy = { b ? 3 : 0, 0, 0, 0 }; // ACCENT_ENABLE_BLURBEHIND=3...
+            WINCOMPATTRDATA data = { 19, &policy, sizeof(ACCENTPOLICY) }; // WCA_ACCENT_POLICY=19
+            SetWindowCompositionAttribute(GetWin32Handle(), &data);
+        }
+    }
+
+    FreeLibrary(_hModule);
 }
