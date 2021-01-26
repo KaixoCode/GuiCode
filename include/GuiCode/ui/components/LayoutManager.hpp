@@ -333,9 +333,9 @@ struct LayoutManager
             if (!_c->Visible())
                 continue;
 
-            int _x = dim.x;
+            int _x = dim.x + _padding;
             _c->Position({ _x, _y });
-            _c->Width(dim.width);
+            _c->Width(dim.width - 2 * _padding);
             _y += _c->Height() + _padding;
         }
         m_BiggestX = dim.x + dim.width;

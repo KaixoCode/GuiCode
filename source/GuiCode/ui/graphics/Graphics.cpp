@@ -385,37 +385,46 @@ namespace Graphics
             return;
 
         static std::unordered_map<int, unsigned int> _VAOs;
-        static std::unordered_map<int, unsigned int> _VBOs;
         std::unordered_map<int, unsigned int>::iterator _it;
-        static unsigned int _VAO, _VBO;
+        static unsigned int _VAO, _VBO, _EBO;
         if ((_it = _VAOs.find(m_CurrentWindowId)) != _VAOs.end())
-        {
             _VAO = std::get<1>(*_it);
-            _VBO = _VBOs.at(m_CurrentWindowId);
-        }
+
         else
         {
+            float _vertices[] = {
+                // positions   // texCoords
+                 1.0f,  1.0f,  1.0f, 0.0f,
+                 1.0f,  0.0f,  1.0f, 1.0f,
+                 0.0f,  0.0f,  0.0f, 1.0f,
+                 0.0f,  1.0f,  0.0f, 0.0f,
+            };
+
+            unsigned int indices[] = {
+                0, 1, 3, // first triangle
+                1, 2, 3  // second triangle
+            };
+
             glGenVertexArrays(1, &_VAO);
             glGenBuffers(1, &_VBO);
+            glGenBuffers(1, &_EBO);
+
             glBindVertexArray(_VAO);
+
             glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindVertexArray(0);
+
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+            glEnableVertexAttribArray(1);
 
             _VAO = std::get<1>(_VAOs.emplace(m_CurrentWindowId, _VAO));
-            _VBO = std::get<1>(_VBOs.emplace(m_CurrentWindowId, _VBO));
         }
-
-        glm::vec3 _pos = m_Matrix[3];
-
-        _shader.Use();
-        _shader.SetVec4("color", m_Fill);
-        _shader.SetMat4("projection", m_Projection);
-        glActiveTexture(GL_TEXTURE0);
-        glBindVertexArray(_VAO);
 
         long _totalWidth = 0;
         long _totalHeight = m_FontSize * 0.7;
@@ -431,13 +440,13 @@ namespace Graphics
         {
             Character _ch = Graphics::m_Fonts[m_Font][*_c];
 
-            int _xpos = x * m_Matrix[0][0] + _ch.Bearing.x * _scale + _pos.x;
+            int _xpos = x * m_Matrix[0][0] + _ch.Bearing.x * _scale;
             if (m_TextAlign.x == Align::CENTER)
                 _xpos -= 0.5 * _totalWidth * _scale;
             else if (m_TextAlign.x == Align::RIGHT)
                 _xpos -= _totalWidth * _scale;
 
-            int _ypos = y - (_ch.Size.y - _ch.Bearing.y) * _scale + _pos.y;
+            int _ypos = y - (_ch.Size.y - _ch.Bearing.y) * _scale;
             if (m_TextAlign.y == Align::CENTER)
                 _ypos -= 0.5 * _totalHeight * _scale;
             else if (m_TextAlign.y == Align::TOP)
@@ -445,25 +454,25 @@ namespace Graphics
 
             float _w = _ch.Size.x * _scale;
             float _h = _ch.Size.y * _scale;
-            float _vertices[6][4] = {
-                { _xpos ,     _ypos + _h,   0.0f, 0.0f },
-                { _xpos ,     _ypos ,       0.0f, 1.0f },
-                { _xpos + _w, _ypos ,       1.0f, 1.0f },
 
-                { _xpos ,     _ypos + _h,   0.0f, 0.0f },
-                { _xpos + _w, _ypos ,       1.0f, 1.0f },
-                { _xpos + _w, _ypos + _h,   1.0f, 0.0f }
-            };
+            _shader.Use();
+            glm::mat4 _model{ 1.0f };
+            _model = glm::translate(_model, glm::vec3{ _xpos, _ypos, 0 });
+            _model = glm::scale(_model, glm::vec3{ _w, _h, 1 });
 
+            _shader.SetMat4("model", _model);
+            _shader.SetMat4("view", m_Matrix);
+            _shader.SetVec4("color", m_Fill);
+            _shader.SetMat4("projection", m_Projection);
+
+            _shader.SetInt("theTexture", 1);
+            glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, _ch.TextureID);
-            glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(_vertices), _vertices);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindVertexArray(_VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glBindTexture(GL_TEXTURE_2D, 0);
             x += (_ch.Advance >> 6) * _scale / m_Matrix[0][0];
         }
-        glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void LoadFont(const std::string& path, Graphics::Fonts name)
