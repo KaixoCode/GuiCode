@@ -41,10 +41,10 @@ namespace TreeItemGraphics
                 _texture = Graphics::Textures::AudioFileIcon;
             d.Command<TexturedQuad>(_texture, _x, _y, _w, _h);
 
-            d.Command<Font>(Fonts::Gidole14, 14);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
-            d.Command<Text>(&b.Name(), b.X() + 48, b.Y() + b.Height() / 2);
+            d.Command<Text>(&b.Name(), Vec2<int>{b.X() + 48, b.Y() + b.Height() / 2});
             d.Command<Fill>(_c3);
             d.Command<TextAlign>(Align::RIGHT, Align::CENTER);
         }
@@ -64,10 +64,10 @@ namespace TreeItemGraphics
             int _h = 16;
             d.Command<TexturedQuad>(Graphics::Textures::FolderIcon, _x, _y, _w, _h);
 
-            d.Command<Font>(Fonts::Gidole14, 14);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
-            d.Command<Text>(&b.Name(), b.X() + 48, b.Y() + b.Height() - b.ActualHeight() / 2);
+            d.Command<Text>(&b.Name(), Vec2<int>{b.X() + 48, b.Y() + b.Height() - b.ActualHeight() / 2});
             d.Command<Fill>(_c3);
             _x = b.Position().x + 12;
             _y = b.Position().y + b.Height() - b.ActualHeight() / 2;

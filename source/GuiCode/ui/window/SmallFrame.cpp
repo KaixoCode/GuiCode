@@ -27,5 +27,5 @@ void SmallFrame::Render(CommandCollection& d)
     d.Command<Text>(&_line, _x += 45, _y + 16);
     d.Command<Fill>(Theme::Get(Theme::TITLEBAR_TEXT));
     d.Command<TextAlign>(Align::LEFT, Align::CENTER);
-    d.Command<Text>(&m_Name, _x + 9, _y + 16.5);
+    d.Command<Text>(&m_Name, _x + 9, _y + 16);
 }

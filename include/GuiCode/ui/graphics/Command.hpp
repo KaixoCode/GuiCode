@@ -32,39 +32,43 @@ namespace Graphics
 
         Type type;
 
-        CommandBase() {}
+        CommandBase(Type type) : type(type) {}
 
         // Stroke Weight
-        CommandBase(float w) : weight(w) {}
-        
-        // Translate
-        CommandBase(const Vec2<int>& t) : translate(t) {}
-
-        // Stroke/Fill
-        CommandBase(float r, float g, float b, float a = 1.0f) : fill({ r, g, b, a }) {}
-        CommandBase(const Color& c) : fill(c) {}
-
-        // Text
-        CommandBase(const std::string* t, const Vec2<int>& p) : text(t), position(p) {}
-        CommandBase(const std::string* t, int x, int y) : text(t), position({ x, y }) {}
-        CommandBase(int t, float s) : font(t), fontSize(s) {}
-
-        // Quad/Ellipse
-        CommandBase(int x, int y, int w, int h) : dimension({ x, y, w, h }), rotation(0) {}
-        CommandBase(const Vec4<int>& d) : dimension(d), rotation(0) {}
-        CommandBase(const Vec2<int>& d1, const Vec2<int>& d2) : dimension({ d1.x, d1.y, d2.x, d2.y }), rotation(0) {}
-
-        // Textured Quad
-        CommandBase(int t, int x, int y, int w, int h) : texture(t), textureDimension({ x, y, w, h }) {}
-        CommandBase(int t, const Vec4<int>& d) : texture(t), textureDimension(d) {}
-
-        // Triangle
-        CommandBase(int x, int y, int w, int h, float r) : dimension({ x, y, w, h }), rotation(r) {}
-        CommandBase(const Vec4<int>& d, float r) : dimension(d), rotation(r) {}
-
-        // TextAlign
-        CommandBase(const Vec2<Align>& a) : align(a) {}
-        CommandBase(Align a, Align b) : align({ a, b }) {}
+        CommandBase(Type type, float w) : type(type), weight(w) {}
+        CommandBase(Type type, double w) : type(type), weight((float)w) {}
+                         
+        // Translate     
+        CommandBase(Type type, const Vec2<int>& t) : type(type), translate(t) {}
+                         
+        // Stroke/Fill   
+        CommandBase(Type type, float r, float g, float b, float a = 255.0f) : type(type), fill({ r, g, b, a }) {}
+        CommandBase(Type type, double r, double g, double b, double a = 255.0) : type(type), fill({ (float)r, (float)g, (float)b, (float)a }) {}
+        CommandBase(Type type, const Color& c) : type(type), fill(c) {}
+                         
+        // Text          
+        CommandBase(Type type, const std::string* t, const Vec2<int>& p) : type(type), text(t), position(p) {}
+        CommandBase(Type type, const std::string* t, int x, int y) : type(type), text(t), position({ x, y }) {}
+        CommandBase(Type type, int t, float s) : type(type), font(t), fontSize(s) {}
+                         
+        // Quad/Ellipse  
+        CommandBase(Type type, int x, int y, int w, int h) : type(type), dimension({ x, y, w, h }), rotation(0) {}
+        CommandBase(Type type, const Vec4<int>& d) : type(type), dimension(d), rotation(0) {}
+        CommandBase(Type type, const Vec2<int>& d1, const Vec2<int>& d2) : type(type), dimension({ d1.x, d1.y, d2.x, d2.y }), rotation(0) {}
+                         
+        // Textured Quad 
+        CommandBase(Type type, unsigned int t, int x, int y, int w, int h) : type(type), texture(t), textureDimension({ x, y, w, h }) {}
+        CommandBase(Type type, unsigned int t, const Vec4<int>& d) : type(type), texture(t), textureDimension(d) {}
+                         
+        // Triangle      
+        CommandBase(Type type, int x, int y, int w, int h, float r) : type(type), dimension({ x, y, w, h }), rotation(r) {}
+        CommandBase(Type type, int x, int y, int w, int h, double r) : type(type), dimension({ x, y, w, h }), rotation((float)r) {}
+        CommandBase(Type type, const Vec4<int>& d, float r) : type(type), dimension(d), rotation(r) {}
+        CommandBase(Type type, const Vec4<int>& d, double r) : type(type), dimension(d), rotation((float)r) {}
+                         
+        // TextAlign     
+        CommandBase(Type type, const Vec2<Align>& a) : type(type), align(a) {}
+        CommandBase(Type type, Align a, Align b) : type(type), align({ a, b }) {}
 
         ~CommandBase()
         {}

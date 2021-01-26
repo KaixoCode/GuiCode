@@ -93,7 +93,7 @@ namespace Graphics
         for (int i = 0; i < d.Get().size(); i++)
         {
            
-            auto& a = d.Get()[i];
+            const CommandBase* a = &d.Get()[i];
             switch (a->type)
             {
             case Fill: m_Fill = a->fill / 255.0; break;
@@ -174,9 +174,12 @@ namespace Graphics
         _shader.Use();
         glm::mat4 _model{ 1.0f };
         _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
-        _model = glm::translate(_model, glm::vec3{ dim.z / 2, dim.w / 2, 0 });
-        _model = glm::rotate(_model, glm::radians(rotation), glm::vec3{ 0, 0, 1 });
-        _model = glm::translate(_model, glm::vec3{ -dim.z/2, -dim.w/2, 0 });
+        if (rotation != 0)
+        {
+            _model = glm::translate(_model, glm::vec3{ dim.z / 2, dim.w / 2, 0 });
+            _model = glm::rotate(_model, glm::radians(rotation), glm::vec3{ 0, 0, 1 });
+            _model = glm::translate(_model, glm::vec3{ -dim.z/2, -dim.w/2, 0 });
+        }
         _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
 
         _shader.SetMat4("model", _model);
@@ -353,7 +356,10 @@ namespace Graphics
         glm::mat4 _model{ 1.0f };
         _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
         _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
-        _model = glm::rotate(_model, glm::radians(rotation), glm::vec3{ 0, 0, 1 });
+        if (rotation != 0)
+        {
+            _model = glm::rotate(_model, glm::radians(rotation), glm::vec3{ 0, 0, 1 });
+        }
 
         _shader.SetMat4("model", _model);
         _shader.SetMat4("view", m_Matrix);
@@ -436,6 +442,12 @@ namespace Graphics
                 _totalWidth += (_ch.Advance >> 6);
             }
 
+
+        _shader.Use();
+        _shader.SetMat4("view", m_Matrix);
+        _shader.SetVec4("color", m_Fill);
+        _shader.SetMat4("projection", m_Projection);
+        _shader.SetInt("theTexture", 1);
         for (_c = text->begin(); _c != text->end(); _c++)
         {
             Character _ch = Graphics::m_Fonts[m_Font][*_c];
@@ -455,17 +467,12 @@ namespace Graphics
             float _w = _ch.Size.x * _scale;
             float _h = _ch.Size.y * _scale;
 
-            _shader.Use();
             glm::mat4 _model{ 1.0f };
             _model = glm::translate(_model, glm::vec3{ _xpos, _ypos, 0 });
             _model = glm::scale(_model, glm::vec3{ _w, _h, 1 });
 
             _shader.SetMat4("model", _model);
-            _shader.SetMat4("view", m_Matrix);
-            _shader.SetVec4("color", m_Fill);
-            _shader.SetMat4("projection", m_Projection);
 
-            _shader.SetInt("theTexture", 1);
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, _ch.TextureID);
             glBindVertexArray(_VAO);

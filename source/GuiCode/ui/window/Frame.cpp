@@ -51,5 +51,5 @@ void Frame::Render(CommandCollection& d)
 
     d.Command<Fill>(Theme::Get(Theme::TITLEBAR_TEXT));
     d.Command<TextAlign>(Align::LEFT, Align::CENTER);
-    d.Command<Text>(&m_Name, _x + 9, _y + 16.5);
+    d.Command<Text>(&m_Name, Vec2<int>{_x + 9, _y + 16});
 }

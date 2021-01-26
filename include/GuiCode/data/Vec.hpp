@@ -20,7 +20,7 @@ struct Vec2
     Vec2& operator+=(const Vec2& other) { x += other.x; y += other.y; return *this; }
     Vec2& operator-=(const Vec2& other) { x -= other.x; y -= other.y; return *this; }
 
-    operator glm::vec2() { return { x, y }; }
+    operator glm::vec2() const { return { x, y }; }
 
     template <size_t I>
     auto& get()&
@@ -60,7 +60,7 @@ struct Vec3
     Vec3& operator+=(const Vec3& other) { x += other.x; y += other.y; z += other.z; return *this; }
     Vec3& operator-=(const Vec3& other) { x -= other.x; y -= other.y; z -= other.z; return *this; }
 
-    operator glm::vec3() { return { x, y, z }; }
+    operator glm::vec3() const { return { x, y, z }; }
 
     template <size_t I>
     auto& get()&
@@ -139,7 +139,7 @@ struct Vec4
         return { x - o.x, y - o.y, width, height };
     }
 
-    operator glm::vec4() { return { x, y, z, w }; }
+    operator glm::vec4() const { return { x, y, z, w }; }
 
     template <size_t I>
     auto& get()&

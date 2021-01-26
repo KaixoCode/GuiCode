@@ -8,10 +8,11 @@ public:
     template<Graphics::Type T, typename ...Args>
     void Command(Args ...args)
     {
-        m_CommandCollection.emplace_back(std::make_shared<Graphics::Command<T>>(std::forward<Args>(args)...));
+       // m_CommandCollection.emplace_back(std::make_unique<Graphics::Command<T>>(std::forward<Args>(args)...));
+        m_CommandCollection.emplace_back(T, args...);
     }
 
-    const std::vector<std::shared_ptr<Graphics::CommandBase>>& Get() const
+    const std::vector<Graphics::CommandBase>& Get() const
     {
         return m_CommandCollection;
     }
@@ -21,11 +22,6 @@ public:
         m_CommandCollection.clear();
     }
 
-    void Add(const std::shared_ptr<Graphics::CommandBase>& c)
-    {
-        m_CommandCollection.emplace_back(std::move(c));
-    }
-
 private:
-    std::vector<std::shared_ptr<Graphics::CommandBase>> m_CommandCollection;
+    std::vector<Graphics::CommandBase> m_CommandCollection;
 };

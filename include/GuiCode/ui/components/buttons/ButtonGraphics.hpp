@@ -46,7 +46,7 @@ namespace ButtonGraphics
                 b.Active() ? Theme::MENU_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
-            d.Command<Font>(Fonts::Gidole14, 14);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
             d.Command<Text>(&b.Name(), _padding + b.X() + 6, b.Y() + b.Height() / 2);
@@ -78,7 +78,7 @@ namespace ButtonGraphics
                 int _p = 2;
                 d.Command<Quad>(b.Position() + Vec2<int>{ _p, _p }, Vec2<int>{ b.Size().y - _p * 2, b.Size().y - _p * 2 });
             }
-            d.Command<Font>(Fonts::Gidole14, 14);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
             d.Command<Text>(&b.Name(), _padding + b.X() + 6, b.Y() + b.Height() / 2);
@@ -110,7 +110,7 @@ namespace ButtonGraphics
                 int _p = 2;
                 d.Command<Quad>(b.Position() + Vec2<int>{ _p, _p }, Vec2<int>{ b.Size().y - _p * 2, b.Size().y - _p * 2 });
             }
-            d.Command<Font>(Fonts::Gidole14, 14);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
             d.Command<Text>(&b.Name(), _padding + b.X() + 6, b.Y() + b.Height() / 2);
@@ -184,7 +184,7 @@ namespace ButtonGraphics
             b.Size({ _t.Width, _t.Height });
             d.Command<TexturedQuad>(_t, b.X(), b.Y(), b.Width(), b.Height());
             d.Command<Fill>(Color{ 1.0f, 1.0f, 1.0f, 1.0f });
-            d.Command<Font>(Fonts::Gidole14, 14);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<TextAlign>(Hori, Vert);
             if (Hori == Align::CENTER)
                 d.Command<Text>(&b.Name(), b.X() + b.Width() / 2, b.Y() + b.Height() / 2);
