@@ -48,7 +48,6 @@ namespace ButtonType
                             _l->Selected(false);
                         
                         Selected(true);
-                        LOG(Selected());
                     }
                 }
             };
