@@ -72,7 +72,12 @@ namespace ButtonType
     void Toggle::Update(const Vec4<int>& viewport)
     {
         if (m_Link)
+        {
+            if (*m_Link != m_Active)
+                m_NeedsRedraw = true;
+
             m_Active = *m_Link;
+        }
         ButtonBase::Update(viewport);
     }
 
@@ -80,11 +85,13 @@ namespace ButtonType
     {
         m_Listener += [this](Event::MouseExited& event)
         {
+            m_NeedsRedraw = true;
             m_Hovering = false;
         };
 
         m_Listener += [this](Event::MouseEntered& event)
         {
+            m_NeedsRedraw = true;
             m_Hovering = true;
         };
 
@@ -106,6 +113,7 @@ namespace ButtonType
         {
             if (event.button == Event::MouseButton::LEFT && !Disabled() && Component::WithinBounds({ event.x, event.y }))
             {
+                m_NeedsRedraw = true;
                 if (m_Link)
                 {
                     *m_Link ^= true;
@@ -125,6 +133,7 @@ namespace ButtonType
     {
         m_Listener += [this](Event::Unfocused& event)
         {
+            m_NeedsRedraw = true;
             Active(false);
         };
     }
@@ -132,7 +141,10 @@ namespace ButtonType
     void FocusToggle::Update(const Vec4<int>& viewport)
     {
         if (!::Graphics::WindowFocused())
+        {
+            m_NeedsRedraw = true;
             Active(false);
+        }
 
         Toggle::Update(viewport);
     }
@@ -146,13 +158,14 @@ namespace ButtonType
     {
         m_Listener += [this](Event::MouseEntered& event)
         {
+            m_NeedsRedraw = true;
             m_Hovering = true;
             m_Active = true;
-            
         };
 
         m_Listener += [this](Event::MouseExited& event)
         {
+            m_NeedsRedraw = true;
             m_Hovering = false;
             m_Active = false;
         };

@@ -77,12 +77,15 @@ void Container::Update(const Vec4<int>& viewport)
         {
             if (_c->NeedsRedraw())
                 m_NeedsRedraw = true;
+
             _c->Update(viewport);
         }
 }
 
 void Container::Render(CommandCollection& d)
 {
+    Component::Render(d);
+
     // Only render if the viewport has actual size.
     if (m_Viewport.width == 0 || m_Viewport.height == 0)
         return;

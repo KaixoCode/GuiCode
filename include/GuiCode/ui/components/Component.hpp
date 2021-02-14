@@ -48,11 +48,11 @@ public:
     virtual int          Cursor()     const { return m_Cursor; }
     virtual bool         Visible()    const { return m_Visible; }
     virtual Layout::Hint LayoutHint() const { return m_LayoutHint; }
-    virtual bool         NeedsRedraw() { if (m_NeedsRedraw) { m_NeedsRedraw = false; return true; } else return false; }
+    virtual bool         NeedsRedraw() { if (m_NeedsRedraw) { return true; } else return false; }
 
     virtual bool WithinBounds(const Vec2<int>& pos) const;
 
-    virtual void Render(CommandCollection& d) { }
+    virtual void Render(CommandCollection& d) { m_NeedsRedraw = false; }
     virtual void Update(const Vec4<int>& viewport);
 
     void AddEvent(Event& e) { m_Listener.AddEvent(e); }
