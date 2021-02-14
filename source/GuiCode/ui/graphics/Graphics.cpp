@@ -198,8 +198,19 @@ namespace Graphics
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         m_TexturedQuad(m_FrameBuffers[id].renderTexture, size);
 
+
         FrameBufferTexture& _texture = m_FrameBuffers[id];
         glBindFramebuffer(GL_FRAMEBUFFER, _texture.frameBuffer);
+        if (size.width != _texture.width || size.height != _texture.height)
+        {
+            m_IgnoreDraws = false;
+            _texture.width = size.width;
+            _texture.height = size.height;
+            glBindTexture(GL_TEXTURE_2D, _texture.renderTexture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        }
+
+
         if (refresh)
         {
             //glClear(GL_COLOR_BUFFER_BIT);
