@@ -48,6 +48,7 @@ public:
     virtual int          Cursor()     const { return m_Cursor; }
     virtual bool         Visible()    const { return m_Visible; }
     virtual Layout::Hint LayoutHint() const { return m_LayoutHint; }
+    virtual bool         NeedsRedraw() { if (m_NeedsRedraw) { m_NeedsRedraw = false; return true; } else return false; }
 
     virtual bool WithinBounds(const Vec2<int>& pos) const;
 
@@ -68,7 +69,8 @@ protected:
 
     int m_Cursor = GLFW_CURSOR_NORMAL;
 
-    bool m_Visible = true;
+    bool m_Visible = true,
+        m_NeedsRedraw = true;
 
     EventListener m_Listener;
 };

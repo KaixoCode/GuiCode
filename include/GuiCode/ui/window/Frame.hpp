@@ -16,9 +16,9 @@
 class Frame : public Window 
 {
 public:
-    Frame(const std::string& name, const int width, const int height, bool r = true)
+    Frame(const std::string& name, const int width, const int height, bool hideonclose = false, bool r = true)
         : Window(name, width, height, r), m_Resizable(r),
-        m_CloseButton(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Cross1, Graphics::Textures::Cross2, Graphics::Textures::Cross3, [&]() { this->Close(); }, "")),
+        m_CloseButton(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Cross1, Graphics::Textures::Cross2, Graphics::Textures::Cross3, [&, hideonclose]() { if (hideonclose) this->Hide(); else this->Close(); }, "")),
         m_MaxiButton1(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Maxi1, Graphics::Textures::Maxi2, Graphics::Textures::Maxi3, [&]() { this->Restore(); }, "")),
         m_MaxiButton2(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Maxi4, Graphics::Textures::Maxi5, Graphics::Textures::Maxi6, [&]() { this->Maximize(); }, "")),
         m_MinimButton(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Mini1, Graphics::Textures::Mini2, Graphics::Textures::Mini3, [&]() { this->Iconify(); }, "")),

@@ -11,7 +11,10 @@ class Gui
 {
 public:
 	Gui()
-	{}
+	{
+		RightClickMenu::Get().Hide();
+		Dragging::Get().Hide();
+	}
 
 	template<typename T, typename ...Args>
 	T& AddWindow(Args...args)

@@ -74,7 +74,11 @@ void Container::Update(const Vec4<int>& viewport)
         if (_c->Visible() &&
             _c->X() + _c->Width() >= m_Viewport.x && _c->Y() + _c->Height() >= m_Viewport.y &&
             _c->X() <= m_Viewport.x + m_Viewport.width && _c->Y() <= m_Viewport.y + m_Viewport.height)
+        {
+            if (_c->NeedsRedraw())
+                m_NeedsRedraw = true;
             _c->Update(viewport);
+        }
 }
 
 void Container::Render(CommandCollection& d)
@@ -88,7 +92,9 @@ void Container::Render(CommandCollection& d)
         if (_c->Visible() &&
             _c->X() + _c->Width() >= m_Viewport.x && _c->Y() + _c->Height() >= m_Viewport.y &&
             _c->X() <= m_Viewport.x + m_Viewport.width && _c->Y() <= m_Viewport.y + m_Viewport.height)
+        {
             _c->Render(d);
+        }
 }
 
 void Container::Determine(Event& e)

@@ -9,6 +9,18 @@
 // --------------------------------------------------------------------------
 namespace Graphics
 {
+    struct FrameBufferTexture
+    {
+        GLuint frameBuffer;
+        GLuint renderTexture;
+
+        int width, height;
+    };
+
+    std::stack<unsigned int> m_FrameBufferStack;
+    std::unordered_map<unsigned int, FrameBufferTexture> m_FrameBuffers;
+    bool m_IgnoreDraws = false;
+
     struct Character
     {
         unsigned int TextureID;
@@ -70,6 +82,8 @@ namespace Graphics
     void m_Ellipse(const glm::vec4& dim);
     void m_Triangle(const glm::vec4& dim, float rotation);
     void m_Text(const std::string* text, float x, float y);
+    void m_FrameBuffer(unsigned int id, bool refresh, Vec4<int> size);
+    void m_FrameBufferRender(unsigned int id, Vec4<int> loc);
 
     Color m_Fill{ 1, 1, 1, 1 };
     Color m_Stroke{ 1, 1, 1, 1 };
@@ -94,25 +108,33 @@ namespace Graphics
         {
            
             const CommandBase* a = &d.Get()[i];
+            if (!m_IgnoreDraws)
+            {
+                switch (a->type)
+                {
+                case Fill: m_Fill = a->fill / 255.0; break;
+                case Stroke: m_Stroke = a->stroke / 255.0; break;
+                case TextAlign: m_TextAlign = a->align; break;
+                case FontSize: m_FontSize = a->fontSize; break;
+                case Font: m_Font = (Fonts)a->font, m_FontSize = a->fontSize; break;
+                case Quad: m_Quad(a->dimension, a->rotation); break;
+                case TexturedQuad: m_TexturedQuad(a->texture, a->textureDimension); break;
+                case Text: m_Text(a->text, a->position.x, a->position.y); break;
+                case Ellipse: m_Ellipse(a->dimension); break;
+                case Triangle: m_Triangle(a->dimension, a->rotation); break;
+                case Clip: glEnable(GL_SCISSOR_TEST); glScissor(a->dimension.x + m_Matrix[3][0], a->dimension.y + m_Matrix[3][1], a->dimension.z, a->dimension.w); break;
+                case Viewport: glViewport(a->dimension.x, a->dimension.y, a->dimension.z, a->dimension.w); break;
+                case ClearClip: glDisable(GL_SCISSOR_TEST); break;
+                case Translate: m_Translate(a->translate); break;
+                case Scale: m_Scale(a->scale); break;
+                case PushMatrix: m_PushMatrix(); break;
+                case PopMatrix: m_PopMatrix(); break;
+                }
+            }
             switch (a->type)
             {
-            case Fill: m_Fill = a->fill / 255.0; break;
-            case Stroke: m_Stroke = a->stroke / 255.0; break;
-            case TextAlign: m_TextAlign = a->align; break;
-            case FontSize: m_FontSize = a->fontSize; break;
-            case Font: m_Font = (Fonts)a->font, m_FontSize = a->fontSize; break;
-            case Quad: m_Quad(a->dimension, a->rotation); break;
-            case TexturedQuad: m_TexturedQuad(a->texture, a->textureDimension); break;
-            case Text: m_Text(a->text, a->position.x, a->position.y); break;
-            case Ellipse: m_Ellipse(a->dimension); break;
-            case Triangle: m_Triangle(a->dimension, a->rotation); break;
-            case Clip: glEnable(GL_SCISSOR_TEST); glScissor(a->dimension.x + m_Matrix[3][0], a->dimension.y + m_Matrix[3][1], a->dimension.z, a->dimension.w); break;
-            case Viewport: glViewport(a->dimension.x, a->dimension.y, a->dimension.z, a->dimension.w); break;
-            case ClearClip: glDisable(GL_SCISSOR_TEST); break;
-            case Translate: m_Translate(a->translate); break;
-            case Scale: m_Scale(a->scale); break;
-            case PushMatrix: m_PushMatrix(); break;
-            case PopMatrix: m_PopMatrix(); break;
+            case FrameBuffer: m_FrameBuffer(a->id, a->refresh, a->size); break;
+            case FrameBufferRender: m_FrameBufferRender(a->texture, a->textureDimension); break;
             }
         }
 
@@ -123,6 +145,79 @@ namespace Graphics
 
             m_PrevCollection.Add(a);
         }*/
+    }
+
+    void m_FrameBuffer(unsigned int id, bool refresh, Vec4<int> size)
+    {
+        if (id == 0)
+        {
+            // Don't ignore draws when rendering to screen
+            m_IgnoreDraws = false;
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            return;
+        }
+
+        // Ignore draw commands if no refresh
+        m_IgnoreDraws = !refresh;
+        m_FrameBufferStack.push(id);
+
+        // Make framebuffer if it doesn't exist yet
+        auto& _hasfb = m_FrameBuffers.find(id);
+        if (_hasfb == m_FrameBuffers.end())
+        {
+            GLuint _fb = 0;
+            glGenFramebuffers(1, &_fb);
+            glBindFramebuffer(GL_FRAMEBUFFER, _fb);
+
+            GLuint _rt = 0;
+            glGenTextures(1, &_rt);
+
+            // "Bind" the newly created texture : all future texture functions will modify this texture
+            glBindTexture(GL_TEXTURE_2D, _rt);
+
+            // Give an empty image to OpenGL ( the last "0" )
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+            // Poor filtering. Needed !
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+            // Set "renderedTexture" as our colour attachement #0
+            glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _rt, 0);
+
+            // Set the list of draw buffers.
+            GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+            glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+            
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+                exit(-1);
+
+            m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, size.width, size.height });
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        m_TexturedQuad(m_FrameBuffers[id].renderTexture, size);
+
+        FrameBufferTexture& _texture = m_FrameBuffers[id];
+        glBindFramebuffer(GL_FRAMEBUFFER, _texture.frameBuffer);
+        if (refresh)
+        {
+            //glClear(GL_COLOR_BUFFER_BIT);
+            //glClearColor(0, 0, 0, 0);
+        }
+    }
+
+    void m_FrameBufferRender(unsigned int id, Vec4<int> loc)
+    {      
+        m_FrameBufferStack.pop();
+
+        if (!m_FrameBufferStack.empty())
+            glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBuffers[m_FrameBufferStack.top()].frameBuffer);
+        else
+        {
+            m_IgnoreDraws = false;
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
     }
 
     // --------------------------------------------------------------------------

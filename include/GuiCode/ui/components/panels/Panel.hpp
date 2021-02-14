@@ -11,6 +11,7 @@ class Panel : public Container
 public:
     Panel(Vec2<int> size = { 40, 70 });
 
+    auto SmartPanel(bool s)          -> void { m_SmartPanel = s; }
     auto Background(const Color& c)  -> void { m_Background = c; };
     auto TranslateBackground(bool t) -> void { m_TranslateBackground = t; }
 
@@ -37,5 +38,10 @@ public:
 protected:
     ::Color m_Background = { 0, 0, 0, 0 };
     LayoutManager m_LayoutManager;
-    bool m_AutoResizeX = false, m_AutoResizeY = false, m_TranslateBackground = false;
+    bool m_AutoResizeX = false, 
+        m_AutoResizeY = false, 
+        m_TranslateBackground = false,
+        m_SmartPanel = false;
+    static inline unsigned int m_PanelCounter = 0;
+    unsigned int m_PanelId = m_PanelCounter++;
 };

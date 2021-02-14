@@ -15,17 +15,20 @@ namespace ButtonType
     {
         m_Listener += [this](Event::MousePressed& event)
         {
+            m_NeedsRedraw = true;
             if (event.button == Event::MouseButton::LEFT && Component::WithinBounds({ event.x, event.y }))
                 m_Active = true;
         };
 
         m_Listener += [this](Event::MouseExited& event)
         {
+            m_NeedsRedraw = true;
             m_Hovering = false;
         };
 
         m_Listener += [this](Event::MouseEntered& event)
         {
+            m_NeedsRedraw = true;
             m_Hovering = true;
         };
 
@@ -33,6 +36,7 @@ namespace ButtonType
         {
             if (event.button == Event::MouseButton::LEFT)
             {
+                m_NeedsRedraw = true;
                 m_Active = false;
                 if (!Disabled() && Component::WithinBounds({ event.x, event.y }))
                 {

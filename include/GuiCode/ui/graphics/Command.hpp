@@ -11,7 +11,10 @@ namespace Graphics
 
         Clip, ClearClip, Translate, PushMatrix, PopMatrix, Scale, Viewport,
 
-        Text, Quad, TexturedQuad, Ellipse, Triangle
+        Text, Quad, TexturedQuad, Ellipse, Triangle,
+
+        FrameBuffer, FrameBufferRender
+
     };
 
     struct CommandBase
@@ -70,11 +73,22 @@ namespace Graphics
         CommandBase(Type type, const Vec2<Align>& a) : type(type), align(a) {}
         CommandBase(Type type, Align a, Align b) : type(type), align({ a, b }) {}
 
+        // Framebuffers
+        CommandBase(Type type, unsigned int id, bool refresh, const Vec4<int>& size) : type(type), id(id), refresh(refresh), size(size) {}
+
         ~CommandBase()
         {}
 
         union
         {
+            // Framebuffer
+            struct 
+            {
+                Vec4<int> size;
+                bool refresh;
+                unsigned int id;
+            };
+
             // Fill/Stroke
             union { Color fill, stroke; };
 

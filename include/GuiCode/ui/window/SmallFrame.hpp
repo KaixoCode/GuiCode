@@ -12,9 +12,9 @@
 class SmallFrame : public Window
 {
 public:
-    SmallFrame(const std::string& name, const int width, const int height)
-        : Window(name, width, height, true),
-        m_CloseButton(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Cross1, Graphics::Textures::Cross2, Graphics::Textures::Cross3, [&]() { this->Close(); }, "")),
+    SmallFrame(const std::string& name, const int width, const int height, bool hideonclose = false, bool r = true)
+        : Window(name, width, height, r),
+        m_CloseButton(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Cross1, Graphics::Textures::Cross2, Graphics::Textures::Cross3, [&, hideonclose]() { if (hideonclose) this->Hide(); else this->Close(); }, "")),
         m_Panel(&Emplace<::Panel>())
     {}
 
