@@ -1,6 +1,5 @@
 #include "GuiCode/platform/windows/WindowsWindow.hpp"
 #include "GuiCode/ui/events/Event.hpp"
-#include "GuiCode/ui/graphics/Theme.hpp"
 #include "GuiCode/ui/graphics/Graphics.hpp"
 
 int WindowsWindow::m_WindowCount = 0;
@@ -107,7 +106,7 @@ void WindowsWindow::Render(CommandCollection& d)
     using namespace Graphics;
     d.Command<Clip>(0, 0, Width(), Height());
     d.Command<Type::Viewport>(0, 0, Width(), Height());
-    d.Command<Fill>(Theme::Get(Theme::WINDOW_BACKGROUND));
+    d.Command<Fill>(Color{ 23, 23, 23, 255 });
     d.Command<Quad>(0, 0, Width(), Height());
     WindowBase::Render(d);
 }

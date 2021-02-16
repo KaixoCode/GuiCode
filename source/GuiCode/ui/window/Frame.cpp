@@ -37,7 +37,7 @@ void Frame::Render(CommandCollection& d)
     static const std::string _line = "|";
 
     d.Command<TexturedQuad>(Graphics::Textures::Logo, _x + 12, Height() - 26 + _offset, 20, 20);
-    d.Command<Fill>(Theme::Get(Theme::TITLEBAR_TEXT));
+    d.Command<Fill>(Color{ 179, 179, 179, 255 });
     d.Command<TextAlign>(Align::CENTER, Align::CENTER);
     d.Command<Text>(&_line, _x += 45, _y + 16);
 
@@ -49,7 +49,7 @@ void Frame::Render(CommandCollection& d)
         d.Command<Text>(&_line, _x += 6, _y + 16);
     }
 
-    d.Command<Fill>(Theme::Get(Theme::TITLEBAR_TEXT));
+    d.Command<Fill>(Color{ 179, 179, 179, 255 });
     d.Command<TextAlign>(Align::LEFT, Align::CENTER);
     d.Command<Text>(&m_Name, Vec2<int>{_x + 9, _y + 16});
 }

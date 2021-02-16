@@ -3,7 +3,6 @@
 #include "GuiCode/ui/components/treeitems/TreeItem.hpp"
 #include "GuiCode/ui/components/treeitems/TreeItemType.hpp"
 #include "GuiCode/ui/graphics/Graphics.hpp"
-#include "GuiCode/ui/graphics/Theme.hpp"
 
 // --------------------------------------------------------------------------
 // ------------------------- TreeItem Graphics ------------------------------
@@ -33,9 +32,9 @@ namespace TreeItemGraphics
         template<>
         static void Render(TreeItem<Normal, TreeItemType::Normal>& b, CommandCollection& d)
         {
-            Color _c2 = Theme::Get(Theme::MENU_BUTTON_TEXT);
-            Color _c3 = Theme::Get(Theme::MENU_BUTTON_DARKER_TEXT);
-            Color _c1 = Theme::Get(b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
+            Color _c2 = Color{ 255, 255, 255, 255 };
+            Color _c3 = Color{ 128, 128, 128, 255 };
+            Color _c1 = b.Hovering() ? Color{ 255, 255, 255, 13 } : Color{ 0, 0, 0, 0 };
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
 
@@ -60,9 +59,9 @@ namespace TreeItemGraphics
         template<>
         static void Render(TreeItem<Normal, TreeItemType::Folder>& b, CommandCollection& d)
         {
-            Color _c2 = Theme::Get(Theme::MENU_BUTTON_TEXT);
-            Color _c3 = Theme::Get(Theme::MENU_BUTTON_DARKER_TEXT);
-            Color _c1 = Theme::Get(b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
+            Color _c2 = Color{ 255, 255, 255, 255 };
+            Color _c3 = Color{ 128, 128, 128, 255 };
+            Color _c1 = b.Hovering() ? Color{ 255, 255, 255, 13 } : Color{ 0, 0, 0, 0 };
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.X(), b.Y() + b.Height() - b.ActualHeight(), b.Width(), b.ActualHeight());
 

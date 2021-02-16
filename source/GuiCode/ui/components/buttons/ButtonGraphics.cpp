@@ -14,12 +14,13 @@ namespace ButtonGraphics
 
     void TitleMenu::Render(ButtonBase& b, CommandCollection& d)
     {
-        Color _c1 = Theme::Get(b.Active() ? Theme::MENU_BACKGROUND : b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
-        Color _c2 = Theme::Get(Theme::MENU_BUTTON_TEXT);
+        Color _c1 = b.Active() ? Color{ 18, 18, 18, 255 } : b.Hovering() ? Color{ 255, 255, 255, 13 } : Color{ 0, 0, 0, 0 };
+        Color _c2 = Color{ 255, 255, 255, 255 };
+        
         int _padding = 20;
         if (b.Active())
         {
-            d.Command<Fill>(Theme::Get(Theme::MENU_BORDER));
+            d.Command<Fill>(Color{ 64, 64, 64, 255 });
             d.Command<Quad>(b.X() - 1, b.Y(), b.Width() + 2, b.Height());
         }
         d.Command<Fill>(_c1);

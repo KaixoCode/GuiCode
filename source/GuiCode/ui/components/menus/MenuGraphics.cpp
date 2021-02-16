@@ -1,5 +1,4 @@
 #include "GuiCode/ui/components/menus/MenuGraphics.hpp"
-#include "GuiCode/ui/graphics/Theme.hpp"
 #include "GuiCode/ui/graphics/Graphics.hpp"
 
 // --------------------------------------------------------------------------
@@ -48,10 +47,10 @@ namespace MenuGraphics
         int _iy = _y;
         int _mw = 0;
 
-        d.Command<Fill>(Theme::Get(Theme::MENU_BORDER));
+        d.Command<Fill>(Color{ 64, 64, 64, 255 });
         d.Command<Quad>(b.X() - 1, b.Y() - 1, b.Width() + 2, b.Height() + 2);
 
-        d.Command<Fill>(Theme::Get(Theme::MENU_BACKGROUND));
+        d.Command<Fill>(Color{ 18, 18, 18, 255 });
         d.Command<Quad>(b.X(), b.Y(), b.Width(), b.Height());
 
         for (auto& _item : _menuItems)

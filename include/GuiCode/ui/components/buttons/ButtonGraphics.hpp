@@ -3,7 +3,6 @@
 #include "GuiCode/ui/components/buttons/Button.hpp"
 #include "GuiCode/ui/components/buttons/ButtonType.hpp"
 #include "GuiCode/ui/graphics/Graphics.hpp"
-#include "GuiCode/ui/graphics/Theme.hpp"
 
 // --------------------------------------------------------------------------
 // -------------------------- Button Graphics -------------------------------
@@ -33,14 +32,10 @@ namespace ButtonGraphics
         static void Render(ButtonBase& b, CommandCollection& d)
         {
             int _padding = 20;
-            Color _c1;
-            Color _c2 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_TEXT : Theme::MENU_BUTTON_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            Color _c3 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_DARKER_TEXT : Theme::MENU_BUTTON_DARKER_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Active() ? Color{ 255, 255, 255, 26 } : b.Hovering() ? Color{ 255, 255, 255, 13 } : Color{ 0, 0, 0, 0 };
+            Color _c2 = Color{ 255, 255, 255, 255 } * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c3 = Color{ 128, 128, 128, 255 } * (Graphics::WindowFocused() ? 1.0f : 0.8f);
 
-            _c1 = Theme::Get(b.Disabled() ?
-                b.Active() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
-                :
-                b.Active() ? Theme::MENU_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
             d.Command<Fill>(Color{ 255, 255, 255, 255 });
@@ -73,14 +68,10 @@ namespace ButtonGraphics
         static void Render(Type& b, CommandCollection& d)
         {
             int _padding = 20;
-            Color _c1;
-            Color _c2 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_TEXT : Theme::MENU_BUTTON_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            Color _c3 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_DARKER_TEXT : Theme::MENU_BUTTON_DARKER_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            
-            _c1 = Theme::Get(b.Disabled() ?
-                b.Active() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
-                :
-                b.Active() ? Theme::MENU_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
+            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Active() ? Color{ 255, 255, 255, 26 } : b.Hovering() ? Color{ 255, 255, 255, 13 } : Color{ 0, 0, 0, 0 };
+            Color _c2 = Color{ 255, 255, 255, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c3 = Color{ 128, 128, 128, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
+
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
             d.Command<Font>(Fonts::Gidole14, 14.0f);
@@ -97,21 +88,16 @@ namespace ButtonGraphics
         static void Render<Button<Menu, ButtonType::List>>(Button<Menu, ButtonType::List>& b, CommandCollection& d)
         {
             int _padding = 20;
-            Color _c1;
-            Color _c2 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_TEXT : Theme::MENU_BUTTON_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            Color _c3 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_DARKER_TEXT : Theme::MENU_BUTTON_DARKER_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-
-            _c1 = Theme::Get(b.Disabled() ?
-                b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
-                :
-                b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
+            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Active() ? Color{ 255, 255, 255, 26 } : b.Hovering() ? Color{ 255, 255, 255, 13 } : Color{ 0, 0, 0, 0 };
+            Color _c2 = Color{ 255, 255, 255, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c3 = Color{ 128, 128, 128, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
 
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
 
             if (b.Selected())
             {
-                d.Command<Fill>(Theme::Get(Theme::MENU_BUTTON_BACKGROUND_PRESS));
+                d.Command<Fill>(Color{ 255, 255, 255, 26 });
                 int _p = 2;
                 d.Command<Quad>(b.Position() + Vec2<int>{ _p, _p }, Vec2<int>{ b.Size().y - _p * 2, b.Size().y - _p * 2 });
             }
@@ -129,21 +115,16 @@ namespace ButtonGraphics
         static void Render<Button<Menu, ButtonType::Toggle>>(Button<Menu, ButtonType::Toggle>& b, CommandCollection& d)
         {
             int _padding = 20;
-            Color _c1;
-            Color _c2 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_TEXT : Theme::MENU_BUTTON_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            Color _c3 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_DARKER_TEXT : Theme::MENU_BUTTON_DARKER_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-        
-            _c1 = Theme::Get(b.Disabled() ?
-                b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
-                :
-                b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
+            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Hovering() ? Color{ 255, 255, 255, 13 } : Color{ 0, 0, 0, 0 };
+            Color _c2 = Color{ 255, 255, 255, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c3 = Color{ 128, 128, 128, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
 
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
 
             if (b.Active())
             {
-                d.Command<Fill>(Theme::Get(Theme::MENU_BUTTON_BACKGROUND_PRESS));
+                d.Command<Fill>(Color{ 255, 255, 255, 26 });
                 int _p = 2;
                 d.Command<Quad>(b.Position() + Vec2<int>{ _p, _p }, Vec2<int>{ b.Size().y - _p * 2, b.Size().y - _p * 2 });
             }
@@ -161,14 +142,10 @@ namespace ButtonGraphics
         static void Render<Button<Menu, ButtonType::Hover>>(Button<Menu, ButtonType::Hover>& b, CommandCollection& d)
         {
             int _padding = 20;
-            Color _c1;
-            Color _c2 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_TEXT : Theme::MENU_BUTTON_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
-            Color _c3 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_DARKER_TEXT : Theme::MENU_BUTTON_DARKER_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Hovering() ? Color{ 255, 255, 255, 13 } : Color{ 0, 0, 0, 0 };
+            Color _c2 = Color{ 255, 255, 255, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c3 = Color{ 128, 128, 128, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
             
-            _c1 = Theme::Get(b.Disabled() ?
-                b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
-                :
-                b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
             d.Command<Font>(Fonts::Gidole14, 14);
@@ -246,7 +223,7 @@ namespace ButtonGraphics
             Graphics::Texture& _t = b.Active() ? b.m_Texture3 : b.Hovering() ? b.m_Texture2 : b.m_Texture1;
             b.Size({ _t.Width, _t.Height });
             d.Command<TexturedQuad>(_t, b.X(), b.Y(), b.Width(), b.Height());
-            d.Command<Fill>(Color{ 1.0f, 1.0f, 1.0f, 1.0f });
+            d.Command<Fill>(Color{ 255, 255, 255, 255 });
             d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<TextAlign>(Hori, Vert);
             if (Hori == Align::CENTER)
