@@ -2,9 +2,18 @@
 #include "GuiCode/pch.hpp"
 #include "GuiCode/ui/components/Container.hpp"
 
+/**
+ * Base for a window
+ */
 class WindowBase : protected Container
 {
 public:
+    /**
+     * Constructor
+     * @param name name
+     * @param width width
+     * @param height height
+     */
     WindowBase(const std::string& name, int width, int height)
         : Container(), m_Name(name)
     {

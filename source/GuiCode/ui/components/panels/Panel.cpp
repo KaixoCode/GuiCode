@@ -28,10 +28,7 @@ void Panel::Background(CommandCollection& d)
 {
     using namespace Graphics;
     d.Command<Fill>(m_Background);
-    if (m_SmartPanel)
-        d.Command<Quad>(0, 0, Width(), Height());
-    else
-        d.Command<Quad>(X(), Y(), Width(), Height());
+    d.Command<Quad>(0, 0, Width(), Height());
 };
 
 void Panel::Update(const Vec4<int>& viewport)
@@ -66,13 +63,9 @@ void Panel::Render(CommandCollection& d)
     else
     {
         d.Command<PushMatrix>();
-        if (!m_TranslateBackground)
-            Background(d);
 
         d.Command<Translate>(Vec2<int>{ X(), Y() });
-   
-        if (m_TranslateBackground)
-            Background(d);
+        Background(d);
 
         Container::Render(d);
         d.Command<PopMatrix>();

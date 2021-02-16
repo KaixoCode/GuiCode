@@ -17,10 +17,18 @@ namespace TreeItemGraphics
     // ------------------------------- Normal -----------------------------------
     // --------------------------------------------------------------------------
 
+    /**
+     * Simple normal tree item graphics
+     */
     struct Normal
     {
+        /**
+         * Render
+         * @param b the <code>TreeItem</code>
+         * @param d the <code>CommandCollection</code>
+         */
         template<typename TreeItemType>
-        static void Render(TreeItem<Normal, TreeItemType>& b, CommandCollection& d) { LOG(typeid(b).name()); }
+        static void Render(TreeItem<Normal, TreeItemType>& b, CommandCollection& d) { }
 
         template<>
         static void Render(TreeItem<Normal, TreeItemType::Normal>& b, CommandCollection& d)

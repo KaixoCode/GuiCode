@@ -12,9 +12,15 @@ namespace ScrollbarType
     // ----------------------------- Vertical -----------------------------------
     // --------------------------------------------------------------------------
 
+    /**
+     * Vertical scrollbar.
+     */
     class Vertical : public ScrollbarBase
     {
     public:
+        /**
+         * Constructor
+         */
         Vertical();
     
         virtual bool Hovering() const override { return m_Hovering | m_Dragging; }
@@ -27,9 +33,15 @@ namespace ScrollbarType
     // ---------------------------- Horizontal ----------------------------------
     // --------------------------------------------------------------------------
 
+    /**
+     * Horizontal scrollbar.
+     */
     class Horizontal : public ScrollbarBase
     {
     public:
+        /**
+         * Constructor
+         */
         Horizontal();
 
         virtual bool Hovering() const override { return m_Hovering | m_Dragging; }

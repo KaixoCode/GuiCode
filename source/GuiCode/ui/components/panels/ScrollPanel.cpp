@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------
 
 ScrollPanel::ScrollPanel()
-    : Panel()
+    : ::Panel()
 {
     m_Listener += [this](Event::MouseWheel& e)
     {
@@ -89,15 +89,12 @@ void ScrollPanel::Render(CommandCollection& d)
 {
     using namespace Graphics;
     d.Command<Clip>(X(), Y(), Width(), Height());
-    if (!m_TranslateBackground)
-        Background(d);
     d.Command<PushMatrix>();
     d.Command<Translate>(Vec2<int>{ X(), Y() });
     if (m_Panel)
     {
         d.Command<Clip>(0, m_ScrollbarX->Height() * m_ScrollbarX->Visible(), Width() - m_ScrollbarY->Width() * m_ScrollbarY->Visible(), Height() - m_ScrollbarX->Height() * m_ScrollbarX->Visible());
-        if (m_TranslateBackground)
-            Background(d);
+        Background(d);
 
         m_Panel->Render(d);
         d.Command<Clip>(0, 0, Width(), Height());

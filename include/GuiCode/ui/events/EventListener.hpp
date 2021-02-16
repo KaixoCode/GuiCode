@@ -21,6 +21,10 @@ public:
     void AddCallback(Callback<Event::Focused> c) { m_FocusedCallbacks.emplace_back(c); }
     void AddCallback(Callback<Event::Unfocused> c) { m_UnfocusedCallbacks.emplace_back(c); }
 
+    /**
+     * Add an event.
+     * @param e event
+     */
     void AddEvent(Event& e)
     {
         for (auto& a = m_EventCallbacks.rbegin(); a != m_EventCallbacks.rend(); ++a)

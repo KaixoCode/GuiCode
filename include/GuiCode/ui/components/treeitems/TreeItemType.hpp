@@ -12,24 +12,36 @@ namespace TreeItemType
     // --------------------------------------------------------------------------
     // ------------------------------- Normal -----------------------------------
     // --------------------------------------------------------------------------
-    // ---------------------- Normal treeitem behaviour -------------------------
-    // --------------------------------------------------------------------------
 
+    /**
+     * Normal tree item.
+     */
     class Normal : public TreeItemBase     
     {
     public:
+        /**
+         * Constructor
+         * @param path path to file
+         * @param size size
+         */
         Normal(const std::filesystem::path &path, Vec2<int> size = { 250, 22 });
     };
 
     // --------------------------------------------------------------------------
     // ------------------------------- Folder -----------------------------------
     // --------------------------------------------------------------------------
-    // ------------------------ Expandable tree item ----------------------------
-    // --------------------------------------------------------------------------
 
+    /**
+     * Folder tree item. Contains a sub-<code>TreePanel</code> for more folder and files.
+     */
     class Folder : public TreeItemBase
     {
     public:
+        /**
+         * Constructor
+         * @param path path to file
+         * @param size size
+         */
         Folder(const std::filesystem::path& path, Vec2<int> size = { 250, 22 });
 
         auto Size(const Vec2<int>& size) -> void override { m_Size = size; m_ActualHeight = size.height; }
@@ -39,9 +51,24 @@ namespace TreeItemType
         Vec2<int> Size()   const override { return m_Size; }
         int       Height() const override { return m_Size.height; }
         int       Width()  const override { return m_Size.width; }
-        int       ActualHeight()    const { return m_ActualHeight; }
-        bool      Expanded()        const { return m_Expanded; }
 
+        /**
+         * Height is slightly adjust, this returns the actual height.
+         * @return actual height
+         */
+        int ActualHeight() const { return m_ActualHeight; }
+
+        /**
+         * Is this folder expanded?
+         * @return true when folder is expanded
+         */
+        bool Expanded() const { return m_Expanded; }
+
+        /**
+         * Emplace <code>TreeItem</code> to the sub-<code>TreePanel</code>
+         * @tparam T type of TreeItem
+         * @param ...args arguments for the constructor of <code>T</code>
+         */
         template<typename T, typename ...Args>
         T& Emplace(Args&&... args)
         {

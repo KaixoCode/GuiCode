@@ -7,14 +7,35 @@
 // --------------------------- LayoutManager --------------------------------
 // --------------------------------------------------------------------------
 
+/**
+ * Each <code>Panel</code> contains an instance of <code>LayoutManager</code> and it 
+ * helps with arranging the components inside the <code>Panel</code>.
+ */
 struct LayoutManager
 {
+    /**
+     * Constructor
+     */
     LayoutManager();
 
+    /**
+     * The <code>LayoutManager</code> also receives events because it also manages the
+     * resizability of some layouts, and thus needs to receive mouse events.
+     * @param e event
+     */
     void AddEvent(Event& e) { m_Listener.AddEvent(e); }
 
+    /**
+     * Requested cursor to be displayed, used when resizing.
+     * @return cursor id
+     */
     int Cursor() const { return m_Cursor; }
     
+    /**
+     * Update the positions and sizes of the components using the given dimensions.
+     * @param dim rectangle of the available space
+     * @param components components
+     */
     template<typename TypeCollection>
     void Update(const Vec4<int>& dim, TypeCollection& components) 
     {
@@ -26,11 +47,28 @@ struct LayoutManager
         m_MousePress = Event::MouseButton::NONE;
     }
 
+    /**
+     * Returns the <code>Layout</code> that is in use.
+     * @return layout
+     */
     ::Layout Layout() const{ return m_Layout; }
 
+    /**
+     * Set the <code>Layout</code>
+     * @tparam T <code>Layout::Type</code>
+     * @param ...args the arguments for the constructor of <code>Layout</code> with the given type <code>T</code>
+     */
     template<Layout::Type T, typename ...Args>
     void Layout(Args&& ...args) { m_Layout = ::Layout{ T, args... }; }
 
+    /**
+     * The biggest coords that were seen by this <code>LayoutManger</code>, can be used by the
+     * <code>Panel</code> to automatically resize.
+     * @return biggest coords
+     */
+    Vec2<int> BiggestCoords() { return { m_BiggestX, m_BiggestY }; }
+
+private:
     template<typename TypeCollection>
     void UpdateLayoutGrid(const Vec4<int>& dim, TypeCollection& components)
     {
@@ -365,10 +403,6 @@ struct LayoutManager
         m_BiggestY = dim.y + dim.height;
     }
 
-    Vec2<int> BiggestCoords() { return { m_BiggestX, m_BiggestY }; }
-
-private:
-
     int m_Constrain(int a, int b, int c)
     {
         if (c == -1)
@@ -376,7 +410,6 @@ private:
         else
             return a < b ? b : a > c ? c : a;
     }
-
 
     ::Layout m_Layout = { ::Layout::Free };
     EventListener m_Listener;

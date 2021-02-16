@@ -17,21 +17,58 @@ namespace ButtonGraphics
     // ------------------------------- Normal -----------------------------------
     // --------------------------------------------------------------------------
 
+    /**
+     * Simple normal button graphics, displays name and changes color depending on state.
+     * @tparam Hori horizontal text align
+     * @tparam Vert vertical text align
+     */
     template<Align Hori = Align::CENTER, Align Vert = Align::CENTER>
-    class Normal
+    struct Normal
     {
+        /**
+         * Render
+         * @param b the <code>Button</code>
+         * @param d the <code>CommandCollection</code>
+         */
         static void Render(ButtonBase& b, CommandCollection& d)
         {
-            // TODO    
+            int _padding = 20;
+            Color _c1;
+            Color _c2 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_TEXT : Theme::MENU_BUTTON_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+            Color _c3 = Theme::Get((b.Disabled() ? Theme::MENU_DISABLED_BUTTON_DARKER_TEXT : Theme::MENU_BUTTON_DARKER_TEXT)) * (Graphics::WindowFocused() ? 1.0f : 0.8f);
+
+            _c1 = Theme::Get(b.Disabled() ?
+                b.Active() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_DISABLED_BUTTON_BACKGROUND_HOVER : Theme::MENU_DISABLED_BUTTON_BACKGROUND
+                :
+                b.Active() ? Theme::MENU_BUTTON_BACKGROUND_PRESS : b.Hovering() ? Theme::MENU_BUTTON_BACKGROUND_HOVER : Theme::MENU_BUTTON_BACKGROUND);
+            d.Command<Fill>(_c1);
+            d.Command<Quad>(b.Position(), b.Size());
+            d.Command<Fill>(Color{ 255, 255, 255, 255 });
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
+            d.Command<TextAlign>(Hori, Vert);
+            if (Hori == Align::CENTER)
+                d.Command<Text>(&b.Name(), b.X() + b.Width() / 2, b.Y() + b.Height() / 2);
+            else if (Hori == Align::RIGHT)
+                d.Command<Text>(&b.Name(), b.X() + b.Width() - 6, b.Y() + b.Height() / 2);
+            else if (Hori == Align::LEFT)
+                d.Command<Text>(&b.Name(), b.X() + 6, b.Y() + b.Height() / 2);
         }
     };
 
     // --------------------------------------------------------------------------
     // -------------------------------- Menu ------------------------------------
     // --------------------------------------------------------------------------
-
+     
+    /**
+     * Button graphics for a menu.
+     */
     struct Menu
-    {
+    {        
+        /**
+         * Render
+         * @param b the <code>Button</code>
+         * @param d the <code>CommandCollection</code>
+         */
         template<typename Type = ButtonBase>
         static void Render(Type& b, CommandCollection& d)
         {
@@ -149,8 +186,16 @@ namespace ButtonGraphics
     // ------------------------------ Sub Menu ----------------------------------
     // --------------------------------------------------------------------------
 
+    /**
+     * Button graphics for a submenu, which is a button that, when hovered over, opens a menu.
+     */
     struct SubMenu
     {
+        /**
+         * Render
+         * @param b the <code>Button</code>
+         * @param d the <code>CommandCollection</code>
+         */
         template<typename Type = ButtonBase>
         static void Render(Type& b, CommandCollection& d)
         {
@@ -165,8 +210,16 @@ namespace ButtonGraphics
     // ----------------------------- Title Menu ---------------------------------
     // --------------------------------------------------------------------------
 
+    /**
+     * Button graphics used for the buttons in the title bar menu.
+     */
     struct TitleMenu
     {
+        /**
+         * Render
+         * @param b the <code>Button</code>
+         * @param d the <code>CommandCollection</code>
+         */
         static void Render(ButtonBase& b, CommandCollection& d);
     };
 
@@ -174,9 +227,19 @@ namespace ButtonGraphics
     // ------------------------------ Textured ----------------------------------
     // --------------------------------------------------------------------------
 
+    /**
+     * Simple textured button graphics
+     * @tparam Hori horizontal text align
+     * @tparam Vert vertical text align
+     */
     template<Align Hori = Align::CENTER, Align Vert = Align::CENTER>
     struct Textured
     {
+        /**
+         * Render
+         * @param b the <code>Button</code>
+         * @param d the <code>CommandCollection</code>
+         */
         template<typename Type = ButtonBase>
         static void Render(ButtonType::Textured<Type>& b, CommandCollection& d)
         {

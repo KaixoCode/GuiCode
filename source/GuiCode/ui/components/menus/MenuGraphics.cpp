@@ -16,7 +16,7 @@ namespace MenuGraphics
 
     void Horizontal::Render(MenuBase& b, CommandCollection& d)
     {
-        auto& _menuItems = b.Get();
+        auto& _menuItems = b.Components();
 
         int _x = b.X();
         int _y = b.Y();
@@ -40,7 +40,7 @@ namespace MenuGraphics
 
     void MenuGraphics::Vertical::Render(MenuBase& b, CommandCollection& d)
     {
-        auto& _menuItems = b.Get();
+        auto& _menuItems = b.Components();
 
         int _padding = 2;
         int _x = b.X();

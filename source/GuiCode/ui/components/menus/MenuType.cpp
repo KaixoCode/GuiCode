@@ -16,7 +16,7 @@ namespace MenuType
     {
         // Check if a button is active
         ButtonBase* _ed = { 0 };
-        for (auto& _i : Get())
+        for (auto& _i : Components())
             if ((_ed = dynamic_cast<ButtonBase*>(_i.get())) != nullptr && _ed->Active())
                 break;
 

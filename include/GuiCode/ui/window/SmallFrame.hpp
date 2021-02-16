@@ -9,9 +9,20 @@
 #include "GuiCode/ui/components/menus/MenuType.hpp"
 #include "GuiCode/ui/graphics/Graphics.hpp"
 
+/**
+ * Smaller version of <code>Frame</code>, only has a close button and no menu.
+ */
 class SmallFrame : public Window
 {
 public:
+    /**
+     * Constructor
+     * @param name name
+     * @param width width
+     * @param height height
+     * @param hideonclose when true this window will not exit the program but simply hide the window when closed.
+     * @param r resizeable
+     */
     SmallFrame(const std::string& name, const int width, const int height, bool hideonclose = false, bool r = true)
         : Window(name, width, height, r),
         m_CloseButton(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Cross1, Graphics::Textures::Cross2, Graphics::Textures::Cross3, [&, hideonclose]() { if (hideonclose) this->Hide(); else this->Close(); }, "")),
@@ -20,6 +31,11 @@ public:
 
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection& d) override;
+   
+    /**
+     * Returns the base panel.
+     * @return panel
+     */
     ::Panel& Panel() { return *m_Panel; }
 
 private:

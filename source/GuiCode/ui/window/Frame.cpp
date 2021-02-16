@@ -41,7 +41,7 @@ void Frame::Render(CommandCollection& d)
     d.Command<TextAlign>(Align::CENTER, Align::CENTER);
     d.Command<Text>(&_line, _x += 45, _y + 16);
 
-    if (m_Menu->MenuSize() != 0)
+    if (m_Menu->Components().size() != 0)
     {
         m_Menu->Position({ _x + 6, _y });
         _x += m_Menu->Width() + 6;

@@ -16,6 +16,12 @@ public:
 		Dragging::Get().Hide();
 	}
 
+	/**
+	 * Add a new Window to the Gui
+	 * @return reference to the added Window
+	 * @tparam T the type of Window
+	 * @param ...args arguments to initialize <code>T</code>
+	 */
 	template<typename T, typename ...Args>
 	T& AddWindow(Args...args)
 	{
@@ -31,6 +37,11 @@ public:
 		return *dynamic_cast<T*>(_w.get());;
 	}
 
+	/**
+	 * Call this in a while loop
+	 * <code> while (gui.Loop);</code>
+	 * @return true when Gui is running
+	 */
 	bool Loop()
 	{
 		bool _running = true;

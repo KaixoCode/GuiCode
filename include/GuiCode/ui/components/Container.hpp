@@ -10,7 +10,9 @@ public:
 
     /**
      * Emplace a component to this container,
-     * Returns a reference to the emplaced component.
+     * @return reference to the emplaced component.
+     * @tparam T type
+     * @param ...args constructor arguments for <code>T</code>
      */
     template<typename T, typename ...Args>
     T& Emplace(Args&&... args) 
@@ -19,6 +21,13 @@ public:
         return *dynamic_cast<T*>(_t.get());
     }
 
+    /**
+     * Emplace a component to this container,
+     * @return reference to the emplaced component.
+     * @tparam T type
+     * @param h layout hint for the component
+     * @param ...args constructor arguments for <code>T</code>
+     */
     template<typename T, typename ...Args>
     T& Emplace(Layout::Hint h, Args&&... args)
     {
@@ -27,17 +36,32 @@ public:
         return *dynamic_cast<T*>(_t.get());
     }
 
+    /**
+     * Remove a <code>Component</code> from this <code>Container</code> using its index.
+     * @param index
+     */
     void Remove(int index);
 
-    int Cursor() const override { return m_Pressed && m_Focussed ? m_Focussed->Cursor() : m_Hovering ? m_Hovering->Cursor() : m_Cursor; }
-
+    /**
+     * Remove all components.
+     */
     void Clear() { m_Components.clear(); m_Hovering = nullptr, m_Focussed = nullptr; }
+
+    int Cursor() const override { return m_Pressed && m_Focussed ? m_Focussed->Cursor() : m_Hovering ? m_Hovering->Cursor() : m_Cursor; }
 
     void Render(CommandCollection& d) override;
     void Update(const Vec4<int>& viewport) override;
 
+    /**
+     * Remove a <code>Component</code> from this <code>Container</code> using its iterator.
+     * @param iterator
+     */
     void Erase(ComponentCollection::const_iterator& i) { m_Components.erase(i); m_Hovering = nullptr, m_Focussed = nullptr; }
 
+    /**
+     * Get all components.
+     * @return <code>ComponentCollection</code>
+     */
     const ComponentCollection const& Components() const { return m_Components; }
 
 protected:

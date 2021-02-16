@@ -11,11 +11,33 @@ namespace MenuGraphics
     // ----------------------------- Horizontal ---------------------------------
     // --------------------------------------------------------------------------
     
-    struct Horizontal { static void Render(MenuBase&, CommandCollection&); };
+    /**
+     * Horizontal menu.
+     */
+    struct Horizontal 
+    { 
+        /**
+         * Render
+         * @param m the <code>Menu</code>
+         * @param d the <code>CommandCollection</code>
+         */
+        static void Render(MenuBase& m, CommandCollection& d); 
+    };
 
     // --------------------------------------------------------------------------
     // ------------------------------ Vertical ----------------------------------
     // --------------------------------------------------------------------------
 
-    struct Vertical { static void Render(MenuBase&, CommandCollection&); };
+    /**
+     * Vertical menu.
+     */
+    struct Vertical
+    {
+        /**
+         * Render
+         * @param m the <code>Menu</code>
+         * @param d the <code>CommandCollection</code>
+         */
+        static void Render(MenuBase& m, CommandCollection& d);
+    };
 }

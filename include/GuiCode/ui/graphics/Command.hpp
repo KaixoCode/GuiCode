@@ -3,6 +3,9 @@
 
 namespace Graphics
 {
+    /**
+     * Command Type.
+     */
     enum Type
     {
         Fill, Stroke, StrokeWeight,
@@ -17,6 +20,9 @@ namespace Graphics
 
     };
 
+    /**
+     * Basis for a <code>Command</code>.
+     */
     struct CommandBase
     {
         // TODO: wip

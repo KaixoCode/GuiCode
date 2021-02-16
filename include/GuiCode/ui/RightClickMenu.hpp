@@ -5,18 +5,27 @@
 // ------------------------- Right Click Menu -------------------------------
 // --------------------------------------------------------------------------
 
-class RightClickMenu;
+/**
+ * Right click menu class, uses a <code>ComponentFrame</code> to display a <code>Menu</code> in 
+ * a separate <code>Window</code>.
+ */
 class RightClickMenu : public ComponentFrame
 {
 public:
 
-	// Get the instance of this singleton
+	/**
+	 * Get the instance (Singleton).
+	 * @return instance
+	 */
 	static RightClickMenu& Get()
 	{
 		static RightClickMenu _instance;
 		return _instance;
 	}
 
+	/**
+	 * Don't worry about this, the <code>Gui</code> class will take care of this.
+	 */
 	void Loop() override
 	{
 		// Hide this window when it loses focus.
@@ -26,12 +35,19 @@ public:
 		ComponentFrame::Loop();
 	}
 
+	/**
+	 * Close the right click menu.
+	 */
 	void Close()
 	{
 		Component(nullptr);
 		Hide();
 	}
 
+	/**
+	 * Open the right click menu.
+	 * @param menu menu to show
+	 */
 	void Open(MenuBase* menu)
 	{
 		// TODO: abstract this OS specific code away

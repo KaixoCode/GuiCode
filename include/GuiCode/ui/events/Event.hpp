@@ -7,6 +7,9 @@
 
 struct Event
 {
+    /**
+     * Event type.
+     */
     enum class Type
     {
         KeyPressed, KeyReleased, MousePressed, MouseReleased,
@@ -16,32 +19,79 @@ struct Event
 
     Type type;
 
+    /**
+     * Mouse button
+     */
     enum class MouseButton { NONE = -1, LEFT, RIGHT, MIDDLE };
+
+    /**
+     * Event mods
+     */
     enum Mod {
         SHIFT = 0x0001, CONTROL = 0x0002, ALT = 0x0004, SUPER = 0x0008,
         CAPS_LOCK = 0x0010, NUM_LOCK = 0x0020, LEFT = 0x0100, MIDDLE = 0x0200, RIGHT = 0x0400
     };
 
+    /**
+     * Constructor for <code>Focused</code> and <code>Unfocused</code> events.
+     * @param t type
+     */
     Event(Type t)
         : type(t)
     {}
 
+    /**
+     * Constructor for <code>MouseMoved</code>, <code>MouseEntered</code>, <code>MouseExited</code>, and <code>KeyReleased</code> events.
+     * @param t type
+     * @param x x or key
+     * @param y y or keymod
+     */
     Event(Type t, int x, int y)
         : type(t), x(x), y(y)
     {}
 
-    Event(Type t, int x, int y, int repeat)
-        : type(t), x(x), y(y), repeat(repeat)
+    /**
+     * Constructor for <code>KeyPressed</code> events.
+     * @param t type
+     * @param key key 
+     * @param keymod keymod
+     * @param repeat repeat
+     */
+    Event(Type t, int key, int keymod, int repeat)
+        : type(t), x(key), y(keymod), repeat(repeat)
     {}
 
+    /**
+     * Constructor for <code>MouseDragged</code> events.
+     * @param t type
+     * @param x x
+     * @param y y
+     * @param b mouse button
+     */
     Event(Type t, int x, int y, MouseButton b)
         : type(t), x(x), y(y), button(b)
     {}
 
+    /**
+     * Constructor for <code>MousePressed</code>, <code>MouseReleased</code>, and <code>MouseClicked</code> events.
+     * @param t type
+     * @param x x
+     * @param y y
+     * @param b mouse button
+     * @param m event mods
+     */
     Event(Type t, int x, int y, MouseButton b, int m)
         : type(t), x(x), y(y), button(b), mod(m)
     {}
 
+    /**
+     * Constructor for <code>MouseWheel</code> events.
+     * @param t type
+     * @param x x
+     * @param y y
+     * @param a amount scrolled
+     * @param m event mods
+     */
     Event(Type t, int x, int y, int a, int m)
         : type(t), x(x), y(y), amount(a), wheelmod(m)
     {}
@@ -103,6 +153,9 @@ struct Event
 class Key
 {
 public:
+    /**
+     * Type of key combo
+     */
     enum Value
     {
         NONE = 0,
@@ -139,13 +192,24 @@ public:
         CTRL_F4 = (VK_F4 << 8) | Event::Mod::CONTROL,
     };
 
+    /**
+     * Constructor
+     */
     Key() 
     {};
 
+    /**
+     * Constructor
+     * @param v value
+     */
     Key(Key::Value v)
         : m_Value(v)
     {}
 
+    /**
+     * Constructor
+     * v keypressed event, automatically converted to a key combo
+     */
     Key(Event::KeyPressed v)
         : m_Value((Value)((v.key << 8) | v.keymod))
     {}
@@ -159,6 +223,9 @@ public:
     explicit operator int()       const { return static_cast<int>(m_Value); }
     operator Value()              const { return m_Value; }
 
+    /**
+     * Convert the key combo to a string.
+     */
     inline const std::string& ToString()
     {
         static std::string _ctrl = "Ctrl+";

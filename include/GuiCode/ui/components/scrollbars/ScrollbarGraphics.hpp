@@ -15,8 +15,16 @@ namespace ScrollbarGraphics
     // ------------------------------- Normal -----------------------------------
     // --------------------------------------------------------------------------
 
+    /**
+     * Simple normal scrollbar graphics.
+     */
     struct Normal
     {
+        /**
+         * Render
+         * @param b the <code>Scrollbar</code>
+         * @param d the <code>CommandCollection</code>
+         */
         template<typename ScrollbarType>
         static void Render(Scrollbar<Normal, ScrollbarType>& b, CommandCollection& d)
         {}
