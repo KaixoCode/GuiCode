@@ -131,6 +131,16 @@ namespace ButtonType
 
         /**
          * Constructor
+         * @param a pointer to a bool, this button will actively read for a change in value, and when clicked change the state of this bool.
+         * @param name name
+         * @param size size
+         * @param key keycombo
+         */
+        Toggle(ToggleCallback a = [] (bool state) {}, const std::string& name = "Button",
+            Vec2<int> size = { 70, 40 }, Key key = Key::NONE);
+
+        /**
+         * Constructor
          * @param name name
          * @param size size
          * @param key keycombo
@@ -138,7 +148,7 @@ namespace ButtonType
         Toggle(const std::string& name = "Button",
             Vec2<int> size = { 70, 40 }, Key key = Key::NONE);
 
-        auto Active(bool a) -> void override { if (m_Link) *m_Link = a; m_Active = a; }
+        auto Active(bool a) -> void override { if (m_Link) *m_Link = a; m_Active = a; if (m_ToggleCallback) m_ToggleCallback(a); }
         bool Active() const override { return m_Active; }
 
         void Update(const Vec4<int>& viewport) override;
@@ -147,6 +157,7 @@ namespace ButtonType
         bool* m_Link = { 0 };
 
         virtual void SetupCallbacks();
+        ToggleCallback m_ToggleCallback = nullptr;
     };
 
     // --------------------------------------------------------------------------

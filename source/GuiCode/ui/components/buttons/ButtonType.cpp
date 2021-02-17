@@ -63,6 +63,12 @@ namespace ButtonType
         SetupCallbacks();
     };
 
+    Toggle::Toggle(ToggleCallback c, const std::string& name, Vec2<int> size, Key key)
+        : m_ToggleCallback(c), ButtonBase(name, size, key)
+    {
+        SetupCallbacks();
+    };
+
     Toggle::Toggle(const std::string& name, Vec2<int> size, Key key)
         : ButtonBase(name, size, Key::NONE)
     {
@@ -104,6 +110,11 @@ namespace ButtonType
                     *m_Link ^= true;
                     m_Active = *m_Link;
                 }
+                else if (m_ToggleCallback)
+                {
+                    m_Active ^= true;
+                    m_ToggleCallback(m_Active);
+                }
                 else
                     m_Active ^= true;
             }
@@ -118,6 +129,11 @@ namespace ButtonType
                 {
                     *m_Link ^= true;
                     m_Active = *m_Link;
+                }
+                else if (m_ToggleCallback)
+                {
+                    m_Active ^= true;
+                    m_ToggleCallback(m_Active);
                 }
                 else
                     m_Active ^= true;
