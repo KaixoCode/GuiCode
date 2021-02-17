@@ -120,17 +120,17 @@ namespace Graphics
                 case Text: m_Text(a->text, a->position.x, a->position.y); break;
                 case Ellipse: m_Ellipse(a->dimension); break;
                 case Triangle: m_Triangle(a->dimension, a->rotation); break;
-                case Clip: glEnable(GL_SCISSOR_TEST); glScissor(a->dimension.x + m_Matrix[3][0], a->dimension.y + m_Matrix[3][1], a->dimension.z, a->dimension.w); break;
-                case Viewport: glViewport(a->dimension.x, a->dimension.y, a->dimension.z, a->dimension.w); break;
-                case ClearClip: glDisable(GL_SCISSOR_TEST); break;
-                case Translate: m_Translate(a->translate); break;
-                case Scale: m_Scale(a->scale); break;
-                case PushMatrix: m_PushMatrix(); break;
-                case PopMatrix: m_PopMatrix(); break;
                 }
             }
             switch (a->type)
             {
+            case Clip: glEnable(GL_SCISSOR_TEST); glScissor(a->dimension.x + m_Matrix[3][0], a->dimension.y + m_Matrix[3][1], a->dimension.z, a->dimension.w); break;
+            case Viewport: glViewport(a->dimension.x, a->dimension.y, a->dimension.z, a->dimension.w); break;
+            case ClearClip: glDisable(GL_SCISSOR_TEST); break;
+            case Translate: m_Translate(a->translate); break;
+            case Scale: m_Scale(a->scale); break;
+            case PushMatrix: m_PushMatrix(); break;
+            case PopMatrix: m_PopMatrix(); break;
             case FrameBuffer: m_FrameBuffer(a->id, a->refresh, a->size); break;
             case FrameBufferRender: m_FrameBufferRender(a->texture, a->textureDimension); break;
             }
@@ -538,11 +538,12 @@ namespace Graphics
 
         long _totalWidth = 0;
         long _totalHeight = m_FontSize * 0.7;
-        std::string::const_iterator _c;
+        const char* _data = text->data();
+
         if (m_TextAlign.x != Align::LEFT || m_TextAlign.y != Align::BOTTOM)
-            for (_c = text->begin(); _c != text->end(); _c++)
+            for (int i = 0; i < text->size(); i++)
             {
-                Character _ch = Graphics::m_Fonts[m_Font][*_c];
+                Character _ch = Graphics::m_Fonts[m_Font][_data[i]];
                 _totalWidth += (_ch.Advance >> 6);
             }
 
@@ -552,9 +553,11 @@ namespace Graphics
         _shader.SetVec4("color", m_Fill);
         _shader.SetMat4("projection", m_Projection);
         _shader.SetInt("theTexture", 1);
-        for (_c = text->begin(); _c != text->end(); _c++)
+
+
+        for (int i = 0; i < text->size(); i++)
         {
-            Character _ch = Graphics::m_Fonts[m_Font][*_c];
+            Character _ch = Graphics::m_Fonts[m_Font][_data[i]];
 
             int _xpos = x * m_Matrix[0][0] + _ch.Bearing.x * _scale;
             if (m_TextAlign.x == Align::CENTER)
