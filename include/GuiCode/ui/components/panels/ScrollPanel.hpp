@@ -53,8 +53,12 @@ public:
     {
         if (m_Panel != nullptr)
             return dynamic_cast<T&>(*m_Panel);
- 
-        return Emplace<T>(std::forward<Args>(args)...);
+        
+        auto& _t = Emplace<T>(std::forward<Args>(args)...);
+        m_Panel = &_t;
+        m_ScrollbarX = &Emplace<Scrollbar<ScrollbarGraphics::Normal, ScrollbarType::Horizontal>>();
+        m_ScrollbarY = &Emplace<Scrollbar<ScrollbarGraphics::Normal, ScrollbarType::Vertical>>();
+        return _t;
     }
 
 protected:
