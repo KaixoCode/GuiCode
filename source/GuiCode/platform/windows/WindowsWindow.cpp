@@ -119,7 +119,16 @@ void WindowsWindow::Loop()
 
 void WindowsWindow::WindowsLoop()
 {
-    glfwMakeContextCurrent(*this);
+    static int _currentId = -1;
+
+    // Only change context if it's necessary, because this seems to
+    // have a relatively high impact on the CPU usage.
+    if (_currentId != m_WindowId)
+    {
+        _currentId = m_WindowId;
+        glfwMakeContextCurrent(*this);
+    }
+    
     Graphics::CurrentWindow(m_WindowId);
     Graphics::WindowFocused(GetForegroundWindow() == GetWin32Handle());
     Graphics::SetProjection(m_Projection);
