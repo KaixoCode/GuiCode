@@ -540,13 +540,12 @@ namespace Graphics
         long _totalHeight = m_FontSize * 0.7;
         const char* _data = text->data();
 
-        if (m_TextAlign.x != Align::LEFT || m_TextAlign.y != Align::BOTTOM)
+        if (m_TextAlign.x == Align::RIGHT || m_TextAlign.x == Align::CENTER)
             for (int i = 0; i < text->size(); i++)
             {
                 Character _ch = Graphics::m_Fonts[m_Font][_data[i]];
                 _totalWidth += (_ch.Advance >> 6);
             }
-
 
         _shader.Use();
         _shader.SetMat4("view", m_Matrix);

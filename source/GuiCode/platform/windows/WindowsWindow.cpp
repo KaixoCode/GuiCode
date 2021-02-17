@@ -123,7 +123,7 @@ void WindowsWindow::WindowsLoop()
 
     // Only change context if it's necessary, because this seems to
     // have a relatively high impact on the CPU usage.
-    if (_currentId != m_WindowId)
+    if (_currentId != m_WindowId && Visible())
     {
         _currentId = m_WindowId;
         glfwMakeContextCurrent(*this);
