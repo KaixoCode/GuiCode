@@ -8,7 +8,7 @@ class WindowsWindow;
 class WindowsWindow : public WindowBase
 {
 public:
-    WindowsWindow(const std::string& name, int width, int height, bool resizable, bool decorated);
+    WindowsWindow(const std::string& name, int width, int height, bool show, bool resizable, bool decorated);
     ~WindowsWindow() 
     {
         SetWindowSubclass(GetWin32Handle(), &SubClassProc, m_WindowId, (DWORD_PTR) static_cast<void*>(nullptr));

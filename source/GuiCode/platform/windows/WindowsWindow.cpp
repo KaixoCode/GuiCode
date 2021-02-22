@@ -6,7 +6,7 @@ int WindowsWindow::m_WindowCount = 0;
 int WindowsWindow::m_WindowIdCounter = 0;
 WindowsWindow* WindowsWindow::m_MainWindow = nullptr;
 
-WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool resizable, bool decorated)
+WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool show, bool resizable, bool decorated)
     : WindowBase(name, width, height)
 {
     m_Projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
@@ -24,6 +24,7 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     //glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
     glfwWindowHint(GLFW_DECORATED, decorated);
     glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_VISIBLE, show);
 
     if (WindowsWindow::m_MainWindow != nullptr)
         m_Window = glfwCreateWindow(55, 55, name.c_str(), NULL, WindowsWindow::m_MainWindow->GetWindow());
@@ -79,7 +80,11 @@ void WindowsWindow::Update(const Vec4<int>& viewport)
 {
     // Need to trigger a resize after setup because otherwise
     // stuff fails for some reason...
-    if (m_InitialResize) { m_InitialResize = false; Size(Width(), Height()); }
+    if (m_InitialResize) 
+    { 
+        m_InitialResize = false;     
+        Size(Width(), Height());
+    }
 
     // Go through the even queue
     while (!m_EventQueue.empty())

@@ -13,7 +13,7 @@ public:
 	Gui()
 	{
 		RightClickMenu::Get().Hide();
-		Dragging::Get().Hide();
+		//Dragging::Get().Hide();
 	}
 
 	/**
@@ -31,7 +31,7 @@ public:
 		{
 			Graphics::Init();
 			RightClickMenu::Get().Hide();
-			Dragging::Get().Hide();
+			//Dragging::Get().Hide();
 		}
 		_init = true;
 		return *dynamic_cast<T*>(_w.get());;
@@ -56,7 +56,7 @@ public:
 		}
 
 		RightClickMenu::Get().Loop();
-		Dragging::Get().Loop();
+		//Dragging::Get().Loop();
 
 		return _running;
 	}

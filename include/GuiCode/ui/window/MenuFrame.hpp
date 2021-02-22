@@ -48,7 +48,7 @@ public:
      * @param height height
      */
     ComponentFrame(const std::string& name, const int width, const int height)
-        : Window(name, width, height, true, false),
+        : Window(name, width, height, false, true, false),
         m_Panel(&Emplace<::ComponentFramePanel>())
     {}
 
