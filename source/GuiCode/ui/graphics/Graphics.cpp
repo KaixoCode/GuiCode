@@ -45,30 +45,30 @@ namespace Graphics
 
     void Init()
     {
-        Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole);
-        Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole14, 14);
-        Graphics::LoadFont(ASSET(fonts/gidole/Gidole-Regular.otf), Fonts::Gidole16, 16);
+        Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), Fonts::Gidole);
+        Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), Fonts::Gidole14, 14);
+        Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), Fonts::Gidole16, 16);
 
-        Textures::FileIcon.SetTexture(ASSET(textures/file.png));
-        Textures::AudioFileIcon.SetTexture(ASSET(textures/audiofile.png));
-        Textures::FolderIcon.SetTexture(ASSET(textures/folder.png));
+        Textures::FileIcon.SetTexture(ASSET("textures/file.png"));
+        Textures::AudioFileIcon.SetTexture(ASSET("textures/audiofile.png"));
+        Textures::FolderIcon.SetTexture(ASSET("textures/folder.png"));
 
-        Textures::Cross1.SetTexture(ASSET(textures/cross1.png));
-        Textures::Cross2.SetTexture(ASSET(textures/cross2.png));
-        Textures::Cross3.SetTexture(ASSET(textures/cross3.png));
+        Textures::Cross1.SetTexture(ASSET("textures/cross1.png"));
+        Textures::Cross2.SetTexture(ASSET("textures/cross2.png"));
+        Textures::Cross3.SetTexture(ASSET("textures/cross3.png"));
     
-        Textures::Maxi1.SetTexture(ASSET(textures/maxi1.png));
-        Textures::Maxi2.SetTexture(ASSET(textures/maxi2.png));
-        Textures::Maxi3.SetTexture(ASSET(textures/maxi3.png));
-        Textures::Maxi4.SetTexture(ASSET(textures/maxi4.png));
-        Textures::Maxi5.SetTexture(ASSET(textures/maxi5.png));
-        Textures::Maxi6.SetTexture(ASSET(textures/maxi6.png));
+        Textures::Maxi1.SetTexture(ASSET("textures/maxi1.png"));
+        Textures::Maxi2.SetTexture(ASSET("textures/maxi2.png"));
+        Textures::Maxi3.SetTexture(ASSET("textures/maxi3.png"));
+        Textures::Maxi4.SetTexture(ASSET("textures/maxi4.png"));
+        Textures::Maxi5.SetTexture(ASSET("textures/maxi5.png"));
+        Textures::Maxi6.SetTexture(ASSET("textures/maxi6.png"));
     
-        Textures::Mini1.SetTexture(ASSET(textures/mini1.png));
-        Textures::Mini2.SetTexture(ASSET(textures/mini2.png));
-        Textures::Mini3.SetTexture(ASSET(textures/mini3.png));
+        Textures::Mini1.SetTexture(ASSET("textures/mini1.png"));
+        Textures::Mini2.SetTexture(ASSET("textures/mini2.png"));
+        Textures::Mini3.SetTexture(ASSET("textures/mini3.png"));
 
-        Textures::Logo.SetTexture(ASSET(textures/logosmall.png));
+        Textures::Logo.SetTexture(ASSET("textures/logosmall.png"));
     }
 
     // --------------------------------------------------------------------------
@@ -237,8 +237,8 @@ namespace Graphics
     {
         static Shader _shader
         {
-            SHADER(QuadVertex.shader),
-            SHADER(QuadFragment.shader)
+            SHADER("QuadVertex.shader"),
+            SHADER("QuadFragment.shader")
         };
 
         if (m_CurrentWindowId == -1)
@@ -297,8 +297,8 @@ namespace Graphics
     {
         static Shader _shader
         {
-            SHADER(TexturedQuadVertex.shader),
-            SHADER(TexturedQuadFragment.shader)
+            SHADER("TexturedQuadVertex.shader"),
+            SHADER("TexturedQuadFragment.shader")
         };
     
         if (m_CurrentWindowId == -1)
@@ -367,8 +367,8 @@ namespace Graphics
     {
         static Shader _shader
         {
-            SHADER(EllipseVertex.shader),
-            SHADER(EllipseFragment.shader)
+            SHADER("EllipseVertex.shader"),
+            SHADER("EllipseFragment.shader")
         };
 
         if (m_CurrentWindowId == -1)
@@ -423,8 +423,8 @@ namespace Graphics
     {
         static Shader _shader
         {
-            SHADER(QuadVertex.shader),
-            SHADER(QuadFragment.shader)
+            SHADER("QuadVertex.shader"),
+            SHADER("QuadFragment.shader")
         };
 
         if (m_CurrentWindowId == -1)
@@ -485,8 +485,8 @@ namespace Graphics
 
         static Shader _shader
         {
-            SHADER(TextVertex.shader),
-            SHADER(TextFragment.shader)
+            SHADER("TextVertex.shader"),
+            SHADER("TextFragment.shader")
         };
 
         if (m_CurrentWindowId == -1)
