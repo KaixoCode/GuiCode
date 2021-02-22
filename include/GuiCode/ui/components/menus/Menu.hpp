@@ -16,7 +16,74 @@ public:
         : Container()
     {};
 
+    /**
+     * Adjust the default button size, can be overwritten on a per button basis.
+     * @param s size, -1 to set no default
+     */
+    void ButtonSize(const Vec2<int>& s) { m_ButtonSize = s; }
+
+    /**
+     * Adjust the default button width, can be overwritten on a per button basis.
+     * @param w width, -1 to set no default
+     */
+    void ButtonWidth(int w) { m_ButtonSize.width = w; }
+
+    /**
+     * Adjust the default button height, can be overwritten on a per button basis.
+     * @param h height, -1 to set no default
+     */
+    void ButtonHeight(int h) { m_ButtonSize.height = h; }
+
     bool WithinBounds(const Vec2<int>& pos) const override;
+
+    /**
+     * Emplace a component to this container,
+     * @return reference to the emplaced component.
+     * @tparam T type
+     * @param ...args constructor arguments for <code>T</code>
+     */
+    template<typename T, typename ...Args>
+    T& Emplace(Args&&... args)
+    {
+        auto& _t = m_Components.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+        auto& _ta = *dynamic_cast<T*>(_t.get());
+        if constexpr (std::is_base_of_v<ButtonBase, T>)
+        {
+            if (m_ButtonSize.width != -1)
+                _ta.Width(m_ButtonSize.width);
+            if (m_ButtonSize.height != -1)
+                _ta.Height(m_ButtonSize.height);
+        }
+        return _ta;
+    }
+
+    /**
+     * Emplace a component to this container,
+     * @return reference to the emplaced component.
+     * @tparam T type
+     * @param h layout hint for the component
+     * @param ...args constructor arguments for <code>T</code>
+     */
+    template<typename T, typename ...Args>
+    T& Emplace(Layout::Hint h, Args&&... args)
+    {
+        auto& _t = m_Components.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+        _t->LayoutHint(h);
+        
+        auto& _ta = *dynamic_cast<T*>(_t.get());
+        if constexpr (std::is_base_of_v<ButtonBase, T>)
+        {
+            if (m_ButtonSize.width != -1)
+                _ta.Width(m_ButtonSize.width);
+            if (m_ButtonSize.height != -1)
+                _ta.Height(m_ButtonSize.height);
+        }
+        return _ta;
+    }
+
+
+protected:
+    Vec2<int> m_ButtonSize{ -1, -1 };
 };
 
 // --------------------------------------------------------------------------

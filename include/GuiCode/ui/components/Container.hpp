@@ -6,7 +6,7 @@
 class Container : public Component
 {
 public:
-    Container(Vec2<int> size = { 40, 70 });
+    Container(Vec2<int> size = { 0, 0 });
 
     /**
      * Emplace a component to this container,

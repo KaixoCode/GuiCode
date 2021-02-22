@@ -13,7 +13,7 @@ namespace Graphics
         GLuint frameBuffer;
         GLuint renderTexture;
 
-        int width, height;
+        Vec4<int> dimensions;
     };
 
     std::stack<unsigned int> m_FrameBufferStack;
@@ -157,7 +157,6 @@ namespace Graphics
 
         // Ignore draw commands if no refresh
         m_IgnoreDraws = !refresh;
-        m_FrameBufferStack.push(id);
 
         // Make framebuffer if it doesn't exist yet
         auto& _hasfb = m_FrameBuffers.find(id);
@@ -190,29 +189,25 @@ namespace Graphics
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
                 exit(-1);
 
-            m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, size.width, size.height });
+            m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, size });
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        m_PushMatrix();
+        if (!m_FrameBufferStack.empty())
+            m_Translate(m_FrameBuffers[m_FrameBufferStack.top()].dimensions.position);
         m_TexturedQuad(m_FrameBuffers[id].renderTexture, size);
-
-
+        m_PopMatrix();
+        m_FrameBufferStack.push(id);
+        
         FrameBufferTexture& _texture = m_FrameBuffers[id];
         glBindFramebuffer(GL_FRAMEBUFFER, _texture.frameBuffer);
-        if (size.width != _texture.width || size.height != _texture.height)
+        if (size.width != _texture.dimensions.width || size.height != _texture.dimensions.height)
         {
             m_IgnoreDraws = false;
-            _texture.width = size.width;
-            _texture.height = size.height;
+            _texture.dimensions = size;
             glBindTexture(GL_TEXTURE_2D, _texture.renderTexture);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-        }
-
-
-        if (refresh)
-        {
-            //glClear(GL_COLOR_BUFFER_BIT);
-            //glClearColor(0, 0, 0, 0);
         }
     }
 

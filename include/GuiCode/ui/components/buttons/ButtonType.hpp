@@ -26,9 +26,8 @@ namespace ButtonType
          * @param size size
          * @param key keycombo
          */
-        Normal(Callback c = []() {}, const std::string& name = "Button", 
-            Vec2<int> size = { 70, 40 }, Key key = Key::NONE);
-    
+        Normal(Callback c = []() {}, const std::string& name = "Button", Key key = Key::NONE);
+
     private:
         Callback m_Callback;
     };
@@ -48,13 +47,13 @@ namespace ButtonType
          * Constructor
          * @param c callback
          * @param name name
-         * @param size size
          * @param id list id
+         * @param size size
          * @param key keycombo
          */
         List(Callback c = []() {}, const std::string& name = "Button",
-            Vec2<int> size = { 70, 40 }, int id = 0, Key key = Key::NONE)
-            : Normal(c, name, size, key), m_Id(id)
+            int id = 0, Key key = Key::NONE)
+            : Normal(c, name, key), m_Id(id)
         {
             m_Listener += [this](Event::MouseReleased& event)
             {
@@ -127,7 +126,7 @@ namespace ButtonType
          * @param key keycombo
          */
         Toggle(bool* a, const std::string& name = "Button",
-            Vec2<int> size = { 70, 40 }, Key key = Key::NONE);
+            Key key = Key::NONE);
 
         /**
          * Constructor
@@ -137,7 +136,7 @@ namespace ButtonType
          * @param key keycombo
          */
         Toggle(ToggleCallback a = [] (bool state) {}, const std::string& name = "Button",
-            Vec2<int> size = { 70, 40 }, Key key = Key::NONE);
+            Key key = Key::NONE);
 
         /**
          * Constructor
@@ -146,7 +145,7 @@ namespace ButtonType
          * @param key keycombo
          */
         Toggle(const std::string& name = "Button",
-            Vec2<int> size = { 70, 40 }, Key key = Key::NONE);
+            Key key = Key::NONE);
 
         auto Active(bool a) -> void override { if (m_Link) *m_Link = a; m_Active = a; if (m_ToggleCallback) m_ToggleCallback(a); }
         bool Active() const override { return m_Active; }
@@ -201,7 +200,7 @@ namespace ButtonType
          * @param name name
          * @param size size
          */
-        Hover(const std::string& name = "Button", Vec2<int> size = { 70, 40 });
+        Hover(const std::string& name = "Button");
     };
 
     // --------------------------------------------------------------------------
@@ -284,12 +283,18 @@ namespace ButtonType
             return m_Menu->Emplace<T>(std::forward<Args>(args)...);
         }
 
+        /**
+         * Get the menu of this menu button
+         * @return menu
+         */
+        MenuBase& MenuBase() { return *m_Menu; }
+
         bool WithinBounds(const Vec2<int>& pos) const override
         {
             return ButtonType::WithinBounds(pos) || (Active() && m_Menu->WithinBounds(pos));
         }
 
     private:
-        MenuBase* m_Menu;
+        ::MenuBase* m_Menu;
     };
 }

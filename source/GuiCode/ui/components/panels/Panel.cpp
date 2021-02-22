@@ -58,7 +58,7 @@ void Panel::Render(CommandCollection& d)
         d.Command<FrameBuffer>(m_PanelId, NeedsRedraw(), Vec4<int>{ Position(), Size() });
         Background(d);
         Container::Render(d);
-        d.Command<FrameBufferRender>(m_PanelId, Vec4<int>{ Position(), Size() });
+        d.Command<FrameBufferRender>(m_PanelId, Vec4<int>{ { 0, 0 }, Size() });
     }
     else
     {

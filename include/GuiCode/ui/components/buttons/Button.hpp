@@ -21,8 +21,8 @@ public:
      * @param size size
      * @param key keycombo
      */
-    ButtonBase(const std::string& name = "Button", Vec2<int> size = { 70, 40 }, Key key = Key::NONE)
-        : m_KeyCombo(key), m_Name(name), Container(size)
+    ButtonBase(const std::string& name = "Button", Key key = Key::NONE)
+        : m_KeyCombo(key), m_Name(name), Container()
     {}
 
     /**

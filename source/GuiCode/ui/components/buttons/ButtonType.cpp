@@ -10,8 +10,8 @@ namespace ButtonType
     // ------------------------------- Normal -----------------------------------
     // --------------------------------------------------------------------------
     
-    Normal::Normal(Callback c, const std::string& name, Vec2<int> size, Key key)
-        : ButtonBase(name, size, key), m_Callback(c)
+    Normal::Normal(Callback c, const std::string& name, Key key)
+        : ButtonBase(name, key), m_Callback(c)
     {
         m_Listener += [this](Event::MousePressed& event)
         {
@@ -57,20 +57,20 @@ namespace ButtonType
     // ------------------------------- Toggle -----------------------------------
     // --------------------------------------------------------------------------
 
-    Toggle::Toggle(bool* a, const std::string& name, Vec2<int> size, Key key)
-        : m_Link(a), ButtonBase(name, size, key)
+    Toggle::Toggle(bool* a, const std::string& name, Key key)
+        : m_Link(a), ButtonBase(name, key)
     {
         SetupCallbacks();
     };
 
-    Toggle::Toggle(ToggleCallback c, const std::string& name, Vec2<int> size, Key key)
-        : m_ToggleCallback(c), ButtonBase(name, size, key)
+    Toggle::Toggle(ToggleCallback c, const std::string& name, Key key)
+        : m_ToggleCallback(c), ButtonBase(name, key)
     {
         SetupCallbacks();
     };
 
-    Toggle::Toggle(const std::string& name, Vec2<int> size, Key key)
-        : ButtonBase(name, size, Key::NONE)
+    Toggle::Toggle(const std::string& name, Key key)
+        : ButtonBase(name, Key::NONE)
     {
         SetupCallbacks();
     };
@@ -169,8 +169,8 @@ namespace ButtonType
     // -------------------------------- Hover -----------------------------------
     // --------------------------------------------------------------------------
 
-    Hover::Hover(const std::string& name, Vec2<int> size)
-        : ButtonBase(name, size, Key::NONE)
+    Hover::Hover(const std::string& name)
+        : ButtonBase(name, Key::NONE)
     {
         m_Listener += [this](Event::MouseEntered& event)
         {
