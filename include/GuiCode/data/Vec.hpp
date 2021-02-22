@@ -125,10 +125,10 @@ struct Vec4
     {
         if (width == -1 || height == -1)
             return o;
-        T x5 = max(x, o.x);
-        T y5 = max(y, o.y);
-        T x6 = min(x + width, o.x + o.width);
-        T y6 = min(y + height, o.y + o.height);
+        T x5 = std::max(x, o.x);
+        T y5 = std::max(y, o.y);
+        T x6 = std::min(x + width, o.x + o.width);
+        T y6 = std::min(y + height, o.y + o.height);
         if (x5 > x6 || y5 > y6)
             return { 0, 0, 0, 0 };
         return { x5, y5, x6 - x5, y6 - y5 };

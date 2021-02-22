@@ -60,7 +60,7 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
         m_ScrollbarX->VisibleRange(Width());
         m_ScrollbarX->Visible(!m_ScrollbarX->NotNecessary() && m_EnableX);
 
-        int _x = min(-m_ScrollbarX->Value(), 0);
+        int _x = std::min(-m_ScrollbarX->Value(), 0);
         int _y = Height() - m_Panel->Height() + m_ScrollbarY->Value();
         if (m_ScrollbarY->NotNecessary())
             _y = Height() - m_Panel->Height();
@@ -76,7 +76,7 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
         
         Panel::Update(viewport);
 
-        int _nx = min(-m_ScrollbarX->Value(), 0);
+        int _nx = std::min(-m_ScrollbarX->Value(), 0);
         int _ny = Height() - m_Panel->Height() + m_ScrollbarY->Value();
         if (m_ScrollbarY->NotNecessary())
             _ny = Height() - m_Panel->Height();

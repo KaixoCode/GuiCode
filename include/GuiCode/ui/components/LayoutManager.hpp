@@ -292,7 +292,7 @@ private:
 
                     // Adjust the width of both the center and the west.
                     int _pw = _w;
-                    _w = min(_w + _diffo, _w + _diff);
+                    _w = std::min(_w + _diffo, _w + _diff);
                     _west->Width(_west->Width() - (_w - _pw));
                     _westWidth -= (_w - _pw);
                 }
@@ -302,7 +302,7 @@ private:
                 {
                     // Adjust the widths
                     int _pw = _w;
-                    _w = min(_w + _diffo, _w + _diff);
+                    _w = std::min(_w + _diffo, _w + _diff);
                     _east->Width(_east->Width() - (_w - _pw));
                 }
             }
@@ -325,7 +325,7 @@ private:
 
                     // Adjust the heights
                     int _ph = _h;
-                    _h = min(_h + _diffo, _h + _diff);
+                    _h = std::min(_h + _diffo, _h + _diff);
                     _north->Height(_north->Height() - (_h - _ph));
                 }
 
@@ -334,7 +334,7 @@ private:
                 {
                     // Adjust the heights
                     int _ph = _h;
-                    _h = min(_h + _diffo, _h + _diff);
+                    _h = std::min(_h + _diffo, _h + _diff);
                     _south->Height(_south->Height() - (_h - _ph));
                     _southHeight -= (_h - _ph);
                     
