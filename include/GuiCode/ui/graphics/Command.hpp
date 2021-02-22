@@ -16,7 +16,7 @@ namespace Graphics
 
         Text, Quad, TexturedQuad, Ellipse, Triangle,
 
-        FrameBuffer, FrameBufferRender
+        FrameBuffer, FrameBufferEnd
 
     };
 

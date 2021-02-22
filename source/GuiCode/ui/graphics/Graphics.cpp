@@ -81,7 +81,7 @@ namespace Graphics
     void m_Triangle(const glm::vec4& dim, float rotation);
     void m_Text(const std::string* text, float x, float y);
     void m_FrameBuffer(unsigned int id, bool refresh, Vec4<int> size);
-    void m_FrameBufferRender(unsigned int id, Vec4<int> loc);
+    void m_FrameBufferEnd();
 
     Color m_Fill{ 1, 1, 1, 1 };
     Color m_Stroke{ 1, 1, 1, 1 };
@@ -132,7 +132,7 @@ namespace Graphics
             case PushMatrix: m_PushMatrix(); break;
             case PopMatrix: m_PopMatrix(); break;
             case FrameBuffer: m_FrameBuffer(a->id, a->refresh, a->size); break;
-            case FrameBufferRender: m_FrameBufferRender(a->texture, a->textureDimension); break;
+            case FrameBufferEnd: m_FrameBufferEnd(); break;
             }
         }
 
@@ -194,10 +194,13 @@ namespace Graphics
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         m_PushMatrix();
+        m_Translate(-Vec2<int>{ (int)m_Matrix[3][0], (int)m_Matrix[3][1] });
         if (!m_FrameBufferStack.empty())
             m_Translate(m_FrameBuffers[m_FrameBufferStack.top()].dimensions.position);
+        
         m_TexturedQuad(m_FrameBuffers[id].renderTexture, size);
         m_PopMatrix();
+
         m_FrameBufferStack.push(id);
         
         FrameBufferTexture& _texture = m_FrameBuffers[id];
@@ -211,7 +214,7 @@ namespace Graphics
         }
     }
 
-    void m_FrameBufferRender(unsigned int id, Vec4<int> loc)
+    void m_FrameBufferEnd()
     {      
         m_FrameBufferStack.pop();
 
