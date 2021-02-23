@@ -6,7 +6,8 @@ class Shader
 public:
     unsigned int ID;
 
-    Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
+    //Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
+    Shader(const std::string& vertex, const std::string& frag, const std::string& geo = "");
 
     void Clean()                                    const { glDeleteProgram(ID); };
     void Use()                                      const { glUseProgram(ID); };

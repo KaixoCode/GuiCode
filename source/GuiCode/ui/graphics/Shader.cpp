@@ -48,7 +48,7 @@ static std::string LoadFile(const char* path)
     }
 }
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath) 
+/*Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath) 
 {
     ID = glCreateProgram();
 
@@ -89,5 +89,46 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     glDeleteShader(_vertex);
     glDeleteShader(_fragment);
     if (geometryPath != nullptr) 
+        glDeleteShader(_geometry);
+}*/
+
+Shader::Shader(const std::string& vertex, const std::string& frag, const std::string& geo)
+{
+    ID = glCreateProgram();
+
+    const char* _vShaderCode = vertex.c_str();
+    unsigned int _vertex = glCreateShader(GL_VERTEX_SHADER);
+
+    glShaderSource(_vertex, 1, &_vShaderCode, NULL);
+    glCompileShader(_vertex);
+    CheckCompileErrors(_vertex, "VERTEX");
+    glAttachShader(ID, _vertex);
+
+    const char* _fShaderCode = frag.c_str();
+    unsigned int _fragment = glCreateShader(GL_FRAGMENT_SHADER);
+
+    glShaderSource(_fragment, 1, &_fShaderCode, NULL);
+    glCompileShader(_fragment);
+    CheckCompileErrors(_fragment, "FRAGMENT");
+    glAttachShader(ID, _fragment);
+
+    unsigned int _geometry;
+    if (!geo.empty())
+    {
+        const char* _gShaderCode = geo.c_str();
+        _geometry = glCreateShader(GL_GEOMETRY_SHADER);
+
+        glShaderSource(_geometry, 1, &_gShaderCode, NULL);
+        glCompileShader(_geometry);
+        CheckCompileErrors(_geometry, "GEOMETRY");
+        glAttachShader(ID, _geometry);
+    }
+
+    glLinkProgram(ID);
+    CheckCompileErrors(ID, "PROGRAM");
+
+    glDeleteShader(_vertex);
+    glDeleteShader(_fragment);
+    if (!geo.empty())
         glDeleteShader(_geometry);
 }

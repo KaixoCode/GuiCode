@@ -233,10 +233,16 @@ namespace Graphics
 
     void m_Quad(const glm::vec4& dim, float rotation)
     {
+        //static Shader _shader
+        //{
+        //    SHADER("QuadVertex.shader"),
+        //    SHADER("QuadFragment.shader")
+        //};
+
         static Shader _shader
         {
-            SHADER("QuadVertex.shader"),
-            SHADER("QuadFragment.shader")
+            "#version 330 core \n layout(location = 0) in vec2 aPos; uniform mat4 projection; uniform mat4 view; uniform mat4 model; void main() { gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0); }", 
+            "#version 330 core \n out vec4 FragColor; uniform vec4 color; void main() { FragColor = color; } "
         };
 
         if (m_CurrentWindowId == -1)
@@ -295,10 +301,16 @@ namespace Graphics
 
     void m_TexturedQuad(unsigned int texture, const glm::vec4& dim)
     {
+        //static Shader _shader
+        //{
+        //    SHADER("TexturedQuadVertex.shader"),
+        //    SHADER("TexturedQuadFragment.shader")
+        //};
+
         static Shader _shader
         {
-            SHADER("TexturedQuadVertex.shader"),
-            SHADER("TexturedQuadFragment.shader")
+            "#version 330 core \n layout(location = 0) in vec2 aPos; layout(location = 1) in vec2 aTexCoord; out vec2 texCoord; uniform mat4 projection; uniform mat4 view; uniform mat4 model; void main() { gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0); texCoord = vec2(aTexCoord.x, aTexCoord.y); } ",
+            "#version 330 core \n out vec4 FragColor; in vec2 texCoord; uniform sampler2D theTexture; void main() { FragColor = texture(theTexture, texCoord).rgba; } "
         };
     
         if (m_CurrentWindowId == -1)
@@ -358,10 +370,16 @@ namespace Graphics
 
     void m_Ellipse(const glm::vec4& dim)
     {
+        //static Shader _shader
+        //{
+        //    SHADER("EllipseVertex.shader"),
+        //    SHADER("EllipseFragment.shader")
+        //};
+
         static Shader _shader
         {
-            SHADER("EllipseVertex.shader"),
-            SHADER("EllipseFragment.shader")
+            "#version 330 core \n layout(location = 0) in vec2 aPos; uniform mat4 projection; uniform mat4 view; uniform mat4 model; out vec2 pos; void main() { gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0); } ",
+            "#version 330 core \n out vec4 FragColor; uniform vec4 color; uniform vec4 dimensions; void main() { vec2 pos = gl_FragCoord.xy; float x = dimensions.x; float y = dimensions.y; float r = (pow(pos.x - x, 2) / pow(dimensions.z / 2, 2)) + (pow(pos.y - y, 2) / pow(dimensions.w / 2, 2)); if (r > 1) { discard; } else if (r > 0.95) { FragColor = vec4(color.rgb, (0.5 / r) * color.a); } else { FragColor = color; } } "
         };
 
         if (m_CurrentWindowId == -1)
@@ -416,10 +434,16 @@ namespace Graphics
 
     void m_Triangle(const glm::vec4& dim, float rotation)
     {
+        //static Shader _shader
+        //{
+        //    SHADER("QuadVertex.shader"),
+        //    SHADER("QuadFragment.shader")
+        //};
+
         static Shader _shader
         {
-            SHADER("QuadVertex.shader"),
-            SHADER("QuadFragment.shader")
+            "#version 330 core \n layout(location = 0) in vec2 aPos; uniform mat4 projection; uniform mat4 view; uniform mat4 model; void main() { gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0); }",
+            "#version 330 core \n out vec4 FragColor; uniform vec4 color; void main() { FragColor = color; } "
         };
 
         if (m_CurrentWindowId == -1)
@@ -478,10 +502,16 @@ namespace Graphics
         if (_size != 0)
             _scale = m_FontSize / _size;
 
+        //static Shader _shader
+        //{
+        //    SHADER("TextVertex.shader"),
+        //    SHADER("TextFragment.shader")
+        //};
+
         static Shader _shader
         {
-            SHADER("TextVertex.shader"),
-            SHADER("TextFragment.shader")
+            "#version 330 core \n layout(location = 0) in vec2 aPos; layout(location = 1) in vec2 aTexCoord; out vec2 texCoord; uniform mat4 projection; uniform mat4 view; uniform mat4 model; void main() { gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0); texCoord = vec2(aTexCoord.x, aTexCoord.y); } ",
+            "#version 330 core \n in vec2 texCoord; out vec4 col; uniform sampler2D theTexture; uniform vec4 color; void main() { vec4 sampled = vec4(1.0, 1.0, 1.0, texture(theTexture, texCoord).r); vec4 c = color * sampled; if (c.w == 0) discard; else col = c; }"
         };
 
         if (m_CurrentWindowId == -1)
