@@ -252,20 +252,22 @@ namespace Graphics
     
         else
         {
-            float _vertices[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f };
-            unsigned int _indices[] = { 0, 1, 3, 1, 2, 3 };
+            float _vertices[] = { 
+                0.0f, 0.0f, 
+                1.0f, 0.0f, 
+                0.0f, 1.0f, 
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f
+            };
 
             glGenVertexArrays(1, &_VAO);
             glGenBuffers(1, &_VBO);
-            glGenBuffers(1, &_EBO);
 
             glBindVertexArray(_VAO);
 
             glBindBuffer(GL_ARRAY_BUFFER, _VBO);
             glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(_indices), _indices, GL_STATIC_DRAW);
 
             glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
@@ -290,7 +292,7 @@ namespace Graphics
         _shader.SetVec4("color", m_Fill);
 
         glBindVertexArray(_VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
     void m_TexturedQuad(unsigned int texture, const glm::vec4& dim)
@@ -316,26 +318,19 @@ namespace Graphics
                 // positions   // texCoords
                  1.0f,  1.0f,  1.0f, 1.0f,
                  1.0f,  0.0f,  1.0f, 0.0f,
+                 0.0f,  1.0f,  0.0f, 1.0f,
+                 1.0f,  0.0f,  1.0f, 0.0f,
                  0.0f,  0.0f,  0.0f, 0.0f,
                  0.0f,  1.0f,  0.0f, 1.0f,
             };
 
-            unsigned int indices[] = {
-                0, 1, 3, // first triangle
-                1, 2, 3  // second triangle
-            };
-
             glGenVertexArrays(1, &_VAO);
             glGenBuffers(1, &_VBO);
-            glGenBuffers(1, &_EBO);
 
             glBindVertexArray(_VAO);
 
             glBindBuffer(GL_ARRAY_BUFFER, _VBO);
             glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
             glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
@@ -359,7 +354,7 @@ namespace Graphics
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(_VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
@@ -382,20 +377,22 @@ namespace Graphics
 
         else
         {
-            float _vertices[] = { -.5f, -.5f, .5f, -.5f, .5f, .5f, -.5f, .5f };
-            unsigned int _indices[] = { 0, 1, 3, 1, 2, 3 };
+            float _vertices[] = { 
+                -.5f, -.5f, 
+                .5f, -.5f, 
+                -.5f, .5f, 
+                .5f, -.5f,
+                .5f, .5f,
+                -.5f, .5f
+            };
 
             glGenVertexArrays(1, &_VAO);
             glGenBuffers(1, &_VBO);
-            glGenBuffers(1, &_EBO);
 
             glBindVertexArray(_VAO);
 
             glBindBuffer(GL_ARRAY_BUFFER, _VBO);
             glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(_indices), _indices, GL_STATIC_DRAW);
 
             glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
@@ -416,7 +413,7 @@ namespace Graphics
         _shader.SetVec4("dimensions", _dim);
 
         glBindVertexArray(_VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
     void m_Triangle(const glm::vec4& dim, float rotation)
@@ -504,13 +501,10 @@ namespace Graphics
                 // positions   // texCoords
                  1.0f,  1.0f,  1.0f, 0.0f,
                  1.0f,  0.0f,  1.0f, 1.0f,
+                 0.0f,  1.0f,  0.0f, 0.0f,
+                 1.0f,  0.0f,  1.0f, 1.0f,
                  0.0f,  0.0f,  0.0f, 1.0f,
                  0.0f,  1.0f,  0.0f, 0.0f,
-            };
-
-            unsigned int indices[] = {
-                0, 1, 3, // first triangle
-                1, 2, 3  // second triangle
             };
 
             glGenVertexArrays(1, &_VAO);
@@ -521,9 +515,6 @@ namespace Graphics
 
             glBindBuffer(GL_ARRAY_BUFFER, _VBO);
             glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
             glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
@@ -580,7 +571,7 @@ namespace Graphics
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, _ch.TextureID);
             glBindVertexArray(_VAO);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
             glBindTexture(GL_TEXTURE_2D, 0);
             x += (_ch.Advance >> 6) * _scale / m_Matrix[0][0];
         }

@@ -142,12 +142,13 @@ void WindowsWindow::WindowsLoop()
     Update({ 0, 0, Width(), Height() });
     if (Visible())
     {
+        //d.Command<Graphics::FrameBuffer>(9999, true, Vec4<int>{0, 0, Width(), Height()});
         Render(d);
+        //d.Command<Graphics::FrameBufferEnd>();
         Graphics::RunCommands(d);
+        glfwSwapBuffers(*this);
     }
 
-    glfwSwapBuffers(*this);
-    
 }
 
 // Hit test the frame for resizing and moving.
