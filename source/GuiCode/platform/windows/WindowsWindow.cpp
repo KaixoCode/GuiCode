@@ -5,6 +5,9 @@
 int WindowsWindow::m_WindowCount = 0;
 int WindowsWindow::m_WindowIdCounter = 0;
 WindowsWindow* WindowsWindow::m_MainWindow = nullptr;
+std::vector<NOTIFYICONDATA> WindowsWindow::m_ShellIcons;
+int WindowsWindow::m_ShellIconCount = 0;
+std::unordered_map<int, std::function<void(Event&)>> WindowsWindow::m_ShellIconCallbacks;
 
 WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool show, bool resizable, bool decorated)
     : WindowBase(name, width, height)
@@ -19,7 +22,7 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    //glfwWindowHint(GLFW_FLOATING, !resizable);
+    glfwWindowHint(GLFW_FLOATING, !decorated);
     glfwWindowHint(GLFW_RESIZABLE, resizable);
     //glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
     glfwWindowHint(GLFW_DECORATED, decorated);
@@ -208,6 +211,22 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
         return 0;
     bool _fCallDWP = true;
     LRESULT _lRet = 0;
+
+    // ShellIconCallback
+    if (uMsg == 10000 && m_ShellIconCallbacks.find(wParam) != m_ShellIconCallbacks.end())
+    {
+        if (lParam == WM_LBUTTONDOWN)
+            m_ShellIconCallbacks[wParam](Event{ Event::Type::MousePressed, 0, 0, Event::MouseButton::LEFT });
+
+        if (lParam == WM_LBUTTONDBLCLK)
+            m_ShellIconCallbacks[wParam](Event{ Event::Type::MousePressed, 0, 0, Event::MouseButton::LEFT, true });
+
+        if (lParam == WM_RBUTTONDOWN)
+            m_ShellIconCallbacks[wParam](Event{ Event::Type::MousePressed, 0, 0, Event::MouseButton::RIGHT });
+
+        if (lParam == WM_RBUTTONDBLCLK)
+            m_ShellIconCallbacks[wParam](Event{ Event::Type::MousePressed, 0, 0, Event::MouseButton::RIGHT, true });
+    }
 
     // Winproc worker for custom frame issues.
     _fCallDWP = !DwmDefWindowProc(hWnd, uMsg, wParam, lParam, &_lRet);

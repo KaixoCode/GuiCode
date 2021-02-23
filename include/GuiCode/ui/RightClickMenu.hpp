@@ -30,8 +30,8 @@ public:
 	{
 		// Hide this window when it loses focus.
 		if (GetForegroundWindow() != GetWin32Handle())
-			Hide();
-
+			Close();
+		
 		ComponentFrame::Loop();
 	}
 
@@ -51,7 +51,7 @@ public:
 	void Open(MenuBase* menu)
 	{
 		// TODO: abstract this OS specific code away
-
+		
 		// Set the menu
 		Component(menu);
 
@@ -59,6 +59,7 @@ public:
 		POINT point; GetCursorPos(&point);
 		Location({ point.x, point.y });
 		Show();
+		SetForegroundWindow(GetWin32Handle());
 
 		// Change the capture to this window to make sure 
 		// when releasing the mouse it doesn't immediatly

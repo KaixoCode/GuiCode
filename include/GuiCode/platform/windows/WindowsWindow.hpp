@@ -11,6 +11,9 @@ public:
     WindowsWindow(const std::string& name, int width, int height, bool show, bool resizable, bool decorated);
     ~WindowsWindow() 
     {
+        for (auto& a : m_ShellIcons)
+            Shell_NotifyIconA(NIM_DELETE, &a);
+
         SetWindowSubclass(GetWin32Handle(), &SubClassProc, m_WindowId, (DWORD_PTR) static_cast<void*>(nullptr));
         if (--m_WindowCount == 0)
             glfwTerminate();
@@ -47,6 +50,30 @@ public:
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection&) override;
 
+    template<typename T>
+    static void AddShellIcon(const std::string& path, const std::string& title, T callback)
+    {
+        // ERROR cant add shell icon without window.
+        if (m_MainWindow == nullptr)
+            return;
+
+        NOTIFYICONDATA& nidApp = m_ShellIcons.emplace_back();
+
+        auto hMainIcon = (HICON)LoadImageA(nullptr, path.c_str(), IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE | LR_SHARED);
+        nidApp.cbSize = sizeof(NOTIFYICONDATA); // sizeof the struct in bytes
+        nidApp.hWnd = (HWND)m_MainWindow->GetWin32Handle();            //handle of the window which will process this app. messages
+        nidApp.uID = m_ShellIconCount++;       //ID of the icon that willl appear in the system tray
+        nidApp.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_SHOWTIP; //ORing of all the flags
+        nidApp.hIcon = hMainIcon; // handle of the Icon to be displayed, obtained from LoadIcon
+        nidApp.uCallbackMessage = 10000;
+        nidApp.uVersion = NOTIFYICON_VERSION_4;
+        strcpy(nidApp.szTip, title.c_str());
+        Shell_NotifyIconA(NIM_ADD, &nidApp);
+        m_ShellIconCallbacks.emplace(nidApp.uID, callback);
+    }
+
+
+
 private:
     bool m_InitialResize = true,
         m_Aero = false;
@@ -77,6 +104,9 @@ private:
     static LRESULT SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
     static int m_WindowCount, m_WindowIdCounter;
     static WindowsWindow* m_MainWindow;
+    static std::vector<NOTIFYICONDATA> m_ShellIcons;
+    static std::unordered_map<int, std::function<void(Event&)>> m_ShellIconCallbacks;
+    static int m_ShellIconCount;
 };
 
 

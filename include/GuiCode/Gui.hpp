@@ -44,7 +44,7 @@ public:
 	 */
 	bool Loop()
 	{
-		bool _running = true;
+
 
 		LIMIT_FPS(60);
 		for (auto& _w : m_Windows)
@@ -52,15 +52,24 @@ public:
 			_w->Loop();
 
 			if (_w->ShouldClose())
-				_running = false;
+				m_Running = false;
 		}
 
 		RightClickMenu::Get().Loop();
 		//Dragging::Get().Loop();
 
-		return _running;
+		return m_Running;
+	}
+
+	/**
+	 * Close the gui.
+	 */
+	void Close()
+	{
+		m_Running = false;
 	}
 
 private:
 	std::vector<std::unique_ptr<WindowBase>> m_Windows;
+	bool m_Running = true;
 };

@@ -95,12 +95,10 @@ namespace Graphics
     
     Vec2<Align> m_TextAlign = { Align::LEFT, Align::BOTTOM };
 
-    CommandCollection m_PrevCollection;
-
     void RunCommands(const ::CommandCollection& d)
     {
-        //glClear(GL_COLOR_BUFFER_BIT);
-        //glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0, 0, 0, 0);
         
         for (int i = 0; i < d.Get().size(); i++)
         {

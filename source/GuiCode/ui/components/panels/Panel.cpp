@@ -55,7 +55,7 @@ void Panel::Render(CommandCollection& d)
     using namespace Graphics;
     if (m_SmartPanel)
     {
-        d.Command<FrameBuffer>(m_PanelId, NeedsRedraw(), Vec4<int>{ Position(), Size() });
+        d.Command<FrameBuffer>(m_PanelId, m_NeedsRedraw, Vec4<int>{ Position(), Size() });
         Background(d);
         Container::Render(d);
         d.Command<FrameBufferEnd>();
