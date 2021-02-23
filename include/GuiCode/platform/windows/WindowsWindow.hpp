@@ -72,8 +72,6 @@ public:
         m_ShellIconCallbacks.emplace(nidApp.uID, callback);
     }
 
-
-
 private:
     bool m_InitialResize = true,
         m_Aero = false;
