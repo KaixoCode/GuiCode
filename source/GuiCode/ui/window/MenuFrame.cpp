@@ -42,7 +42,7 @@ void ComponentFrame::Update(const Vec4<int>& viewport)
 
     m_Panel->Size({ Width(), Height() });
     m_Panel->Position({ 0, 0 });
-    m_Panel->Background(Color{ 255, 0, 0, 255 });
+    m_Panel->Background(::Color{ 255, 0, 0, 255 });
     Window::Update(viewport);
 }
 

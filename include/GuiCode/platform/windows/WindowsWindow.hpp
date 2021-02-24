@@ -29,6 +29,7 @@ public:
     auto Show()                -> void override { ShowWindow(GetWin32Handle(), SW_SHOW); }
     auto Hide()                -> void override { ShowWindow(GetWin32Handle(), SW_HIDE); }
     auto ShouldClose(bool b)   -> void override { glfwSetWindowShouldClose(m_Window, b); };
+    auto Color(Color c)-> void { m_Color = c; }
     void Aero(bool b);
     void Icon(const std::string& path);
 
@@ -77,6 +78,8 @@ private:
         m_Aero = false;
 
     GLFWwindow* m_Window;
+
+    ::Color m_Color{ 23, 23, 23, 255 };
 
     Event::MouseButton m_MousePressed = Event::MouseButton::NONE;
     int m_PressMouseX = 0,

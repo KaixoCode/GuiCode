@@ -22,10 +22,10 @@ void SmallFrame::Render(CommandCollection& d)
     static const std::string _line = "|";
 
     d.Command<TexturedQuad>(Graphics::Textures::Logo, _x + 12, Height() - 26 + _offset, 20, 20);
-    d.Command<Fill>(Color{ 179, 179, 179, 255 });
+    d.Command<Fill>(::Color{ 179, 179, 179, 255 });
     d.Command<TextAlign>(Align::CENTER, Align::CENTER);
     d.Command<Text>(&_line, _x += 45, _y + 16);
-    d.Command<Fill>(Color{ 179, 179, 179, 255 });
+    d.Command<Fill>(::Color{ 179, 179, 179, 255 });
     d.Command<TextAlign>(Align::LEFT, Align::CENTER);
     d.Command<Text>(&m_Name, _x + 9, _y + 16);
 }

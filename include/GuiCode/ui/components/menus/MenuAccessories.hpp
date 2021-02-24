@@ -21,8 +21,10 @@ namespace MenuAccessories
 
         void Render(CommandCollection&) override;
         bool WithinBounds(const Vec2<int>&) const override { return false; }
+        void Color(Color c) { m_Color = c; }
 
     private:
+        ::Color m_Color{ 51, 51, 51, 255};
         int m_Size,
             m_PaddingX,
             m_PaddingY,
@@ -38,8 +40,10 @@ namespace MenuAccessories
 
         void Render(CommandCollection&) override;
         bool WithinBounds(const Vec2<int>&) const override { return false; }
+        void Color(Color c) { m_Color = c; }
 
     private:
+        ::Color m_Color{ 51, 51, 51, 255 };
         int m_Size,
             m_PaddingX,
             m_PaddingY,

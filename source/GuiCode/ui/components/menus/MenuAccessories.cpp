@@ -15,13 +15,13 @@ namespace MenuAccessories
     void Divider::Render(CommandCollection& d)
     {
         
-        d.Command<Fill>(Color{ 51, 51, 51, 255 });
+        d.Command<Fill>(m_Color);
         d.Command<Quad>(X() + m_PaddingX, Y() + m_PaddingY, Width() - m_PaddingX * 2, m_Stroke);
     }
 
     void VerticalDivider::Render(CommandCollection& d)
     {
-        d.Command<Fill>(Color{ 51, 51, 51, 255 });
+        d.Command<Fill>(m_Color);
         d.Command<Quad>(X() + m_PaddingX, Y() + m_PaddingY, m_Stroke, Height() - m_PaddingY * 2);
     }
 }

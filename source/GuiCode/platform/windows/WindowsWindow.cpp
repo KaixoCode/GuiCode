@@ -114,7 +114,7 @@ void WindowsWindow::Render(CommandCollection& d)
     using namespace Graphics;
     d.Command<Clip>(0, 0, Width(), Height());
     d.Command<Type::Viewport>(0, 0, Width(), Height());
-    d.Command<Fill>(Color{ 23, 23, 23, 255 });
+    d.Command<Fill>(m_Color);
     d.Command<Quad>(0, 0, Width(), Height());
     WindowBase::Render(d);
 }
