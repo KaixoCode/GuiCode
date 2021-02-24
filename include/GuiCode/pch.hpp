@@ -44,6 +44,48 @@
 // Rarely updated local headers
 #include "GuiCode/data/Vec.hpp"
 
+//struct Color : public Vec4<float>
+//{
+//    constexpr Color(const Color& o)
+//        : Vec4<float>{ o.r, o.g, o.b, o.a }
+//    {}
+//
+//    constexpr Color(const Vec4<float>& o)
+//        : Vec4<float>{ o.r, o.g, o.b, o.a }
+//    {}
+//
+//    constexpr Color(Color&& o)
+//        : Vec4<float>{ o.r, o.g, o.b, o.a }
+//    {}
+//
+//    constexpr Color(float g)
+//        : Vec4<float>{ g, g, g, 255 }
+//    {}
+//
+//    constexpr Color(float g, float a)
+//        : Vec4<float>{ g, g, g, a }
+//    {}
+//
+//    constexpr Color(float r, float g, float b)
+//        : Vec4<float>{ r, g, b, 255 }
+//    {}
+//
+//    constexpr Color(float r, float g, float b, float a)
+//        : Vec4<float>{ r, g, b, a }
+//    {}
+//
+//    constexpr Color(int c)
+//        : Vec4<float>
+//    {
+//        (float)(c > 0xFFFFFF ? ((c >> 24) & 0xFF) : ((c >> 16) & 0xF)),
+//        (float)(c > 0xFFFFFF ? ((c >> 16) & 0xFF) : ((c >> 8) & 0xF)),
+//        (float)(c > 0xFFFFFF ? ((c >> 8) & 0xFF) : ((c) & 0xF)),
+//        (float)(c > 0xFFFFFF ? ((c) & 0xFF) : 255),
+//    }
+//    {}
+//
+//};
+
 using Color = Vec4<float>;
 
 enum struct Align

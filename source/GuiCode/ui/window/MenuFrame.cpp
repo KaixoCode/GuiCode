@@ -19,7 +19,7 @@ void ComponentFramePanel::Update(const Vec4<int>& viewport)
     Panel::Update(viewport);
     if (m_Component)
     {
-        m_Component->Position({ 0, 0 });
+        m_Component->Position({ 1, 1 });
         m_Component->Update(viewport);
     }
 }
@@ -38,9 +38,9 @@ void ComponentFramePanel::Render(CommandCollection& d)
 void ComponentFrame::Update(const Vec4<int>& viewport)
 {
     if (m_Component)
-        Size(m_Component->Width(), m_Component->Height());
+        Size(m_Component->Width() + 2, m_Component->Height() + 2);
 
-    m_Panel->Size({ Width(), Height() });
+    m_Panel->Size({ Width() + 2, Height() + 2 });
     m_Panel->Position({ 0, 0 });
     m_Panel->Background(::Color{ 255, 0, 0, 255 });
     Window::Update(viewport);
