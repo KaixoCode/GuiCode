@@ -56,13 +56,13 @@ public:
      * Remove a <code>Component</code> from this <code>Container</code> using its iterator.
      * @param iterator
      */
-    void Erase(ComponentCollection::const_iterator& i) { m_Components.erase(i); m_Hovering = nullptr, m_Focussed = nullptr; }
+    void Erase(ComponentCollection::const_iterator& i) { m_Components.erase(i, m_Components.end()); m_Hovering = nullptr, m_Focussed = nullptr; }
 
     /**
      * Get all components.
      * @return <code>ComponentCollection</code>
      */
-    const ComponentCollection const& Components() const { return m_Components; }
+    ComponentCollection& Components() { return m_Components; }
 
 protected:
     ComponentCollection m_Components;
