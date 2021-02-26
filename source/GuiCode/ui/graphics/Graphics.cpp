@@ -221,9 +221,9 @@ namespace Graphics
             m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, false, size });
         }
 
+        bool drawn = size.width == -1;
         if (size.width != -1)
         {
-            bool drawn = false;
             auto& it = m_FrameBufferDrawn.find(id);
             if (it != m_FrameBufferDrawn.end())
                 drawn = (*it).second, (*it).second = true;
@@ -246,6 +246,11 @@ namespace Graphics
         
         FrameBufferTexture& _texture = m_FrameBuffers[id];
         glBindFramebuffer(GL_FRAMEBUFFER, _texture.frameBuffer);
+        if (!drawn && refresh)
+        {
+            glClear(GL_COLOR_BUFFER_BIT);
+            glClearColor(0, 0, 0, 0);
+        }
         if (!(size.width == -1 || size.height == -1) && (size.width != _texture.dimensions.width || size.height != _texture.dimensions.height))
         {
             m_IgnoreDraws = false;
