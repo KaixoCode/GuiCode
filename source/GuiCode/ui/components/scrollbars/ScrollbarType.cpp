@@ -40,8 +40,8 @@ namespace ScrollbarType
 
             m_Mouse = constrain(e.y, Y(), Height());
             int _h = std::max((VisibleRange() - Range().start) / (float)(Range().end - Range().start) * Height(), (float)MinBarSize());
-            m_Value = m_PressValue - ((e.y - m_PressMouse) / (float)(Height() - _h)) * (m_Range.end - m_Range.start - m_VisibleRange) + m_Range.start;
-            m_Value = constrain(m_Value, m_Range.start, m_Range.end - m_VisibleRange);
+            Value(m_PressValue - ((e.y - m_PressMouse) / (float)(Height() - _h)) * (m_Range.end - m_Range.start - m_VisibleRange) + m_Range.start);
+            Value(constrain(m_Value, m_Range.start, m_Range.end - m_VisibleRange));
         };
 
         Width(16);
@@ -81,8 +81,8 @@ namespace ScrollbarType
 
             m_Mouse = constrain(e.x, X(), Width());
             int _w = std::max((VisibleRange() - Range().start) / (float)(Range().end - Range().start) * Width(), (float)MinBarSize());
-            m_Value = m_PressValue + ((e.x - m_PressMouse) / (float)(Width() - _w)) * (m_Range.end - m_Range.start - m_VisibleRange) + m_Range.start;
-            m_Value = constrain(m_Value, m_Range.start, m_Range.end - m_VisibleRange);
+            Value(m_PressValue + ((e.x - m_PressMouse) / (float)(Width() - _w)) * (m_Range.end - m_Range.start - m_VisibleRange) + m_Range.start);
+            Value(constrain(m_Value, m_Range.start, m_Range.end - m_VisibleRange));
         };
 
         Height(16);

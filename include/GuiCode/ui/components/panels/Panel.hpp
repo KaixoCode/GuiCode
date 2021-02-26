@@ -25,6 +25,7 @@ public:
      * @param s enable smart panel
      */
     void SmartPanel(bool s) { m_SmartPanel = s; }
+    bool SmartPanel() { return m_SmartPanel; }
 
     /**
      * Set the background color of this panel
