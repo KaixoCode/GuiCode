@@ -13,11 +13,14 @@ namespace Graphics
         GLuint frameBuffer;
         GLuint renderTexture;
 
+        bool ignoreRedraw = false;;
+
         Vec4<int> dimensions;
     };
 
     std::stack<unsigned int> m_FrameBufferStack;
     std::unordered_map<unsigned int, FrameBufferTexture> m_FrameBuffers;
+    std::unordered_map<unsigned int, bool> m_FrameBufferDrawn;
     bool m_IgnoreDraws = false;
 
     struct Character
@@ -124,6 +127,9 @@ namespace Graphics
     {
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0, 0, 0, 0);
+
+        for (auto& i : m_FrameBufferDrawn)
+            i.second = false;
         
         for (int i = 0; i < d.Get().size(); i++)
         {
@@ -212,37 +218,54 @@ namespace Graphics
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
                 exit(-1);
 
-            m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, size });
+            m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, false, size });
         }
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        m_PushMatrix();
-        m_Translate(-Vec2<int>{ (int)m_Matrix[3][0], (int)m_Matrix[3][1] });
-        if (!m_FrameBufferStack.empty())
-            m_Translate(m_FrameBuffers[m_FrameBufferStack.top()].dimensions.position);
-        
-        m_TexturedQuad(m_FrameBuffers[id].renderTexture, size);
-        m_PopMatrix();
+        if (size.width != -1)
+        {
+            bool drawn = false;
+            auto& it = m_FrameBufferDrawn.find(id);
+            if (it != m_FrameBufferDrawn.end())
+                drawn = (*it).second, (*it).second = true;
+            else
+                m_FrameBufferDrawn.emplace(id, true);
 
+            if (!drawn)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                m_PushMatrix();
+                m_Translate(-Vec2<int>{ (int)m_Matrix[3][0], (int)m_Matrix[3][1] });
+                if (!m_FrameBufferStack.empty())
+                    m_Translate(m_FrameBuffers[m_FrameBufferStack.top()].dimensions.position);
+        
+                m_TexturedQuad(m_FrameBuffers[id].renderTexture, size);
+                m_PopMatrix();
+            }
+        }
         m_FrameBufferStack.push(id);
         
         FrameBufferTexture& _texture = m_FrameBuffers[id];
         glBindFramebuffer(GL_FRAMEBUFFER, _texture.frameBuffer);
-        if (size.width != _texture.dimensions.width || size.height != _texture.dimensions.height)
+        if (!(size.width == -1 || size.height == -1) && (size.width != _texture.dimensions.width || size.height != _texture.dimensions.height))
         {
             m_IgnoreDraws = false;
             _texture.dimensions = size;
             glBindTexture(GL_TEXTURE_2D, _texture.renderTexture);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
         }
+
+        m_FrameBuffers[id].ignoreRedraw = m_IgnoreDraws;
     }
 
     void m_FrameBufferEnd()
-    {      
+    {
         m_FrameBufferStack.pop();
 
         if (!m_FrameBufferStack.empty())
+        {
+            m_IgnoreDraws = m_FrameBuffers[m_FrameBufferStack.top()].ignoreRedraw;
             glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBuffers[m_FrameBufferStack.top()].frameBuffer);
+        }
         else
         {
             m_IgnoreDraws = false;
