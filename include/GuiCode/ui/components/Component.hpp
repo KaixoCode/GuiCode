@@ -205,6 +205,7 @@ public:
      * @return true when a redraw is needed
      */
     virtual bool NeedsRedraw() { return m_NeedsRedraw; }
+    virtual void NeedsRedraw(bool v) { m_NeedsRedraw = v; }
 
     /**
      * Returns true when the given <code>pos</code> is inside the <code>Component</code>

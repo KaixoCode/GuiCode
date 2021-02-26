@@ -29,16 +29,41 @@ namespace Graphics
     };
 
     glm::mat4 m_Projection{ 0 };
+    glm::mat4 m_ViewProj{ 0 };
     std::stack<glm::mat4> m_MatrixStack;
     glm::mat4 m_Matrix{ 1.0f };
     int m_CurrentWindowId = -1;
     bool m_WindowFocused = false;
 
-    void m_Translate(const glm::vec2& v) { m_Matrix = glm::translate(m_Matrix, glm::vec3(v.x, v.y, 0)); }
-    void m_Scale(const glm::vec2& v) { m_Matrix = glm::scale(m_Matrix, glm::vec3(v.x, v.y, 1)); }
+    void m_Translate(const glm::vec2& v) 
+    { 
+        m_Matrix = glm::translate(m_Matrix, glm::vec3(v.x, v.y, 0)); 
+        m_ViewProj = m_Projection * m_Matrix;
+    }
+
+    void m_Scale(const glm::vec2& v) 
+    { 
+        m_Matrix = glm::scale(m_Matrix, glm::vec3(v.x, v.y, 1)); 
+        m_ViewProj = m_Projection * m_Matrix;
+    }
+
     void m_PushMatrix() { m_MatrixStack.push(m_Matrix); }
-    void m_PopMatrix() { if (m_MatrixStack.size() > 1) { m_Matrix = m_MatrixStack.top(); m_MatrixStack.pop(); } }
-    void SetProjection(const glm::mat4& proj) { m_Projection = proj; }
+    void m_PopMatrix() 
+    { 
+        if (m_MatrixStack.size() > 1) 
+        { 
+            m_Matrix = m_MatrixStack.top(); 
+            m_MatrixStack.pop(); 
+            m_ViewProj = m_Projection * m_Matrix;
+        } 
+    }
+    
+    void SetProjection(const glm::mat4& proj) 
+    { 
+        m_Projection = proj; 
+        m_ViewProj = m_Projection * m_Matrix;
+    }
+    
     bool WindowFocused() { return m_WindowFocused; }
     void WindowFocused(bool a) { m_WindowFocused = a; }
     void CurrentWindow(int a) { m_CurrentWindowId = a; }
@@ -241,7 +266,7 @@ namespace Graphics
 
         static Shader _shader
         {
-            "#version 330 core \n layout(location = 0) in vec2 aPos; uniform mat4 projection; uniform mat4 view; uniform mat4 model; void main() { gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0); }", 
+            "#version 330 core \n layout(location = 0) in vec2 aPos; uniform mat4 mvp; void main() { gl_Position = mvp * vec4(aPos, 0.0, 1.0); }", 
             "#version 330 core \n out vec4 FragColor; uniform vec4 color; void main() { FragColor = color; } "
         };
 
@@ -290,9 +315,12 @@ namespace Graphics
         }
         _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
 
-        _shader.SetMat4("model", _model);
-        _shader.SetMat4("view", m_Matrix);
-        _shader.SetMat4("projection", m_Projection);
+        auto& _mvp = m_ViewProj * _model;
+
+        _shader.SetMat4("mvp", _mvp);
+        //_shader.SetMat4("model", _model);
+        //_shader.SetMat4("view", m_Matrix);
+        //_shader.SetMat4("projection", m_Projection);
         _shader.SetVec4("color", m_Fill);
 
         glBindVertexArray(_VAO);
@@ -510,7 +538,7 @@ namespace Graphics
 
         static Shader _shader
         {
-            "#version 330 core \n layout(location = 0) in vec2 aPos; layout(location = 1) in vec2 aTexCoord; out vec2 texCoord; uniform mat4 projection; uniform mat4 view; uniform mat4 model; void main() { gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0); texCoord = vec2(aTexCoord.x, aTexCoord.y); } ",
+            "#version 330 core \n layout(location = 0) in vec2 aPos; layout(location = 1) in vec2 aTexCoord; out vec2 texCoord; uniform mat4 mvp; void main() { gl_Position = mvp * vec4(aPos, 0.0, 1.0); texCoord = vec2(aTexCoord.x, aTexCoord.y); } ",
             "#version 330 core \n in vec2 texCoord; out vec4 col; uniform sampler2D theTexture; uniform vec4 color; void main() { vec4 sampled = vec4(1.0, 1.0, 1.0, texture(theTexture, texCoord).r); vec4 c = color * sampled; if (c.w == 0) discard; else col = c; }"
         };
 
@@ -565,9 +593,10 @@ namespace Graphics
             }
 
         _shader.Use();
-        _shader.SetMat4("view", m_Matrix);
+        
+        //_shader.SetMat4("view", m_Matrix);
         _shader.SetVec4("color", m_Fill);
-        _shader.SetMat4("projection", m_Projection);
+        //_shader.SetMat4("projection", m_Projection);
         _shader.SetInt("theTexture", 1);
 
 
@@ -594,7 +623,8 @@ namespace Graphics
             _model = glm::translate(_model, glm::vec3{ _xpos, _ypos, 0 });
             _model = glm::scale(_model, glm::vec3{ _w, _h, 1 });
 
-            _shader.SetMat4("model", _model);
+            auto& _mvp = m_ViewProj * _model;
+            _shader.SetMat4("mvp", _mvp);
 
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, _ch.TextureID);

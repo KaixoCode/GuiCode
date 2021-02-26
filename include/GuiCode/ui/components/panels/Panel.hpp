@@ -75,6 +75,7 @@ public:
     Vec2<bool> AutoResize() const { return { m_AutoResizeX, m_AutoResizeY }; };
 
     bool NeedsRedraw() override { if (m_SmartPanel) return false; else return m_NeedsRedraw; }
+    void NeedsRedraw(bool v) override { m_NeedsRedraw = v; }
 
 protected:
     ::Color m_Background = { 0, 0, 0, 0 };
