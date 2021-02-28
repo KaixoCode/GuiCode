@@ -65,6 +65,7 @@ namespace Graphics
     { 
         m_Projection = proj; 
         m_ViewProj = m_Projection * m_Matrix;
+        //m_PrecalcMvp.clear();
     }
     
     bool WindowFocused() { return m_WindowFocused; }
@@ -294,8 +295,22 @@ namespace Graphics
 
         static Shader _shader
         {
-            "#version 330 core \n layout(location = 0) in vec2 aPos; uniform mat4 mvp; void main() { gl_Position = mvp * vec4(aPos, 0.0, 1.0); }", 
-            "#version 330 core \n out vec4 FragColor; uniform vec4 color; void main() { FragColor = color; } "
+            // Vertex shader
+            "#version 330 core \n "
+            "layout(location = 0) in vec2 aPos; "
+            "uniform mat4 mvp; "
+            "void main() { "
+            "    gl_Position = mvp * vec4(aPos, 0.0, 1.0); "
+            "}", 
+
+            // Fragment shader
+            "#version 330 core \n "
+            "out vec4 FragColor; "
+            "uniform vec4 color; "
+            "void main() { "
+            "    FragColor = color; "
+            "} "
+       
         };
 
         if (m_CurrentWindowId == -1)
@@ -334,21 +349,22 @@ namespace Graphics
 
         _shader.Use();
         glm::mat4 _model{ 1.0f };
-        _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
         if (rotation != 0)
         {
+            _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
             _model = glm::translate(_model, glm::vec3{ dim.z / 2, dim.w / 2, 0 });
             _model = glm::rotate(_model, glm::radians(rotation), glm::vec3{ 0, 0, 1 });
             _model = glm::translate(_model, glm::vec3{ -dim.z/2, -dim.w/2, 0 });
+            _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
+            _shader.SetMat4("mvp", m_ViewProj * _model);
         }
-        _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
+        else
+        {
+            _model = glm::translate(_model, glm::vec3{ (dim.x + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0], (dim.y + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1], 0 });
+            _model = glm::scale(_model, glm::vec3{ dim.z * m_Projection[0][0], dim.w * m_Projection[1][1], 1 });
+            _shader.SetMat4("mvp", _model);
+        }
 
-        auto& _mvp = m_ViewProj * _model;
-
-        _shader.SetMat4("mvp", _mvp);
-        //_shader.SetMat4("model", _model);
-        //_shader.SetMat4("view", m_Matrix);
-        //_shader.SetMat4("projection", m_Projection);
         _shader.SetVec4("color", m_Fill);
 
         glBindVertexArray(_VAO);
@@ -551,6 +567,7 @@ namespace Graphics
     // -------------------------- Text Rendering --------------------------------
     // --------------------------------------------------------------------------
 
+    static inline unsigned int texttexture = 0;
     void m_Text(const std::string* text, float x, float y)
     {
         int _size = m_Fontsizes[m_Font];
@@ -558,16 +575,66 @@ namespace Graphics
         if (_size != 0)
             _scale = m_FontSize / _size;
 
-        //static Shader _shader
-        //{
-        //    SHADER("TextVertex.shader"),
-        //    SHADER("TextFragment.shader")
-        //};
-
         static Shader _shader
         {
-            "#version 330 core \n layout(location = 0) in vec2 aPos; layout(location = 1) in vec2 aTexCoord; out vec2 texCoord; uniform mat4 mvp; void main() { gl_Position = mvp * vec4(aPos, 0.0, 1.0); texCoord = vec2(aTexCoord.x, aTexCoord.y); } ",
-            "#version 330 core \n in vec2 texCoord; out vec4 col; uniform sampler2D theTexture; uniform vec4 color; void main() { vec4 sampled = vec4(1.0, 1.0, 1.0, texture(theTexture, texCoord).r); vec4 c = color * sampled; if (c.w == 0) discard; else col = c; }"
+            // Vertex shader
+            "#version 330 core\n",
+            
+            // Fragment shader
+            "#version 330 core                                                                                      \n"
+            "                                                                                                       \n"
+            "out vec4 col;                                                                                          \n"
+            "                                                                                                       \n"
+            "uniform vec4 color;                                                                                    \n"
+            "uniform sampler2DArray Texture;                                                                        \n"
+            "                                                                                                       \n"
+            "flat in int theTexture;                                                                                \n"
+            "in vec2 texpos;                                                                                        \n"
+            "                                                                                                       \n"
+            "void main() {                                                                                          \n"
+            "    float sampled = texture(Texture, vec3(texpos, theTexture)).r;                                      \n"
+            "    if (sampled == 0) discard;                                                                         \n"
+            "    col.rgb = color.rgb; col.a = color.a * sampled;                                                    \n"
+            "}",
+            
+            // Geometry shader
+            "#version 330 core                                                                                      \n"
+            "                                                                                                       \n"
+            "layout(points) in;                                                                                     \n"
+            "layout(triangle_strip, max_vertices = 255) out;                                                        \n"
+            "                                                                                                       \n"
+            "uniform vec4 model[8];                                                                                 \n"
+            "uniform int textures[8];                                                                               \n"
+            "uniform int amt = 8;                                                                                   \n"
+            "                                                                                                       \n"
+            "flat out int theTexture;                                                                               \n"
+            "out vec2 texpos;                                                                                       \n"
+            "                                                                                                       \n"
+            "void main() {                                                                                          \n"
+            "    for (int i = 0; i < 8; i = i + 1) {                                                                \n"
+            "        int j = i;                                                                                     \n"
+            "        if (i == amt) break;                                                                           \n"
+            "                                                                                                       \n"
+            "        theTexture = textures[i];                                                                      \n"
+            "        texpos = vec2(0, 1);                                                                           \n"
+            "        gl_Position = vec4(model[j].x, model[j].y, 0.0, 1.0);                                          \n"
+            "        EmitVertex();                                                                                  \n"
+            "                                                                                                       \n"
+            "        texpos = vec2(1, 1);                                                                           \n"
+            "        gl_Position = vec4(model[j].x + model[j].z, model[j].y, 0.0, 1.0);                             \n"
+            "        EmitVertex();                                                                                  \n"
+            "                                                                                                       \n"
+            "        texpos = vec2(0, 0);                                                                           \n"
+            "        gl_Position = vec4(model[j].x, model[j].y + model[j].w, 0.0, 1.0);                             \n"
+            "        EmitVertex();                                                                                  \n"
+            "                                                                                                       \n"
+            "        texpos = vec2(1, 0);                                                                           \n"
+            "        gl_Position = vec4(model[j].x + model[j].z, model[j].y + model[j].w, 0.0, 1.0);                \n"
+            "        EmitVertex();                                                                                  \n"
+            "        EndPrimitive();                                                                                \n"
+            "    }                                                                                                  \n"
+            "}                                                                                                      \n"
+
         };
 
         if (m_CurrentWindowId == -1)
@@ -575,36 +642,26 @@ namespace Graphics
 
         static std::unordered_map<int, unsigned int> _VAOs;
         std::unordered_map<int, unsigned int>::iterator _it;
-        static unsigned int _VAO, _VBO, _EBO;
+        static unsigned int _VAO, _VBO;
         if ((_it = _VAOs.find(m_CurrentWindowId)) != _VAOs.end())
             _VAO = std::get<1>(*_it);
 
         else
         {
             float _vertices[] = {
-                // positions   // texCoords
-                 1.0f,  1.0f,  1.0f, 0.0f,
-                 1.0f,  0.0f,  1.0f, 1.0f,
-                 0.0f,  1.0f,  0.0f, 0.0f,
-                 1.0f,  0.0f,  1.0f, 1.0f,
-                 0.0f,  0.0f,  0.0f, 1.0f,
-                 0.0f,  1.0f,  0.0f, 0.0f,
+                 0.0f,
             };
 
             glGenVertexArrays(1, &_VAO);
             glGenBuffers(1, &_VBO);
-            glGenBuffers(1, &_EBO);
 
             glBindVertexArray(_VAO);
 
             glBindBuffer(GL_ARRAY_BUFFER, _VBO);
             glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
 
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+            glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 1 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
-
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-            glEnableVertexAttribArray(1);
 
             _VAO = std::get<1>(_VAOs.emplace(m_CurrentWindowId, _VAO));
         }
@@ -621,13 +678,15 @@ namespace Graphics
             }
 
         _shader.Use();
-        
-        //_shader.SetMat4("view", m_Matrix);
         _shader.SetVec4("color", m_Fill);
-        //_shader.SetMat4("projection", m_Projection);
-        _shader.SetInt("theTexture", 1);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, Graphics::m_Fonts[m_Font][-1].TextureID);
+        _shader.SetInt("Texture", 0);
 
-
+        static float _quads[8 * 4];
+        static int _txtrs[8];
+        glBindVertexArray(_VAO);
+        int _id = -1;
         for (int i = 0; i < text->size(); i++)
         {
             Character _ch = Graphics::m_Fonts[m_Font][_data[i]];
@@ -647,19 +706,29 @@ namespace Graphics
             float _w = _ch.Size.x * _scale;
             float _h = _ch.Size.y * _scale;
 
-            glm::mat4 _model{ 1.0f };
-            _model = glm::translate(_model, glm::vec3{ _xpos, _ypos, 0 });
-            _model = glm::scale(_model, glm::vec3{ _w, _h, 1 });
+            _id = i % 8;
+            _quads[_id * 4 + 0] = (_xpos + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
+            _quads[_id * 4 + 1] = (_ypos + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];
+            _quads[_id * 4 + 2] = m_FontSize * m_Projection[0][0];
+            _quads[_id * 4 + 3] = m_FontSize * m_Projection[1][1];
+            _txtrs[_id] = _ch.TextureID;
 
-            auto& _mvp = m_ViewProj * _model;
-            _shader.SetMat4("mvp", _mvp);
-
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, _ch.TextureID);
-            glBindVertexArray(_VAO);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-            glBindTexture(GL_TEXTURE_2D, 0);
+            if (_id == 7)
+            {
+                _shader.SetFloatA("model", _quads, 8);
+                _shader.SetIntA("textures", _txtrs, 8);
+                _shader.SetInt("amt", 8);
+                glDrawArrays(GL_POINTS, 0, 1);
+            }
             x += (_ch.Advance >> 6) * _scale / m_Matrix[0][0];
+        }
+
+        if (_id != 7)
+        {
+            _shader.SetFloatA("model", _quads, (_id + 1));
+            _shader.SetIntA("textures", _txtrs, 8);
+            _shader.SetInt("amt", _id + 1);
+            glDrawArrays(GL_POINTS, 0, 1);
         }
     }
 
@@ -692,6 +761,21 @@ namespace Graphics
             FT_Set_Pixel_Sizes(_face, 0, size);
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+            unsigned int _texture;
+            glGenTextures(1, &_texture);
+            glBindTexture(GL_TEXTURE_2D_ARRAY, _texture);
+            glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RED, size, size, 128, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+            texttexture = _texture;
+
+            Graphics::Character _character0 = {
+                    _texture,
+                    glm::ivec2(-1, -1),
+                    glm::ivec2(-1, -1),
+                    -1
+            };
+
+            Graphics::m_Fonts[name].insert(std::pair<char, Graphics::Character>((char)-1, _character0));
+
             for (unsigned char _c = 0; _c < 128; _c++)
             {
                 if (FT_Load_Char(_face, _c, FT_LOAD_RENDER))
@@ -700,37 +784,35 @@ namespace Graphics
                     continue;
                 }
 
-                unsigned int _texture;
-                glGenTextures(1, &_texture);
-                glBindTexture(GL_TEXTURE_2D, _texture);
-                glTexImage2D(
-                    GL_TEXTURE_2D,
-                    0,
-                    GL_RED,
-                    _face->glyph->bitmap.width,
-                    _face->glyph->bitmap.rows,
-                    0,
-                    GL_RED,
-                    GL_UNSIGNED_BYTE,
-                    _face->glyph->bitmap.buffer
-                );
-
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
                 Graphics::Character _character = {
-                    _texture,
+                    _c,
                     glm::ivec2(_face->glyph->bitmap.width, _face->glyph->bitmap.rows),
                     glm::ivec2(_face->glyph->bitmap_left, _face->glyph->bitmap_top),
                     static_cast<unsigned int>(_face->glyph->advance.x)
                 };
 
+                int _xpos = _character.Bearing.x;
+                int _ypos = _character.Size.y - _character.Bearing.y;
+
+                glTexSubImage3D(
+                    GL_TEXTURE_2D_ARRAY,
+                    0, 0, size - _character.Size.y, _c,
+                    _face->glyph->bitmap.width,
+                    _face->glyph->bitmap.rows,
+                    1, GL_RED,
+                    GL_UNSIGNED_BYTE,
+                    _face->glyph->bitmap.buffer
+                );
+
                 Graphics::m_Fonts[name].insert(
                     std::pair<char, Graphics::Character>(_c, _character));
             }
-            glBindTexture(GL_TEXTURE_2D, 0);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
             m_Fontsizes.emplace(name, size);
         }
 
