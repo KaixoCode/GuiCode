@@ -8,7 +8,7 @@ class WindowsWindow;
 class WindowsWindow : public WindowBase
 {
 public:
-    WindowsWindow(const std::string& name, int width, int height, bool show, bool resizable, bool decorated);
+    WindowsWindow(const std::string& name, int width, int height, bool hideonclose, bool show, bool resizable, bool decorated);
     ~WindowsWindow() 
     {
         for (auto& a : m_ShellIcons)

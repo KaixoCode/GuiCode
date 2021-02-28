@@ -9,8 +9,8 @@ std::vector<NOTIFYICONDATA> WindowsWindow::m_ShellIcons;
 int WindowsWindow::m_ShellIconCount = 0;
 std::unordered_map<int, std::function<void(Event&)>> WindowsWindow::m_ShellIconCallbacks;
 
-WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool show, bool resizable, bool decorated)
-    : WindowBase(name, width, height)
+WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool hideonclose, bool show, bool resizable, bool decorated)
+    : WindowBase(name, width, height, hideonclose)
 {
     m_Projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
     if (m_WindowCount == 0 && !glfwInit())

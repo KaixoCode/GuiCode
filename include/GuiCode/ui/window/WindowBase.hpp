@@ -14,8 +14,8 @@ public:
      * @param width width
      * @param height height
      */
-    WindowBase(const std::string& name, int width, int height)
-        : Container(), m_Name(name)
+    WindowBase(const std::string& name, int width, int height, bool hideonclose = false)
+        : Container(), m_Name(name), m_HideOnClose(hideonclose)
     {
         m_Size = { width, height };
     }
@@ -40,8 +40,10 @@ public:
     virtual bool      Maximized()   const = 0;
     virtual bool      Visible()     const = 0;
     virtual bool      ShouldClose() const = 0;
+    virtual bool      HideOnClose() const { return m_HideOnClose; };
 
 
 protected:
     std::string m_Name;
+    bool m_HideOnClose = false;
 };

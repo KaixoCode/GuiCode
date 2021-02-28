@@ -52,7 +52,13 @@ public:
 			_w->Loop();
 
 			if (_w->ShouldClose())
-				m_Running = false;
+			{
+				_w->ShouldClose(false);
+				if (_w->HideOnClose())
+					_w->Hide();
+				else
+					m_Running = false;
+			}
 		}
 
 		RightClickMenu::Get().Loop();

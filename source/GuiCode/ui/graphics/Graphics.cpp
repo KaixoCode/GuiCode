@@ -18,6 +18,9 @@ namespace Graphics
         Vec4<int> dimensions;
     };
 
+    
+    int prevShader = -1;
+
     std::stack<unsigned int> m_FrameBufferStack;
     std::unordered_map<unsigned int, FrameBufferTexture> m_FrameBuffers;
     std::unordered_map<unsigned int, bool> m_FrameBufferDrawn;
@@ -166,14 +169,6 @@ namespace Graphics
             case FrameBufferEnd: m_FrameBufferEnd(); break;
             }
         }
-
- /*       m_PrevCollection.Clear();
-        for (int i = 0; i < d.Get().size(); i++)
-        {
-            auto& a = d.Get()[i];
-
-            m_PrevCollection.Add(a);
-        }*/
     }
 
     void m_FrameBuffer(unsigned int id, bool refresh, Vec4<int> size)
@@ -370,7 +365,10 @@ namespace Graphics
 
         if (rotation != 0)
         {
-            _shader.Use();
+            if (prevShader != 6)
+                _shader.Use();
+            prevShader = 6;
+
             glm::mat4 _model{ 1.0f };
             _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
             _model = glm::translate(_model, glm::vec3{ dim.z / 2, dim.w / 2, 0 });
@@ -382,7 +380,10 @@ namespace Graphics
         }
         else
         {
-            _shader2.Use();
+            if (prevShader != 5)
+               _shader2.Use();
+            prevShader = 5;
+            
             glm::vec4 _dim;
             _dim.x = (dim.x + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
             _dim.y = (dim.y + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];
@@ -449,7 +450,10 @@ namespace Graphics
             _VAO = std::get<1>(_VAOs.emplace(m_CurrentWindowId, _VAO));
         }
 
-        _shader.Use();
+        if (prevShader != 4)
+            _shader.Use();
+        prevShader = 4;
+        
         glm::mat4 _model{ 1.0f };
         _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
         _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
@@ -514,7 +518,10 @@ namespace Graphics
             _VAO = std::get<1>(_VAOs.emplace(m_CurrentWindowId, _VAO));
         }
 
-        _shader.Use();
+        if (prevShader != 3)
+            _shader.Use();
+        prevShader = 3;
+        
         glm::mat4 _model{ 1.0f };
         _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
         _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
@@ -571,7 +578,10 @@ namespace Graphics
             _VAO = std::get<1>(_VAOs.emplace(m_CurrentWindowId, _VAO));
         }
 
-        _shader.Use();
+        if (prevShader != 2)
+           _shader.Use();
+        prevShader = 2;
+
         glm::mat4 _model{ 1.0f };
         _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
         _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
@@ -672,22 +682,28 @@ namespace Graphics
         long _totalHeight = m_FontSize * 0.7 * _scale;
         const char* _data = text->data();
 
+        auto& _font = Graphics::m_Fonts[m_Font];
+
         if (m_TextAlign.x == Align::RIGHT || m_TextAlign.x == Align::CENTER)
             for (int i = 0; i < text->size(); i++)
             {
-                _totalWidth += (Graphics::m_Fonts[m_Font][_data[i]].Advance >> 6);
+                _totalWidth += (_font[_data[i]].Advance >> 6);
             }
 
-        _shader.Use();
+
+        if (prevShader != 1)
+            _shader.Use();
+        prevShader = 1;
+
         _shader.SetVec4("color", m_Fill);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, Graphics::m_Fonts[m_Font][-1].TextureID);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, _font[-1].TextureID);
         _shader.SetInt("Texture", 0);
 
         glBindVertexArray(_VAO);
         for (int i = 0; i < text->size(); i++)
         {
-            Character _ch = Graphics::m_Fonts[m_Font][_data[i]];
+            Character _ch = _font[_data[i]];
             
             int _xpos = x * m_Matrix[0][0] + _ch.Bearing.x * _scale;
             if (m_TextAlign.x == Align::CENTER)
