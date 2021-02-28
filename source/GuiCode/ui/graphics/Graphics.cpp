@@ -120,6 +120,7 @@ namespace Graphics
     float m_FontSize = 16.0f;
     Fonts m_Font = Fonts::Gidole;
     std::unordered_map<Fonts, std::unordered_map<char, Graphics::Character>> m_Fonts;
+    std::unordered_map<Fonts, std::unordered_map<char, int>> m_FontAdvance;
     std::unordered_map<Fonts, int> m_Fontsizes;
     
     Vec2<Align> m_TextAlign = { Align::LEFT, Align::BOTTOM };
@@ -313,6 +314,26 @@ namespace Graphics
        
         };
 
+        static Shader _shader2
+        {
+            // Vertex shader
+            "#version 330 core \n "
+            "layout(location = 0) in vec2 aPos; "
+            "uniform vec4 dim; "
+            "void main() { "
+            "    gl_Position = vec4(dim.x + aPos.x * dim.z, dim.y + aPos.y * dim.w, 0.0, 1.0); "
+            "}",
+
+            // Fragment shader
+            "#version 330 core \n "
+            "out vec4 FragColor; "
+            "uniform vec4 color; "
+            "void main() { "
+            "    FragColor = color; "
+            "} "
+
+        };
+
         if (m_CurrentWindowId == -1)
             return;
 
@@ -347,25 +368,30 @@ namespace Graphics
             _VAO = std::get<1>(_VAOs.emplace(m_CurrentWindowId, _VAO));
         }
 
-        _shader.Use();
-        glm::mat4 _model{ 1.0f };
         if (rotation != 0)
         {
+            _shader.Use();
+            glm::mat4 _model{ 1.0f };
             _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
             _model = glm::translate(_model, glm::vec3{ dim.z / 2, dim.w / 2, 0 });
             _model = glm::rotate(_model, glm::radians(rotation), glm::vec3{ 0, 0, 1 });
             _model = glm::translate(_model, glm::vec3{ -dim.z/2, -dim.w/2, 0 });
             _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
             _shader.SetMat4("mvp", m_ViewProj * _model);
+            _shader.SetVec4("color", m_Fill);
         }
         else
         {
-            _model = glm::translate(_model, glm::vec3{ (dim.x + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0], (dim.y + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1], 0 });
-            _model = glm::scale(_model, glm::vec3{ dim.z * m_Projection[0][0], dim.w * m_Projection[1][1], 1 });
-            _shader.SetMat4("mvp", _model);
-        }
+            _shader2.Use();
+            glm::vec4 _dim;
+            _dim.x = (dim.x + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
+            _dim.y = (dim.y + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];
+            _dim.z = dim.z * m_Projection[0][0];
+            _dim.w = dim.w * m_Projection[1][1];
 
-        _shader.SetVec4("color", m_Fill);
+            _shader2.SetVec4("dim", _dim);
+            _shader2.SetVec4("color", m_Fill);
+        }
 
         glBindVertexArray(_VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -567,9 +593,11 @@ namespace Graphics
     // -------------------------- Text Rendering --------------------------------
     // --------------------------------------------------------------------------
 
-    static inline unsigned int texttexture = 0;
     void m_Text(const std::string* text, float x, float y)
     {
+        if (text->empty())
+            return;
+
         int _size = m_Fontsizes[m_Font];
         float _scale = 1;
         if (_size != 0)
@@ -641,14 +669,13 @@ namespace Graphics
         }
 
         long _totalWidth = 0;
-        long _totalHeight = m_FontSize * 0.7;
+        long _totalHeight = m_FontSize * 0.7 * _scale;
         const char* _data = text->data();
 
         if (m_TextAlign.x == Align::RIGHT || m_TextAlign.x == Align::CENTER)
             for (int i = 0; i < text->size(); i++)
             {
-                Character _ch = Graphics::m_Fonts[m_Font][_data[i]];
-                _totalWidth += (_ch.Advance >> 6);
+                _totalWidth += (Graphics::m_Fonts[m_Font][_data[i]].Advance >> 6);
             }
 
         _shader.Use();
@@ -657,13 +684,11 @@ namespace Graphics
         glBindTexture(GL_TEXTURE_2D_ARRAY, Graphics::m_Fonts[m_Font][-1].TextureID);
         _shader.SetInt("Texture", 0);
 
-        static float _quads[8 * 4];
-        static int _txtrs[8];
         glBindVertexArray(_VAO);
         for (int i = 0; i < text->size(); i++)
         {
             Character _ch = Graphics::m_Fonts[m_Font][_data[i]];
-
+            
             int _xpos = x * m_Matrix[0][0] + _ch.Bearing.x * _scale;
             if (m_TextAlign.x == Align::CENTER)
                 _xpos -= 0.5 * _totalWidth * _scale;
@@ -672,17 +697,10 @@ namespace Graphics
 
             int _ypos = y - (_ch.Size.y - _ch.Bearing.y) * _scale;
             if (m_TextAlign.y == Align::CENTER)
-                _ypos -= 0.5 * _totalHeight * _scale;
+                _ypos -= 0.5 * _totalHeight;
             else if (m_TextAlign.y == Align::TOP)
-                _ypos -= (_totalHeight / 0.7) * _scale;
-
-            float _w = _ch.Size.x * _scale;
-            float _h = _ch.Size.y * _scale;
+                _ypos -= _totalHeight / 0.7;
            
-            //glm::mat4 _model{ 1.0f };
-            //_model = glm::translate(_model, glm::vec3{ (_xpos + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0], (_ypos + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1], 0 });
-            //_model = glm::scale(_model, glm::vec3{ m_FontSize * m_Projection[0][0], m_FontSize * m_Projection[1][1], 1 });
-            
             glm::vec4 _dim;
             _dim.x = (_xpos + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
             _dim.y = (_ypos + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];
@@ -690,7 +708,7 @@ namespace Graphics
             _dim.w = m_FontSize * m_Projection[1][1];
 
             _shader.SetVec4("dim", _dim);
-            _shader.SetInt("theTexture", _ch.TextureID);
+            _shader.SetInt("theTexture", _data[i]);
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -733,8 +751,7 @@ namespace Graphics
             glGenTextures(1, &_texture);
             glBindTexture(GL_TEXTURE_2D_ARRAY, _texture);
             glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RED, size, size, 128, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
-            texttexture = _texture;
-
+           
             Graphics::Character _character0 = {
                     _texture,
                     glm::ivec2(-1, -1),
@@ -774,6 +791,8 @@ namespace Graphics
 
                 Graphics::m_Fonts[name].insert(
                     std::pair<char, Graphics::Character>(_c, _character));
+
+                Graphics::m_FontAdvance[name].insert(std::pair<char, int>(_c, _character.Advance));
             }
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
