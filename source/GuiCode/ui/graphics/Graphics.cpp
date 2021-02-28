@@ -578,8 +578,15 @@ namespace Graphics
         static Shader _shader
         {
             // Vertex shader
-            "#version 330 core\n",
-            
+            "#version 330 core \n "
+            "layout(location = 0) in vec2 aPos; "
+            "uniform vec4 dim; "
+            "out vec2 texpos; "
+            "void main() { "
+            "    gl_Position = vec4(dim.x + aPos.x * dim.z, dim.y + aPos.y * dim.w, 0.0, 1.0); "
+            "    texpos = vec2(aPos.x, 1-aPos.y); "
+            "}",
+
             // Fragment shader
             "#version 330 core                                                                                      \n"
             "                                                                                                       \n"
@@ -588,53 +595,13 @@ namespace Graphics
             "uniform vec4 color;                                                                                    \n"
             "uniform sampler2DArray Texture;                                                                        \n"
             "                                                                                                       \n"
-            "flat in int theTexture;                                                                                \n"
+            "uniform int theTexture;                                                                                \n"
             "in vec2 texpos;                                                                                        \n"
             "                                                                                                       \n"
             "void main() {                                                                                          \n"
             "    float sampled = texture(Texture, vec3(texpos, theTexture)).r;                                      \n"
-            "    if (sampled == 0) discard;                                                                         \n"
             "    col.rgb = color.rgb; col.a = color.a * sampled;                                                    \n"
             "}",
-            
-            // Geometry shader
-            "#version 330 core                                                                                      \n"
-            "                                                                                                       \n"
-            "layout(points) in;                                                                                     \n"
-            "layout(triangle_strip, max_vertices = 255) out;                                                        \n"
-            "                                                                                                       \n"
-            "uniform vec4 model[8];                                                                                 \n"
-            "uniform int textures[8];                                                                               \n"
-            "uniform int amt = 8;                                                                                   \n"
-            "                                                                                                       \n"
-            "flat out int theTexture;                                                                               \n"
-            "out vec2 texpos;                                                                                       \n"
-            "                                                                                                       \n"
-            "void main() {                                                                                          \n"
-            "    for (int i = 0; i < 8; i = i + 1) {                                                                \n"
-            "        int j = i;                                                                                     \n"
-            "        if (i == amt) break;                                                                           \n"
-            "                                                                                                       \n"
-            "        theTexture = textures[i];                                                                      \n"
-            "        texpos = vec2(0, 1);                                                                           \n"
-            "        gl_Position = vec4(model[j].x, model[j].y, 0.0, 1.0);                                          \n"
-            "        EmitVertex();                                                                                  \n"
-            "                                                                                                       \n"
-            "        texpos = vec2(1, 1);                                                                           \n"
-            "        gl_Position = vec4(model[j].x + model[j].z, model[j].y, 0.0, 1.0);                             \n"
-            "        EmitVertex();                                                                                  \n"
-            "                                                                                                       \n"
-            "        texpos = vec2(0, 0);                                                                           \n"
-            "        gl_Position = vec4(model[j].x, model[j].y + model[j].w, 0.0, 1.0);                             \n"
-            "        EmitVertex();                                                                                  \n"
-            "                                                                                                       \n"
-            "        texpos = vec2(1, 0);                                                                           \n"
-            "        gl_Position = vec4(model[j].x + model[j].z, model[j].y + model[j].w, 0.0, 1.0);                \n"
-            "        EmitVertex();                                                                                  \n"
-            "        EndPrimitive();                                                                                \n"
-            "    }                                                                                                  \n"
-            "}                                                                                                      \n"
-
         };
 
         if (m_CurrentWindowId == -1)
@@ -648,8 +615,15 @@ namespace Graphics
 
         else
         {
+
             float _vertices[] = {
-                 0.0f,
+                // positions  
+                 1.0f,  1.0f,  
+                 1.0f,  0.0f,  
+                 0.0f,  1.0f,  
+                 1.0f,  0.0f,  
+                 0.0f,  0.0f,  
+                 0.0f,  1.0f,  
             };
 
             glGenVertexArrays(1, &_VAO);
@@ -660,7 +634,7 @@ namespace Graphics
             glBindBuffer(GL_ARRAY_BUFFER, _VBO);
             glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
 
-            glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 1 * sizeof(float), (void*)0);
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
 
             _VAO = std::get<1>(_VAOs.emplace(m_CurrentWindowId, _VAO));
@@ -686,7 +660,6 @@ namespace Graphics
         static float _quads[8 * 4];
         static int _txtrs[8];
         glBindVertexArray(_VAO);
-        int _id = -1;
         for (int i = 0; i < text->size(); i++)
         {
             Character _ch = Graphics::m_Fonts[m_Font][_data[i]];
@@ -705,31 +678,26 @@ namespace Graphics
 
             float _w = _ch.Size.x * _scale;
             float _h = _ch.Size.y * _scale;
+           
+            //glm::mat4 _model{ 1.0f };
+            //_model = glm::translate(_model, glm::vec3{ (_xpos + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0], (_ypos + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1], 0 });
+            //_model = glm::scale(_model, glm::vec3{ m_FontSize * m_Projection[0][0], m_FontSize * m_Projection[1][1], 1 });
+            
+            glm::vec4 _dim;
+            _dim.x = (_xpos + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
+            _dim.y = (_ypos + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];
+            _dim.z = m_FontSize * m_Projection[0][0];
+            _dim.w = m_FontSize * m_Projection[1][1];
 
-            _id = i % 8;
-            _quads[_id * 4 + 0] = (_xpos + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
-            _quads[_id * 4 + 1] = (_ypos + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];
-            _quads[_id * 4 + 2] = m_FontSize * m_Projection[0][0];
-            _quads[_id * 4 + 3] = m_FontSize * m_Projection[1][1];
-            _txtrs[_id] = _ch.TextureID;
+            _shader.SetVec4("dim", _dim);
+            _shader.SetInt("theTexture", _ch.TextureID);
 
-            if (_id == 7)
-            {
-                _shader.SetFloatA("model", _quads, 8);
-                _shader.SetIntA("textures", _txtrs, 8);
-                _shader.SetInt("amt", 8);
-                glDrawArrays(GL_POINTS, 0, 1);
-            }
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
             x += (_ch.Advance >> 6) * _scale / m_Matrix[0][0];
         }
-
-        if (_id != 7)
-        {
-            _shader.SetFloatA("model", _quads, (_id + 1));
-            _shader.SetIntA("textures", _txtrs, 8);
-            _shader.SetInt("amt", _id + 1);
-            glDrawArrays(GL_POINTS, 0, 1);
-        }
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void LoadFont(const std::string& path, Graphics::Fonts name)
