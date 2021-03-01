@@ -26,6 +26,18 @@ public:
     {}
 
     /**
+     * Set the x-position of the <code>Component</code>
+     * @param x-position
+     */
+    virtual void X(int x) { m_Pos.x = x; }
+
+    /**
+     * Set the y-position of the <code>Component</code>
+     * @param y-position
+     */
+    virtual void Y(int y) { m_Pos.y = y; }
+
+    /**
      * Set the position of the <code>Component</code>.
      * @param pos the position
      */
@@ -109,6 +121,11 @@ public:
      * Set the viewport of the <code>Component</code>.
      */
     virtual void Viewport(const Vec4<int>& v) { m_Viewport = v; }
+
+    /**
+     * Get the viewport of the <code>Component</code>.
+     */
+    virtual Vec4<int> Viewport() const { return m_Viewport; }
 
     /**
      * Get the position of the <code>Component</code> 

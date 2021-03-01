@@ -30,6 +30,7 @@ struct LayoutManager
      * @return cursor id
      */
     int Cursor() const { return m_Cursor; }
+    bool WantsCursor() const { return m_Cursor != -1; }
     
     /**
      * Update the positions and sizes of the components using the given dimensions.
@@ -209,13 +210,13 @@ private:
 
             // Dimensions
             _eastWidth += _east->Width() + _p;
-            int _x = dim.width - _eastWidth + _p2,
+            int _x = dim.width - _eastWidth + _p2 + _p,
                 _y = _southHeight,
                 _w = _eastWidth - _p - _p2,
                 _h = dim.height - _southHeight - _northHeight;
 
             // Detect mousepress on resize area
-            if (m_MouseX >= _x - _p && m_MouseX <= _x &&
+            if (m_MouseX > _x - _p && m_MouseX < _x &&
                 m_MouseY > _y && m_MouseY < _y + _h && _rE)
             {
                 m_Cursor = GLFW_RESIZE_EW_CURSOR;
@@ -251,7 +252,7 @@ private:
                 _h = dim.height - _southHeight - _northHeight;
 
             // Detect mousepress on resize area
-            if (m_MouseX >= _x + _w && m_MouseX <= _x + _w + _p &&
+            if (m_MouseX > _x + _w && m_MouseX < _x + _w + _p &&
                 m_MouseY > _y && m_MouseY < _y + _h && _rW)
             {
                 m_Cursor = GLFW_RESIZE_EW_CURSOR;
@@ -304,6 +305,7 @@ private:
                     int _pw = _w;
                     _w = std::min(_w + _diffo, _w + _diff);
                     _east->Width(_east->Width() - (_w - _pw));
+                    _east->X(_east->X() + (_w - _pw));
                 }
             }
 
@@ -362,7 +364,8 @@ private:
     {
         Layout::StackLayout& _stack = m_Layout.stack;
 
-        int _padding = _stack.padding;
+        int _paddingx = _stack.paddingx;
+        int _paddingy = _stack.paddingy;
         int _y = dim.y;
         size_t _size = components.size();
         for (int _i = _size - 1; _i >= 0; _i--)
@@ -371,10 +374,10 @@ private:
             if (!_c->Visible())
                 continue;
 
-            int _x = dim.x + _padding;
+            int _x = dim.x + _paddingx;
             _c->Position({ _x, _y });
-            _c->Width(dim.width - 2 * _padding);
-            _y += _c->Height() + _padding;
+            _c->Width(dim.width - 2 * _paddingx);
+            _y += _c->Height() + _paddingy;
         }
         m_BiggestX = dim.x + dim.width;
         m_BiggestY = _y;
@@ -385,8 +388,9 @@ private:
     {
         Layout::StackLayout& _stack = m_Layout.stack;
 
-        int _padding = _stack.padding;
-        int _x = dim.x + _padding;
+        int _paddingx = _stack.paddingx;
+        int _paddingy = _stack.paddingy;
+        int _x = dim.x + _paddingx;
         size_t _size = components.size();
         for (int _i = _size - 1; _i >= 0; _i--)
         {
@@ -394,10 +398,10 @@ private:
             if (!_c->Visible())
                 continue;
 
-            int _y = dim.y + _padding;
+            int _y = dim.y + _paddingy;
             _c->Position({ _x, _y });
-            _c->Height(dim.height - 2 * _padding);
-            _x += _c->Width() + _padding;
+            _c->Height(dim.height - 2 * _paddingy);
+            _x += _c->Width() + _paddingx;
         }
         m_BiggestX = _x;
         m_BiggestY = dim.y + dim.height;

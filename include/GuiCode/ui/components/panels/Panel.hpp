@@ -35,7 +35,7 @@ public:
 
     int Cursor() const override 
     { 
-        auto a =
+        auto a = m_LayoutManager.WantsCursor() ? m_LayoutManager.Cursor() :
             !m_Pressed && m_LayoutManager.Cursor() != -1 ? m_LayoutManager.Cursor() :
             m_Pressed && m_Focussed ? m_Focussed->Cursor() : 
             m_Hovering ? m_Hovering->Cursor() : 

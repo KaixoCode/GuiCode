@@ -38,7 +38,7 @@ void ComponentFramePanel::Render(CommandCollection& d)
 void ComponentFrame::Update(const Vec4<int>& viewport)
 {
     if (m_Component)
-        Size(m_Component->Width() + 2, m_Component->Height() + 2);
+        Size(std::max(m_Component->Width() + 2, 5), std::max(m_Component->Height() + 2, 5));
 
     m_Panel->Size({ Width() + 2, Height() + 2 });
     m_Panel->Position({ 0, 0 });

@@ -155,7 +155,7 @@ struct Layout
 
     struct StackLayout // Grid Layout
     {
-        int padding;
+        int paddingx, paddingy;
     };
 
     union
