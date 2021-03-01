@@ -80,7 +80,7 @@ namespace Graphics
         CommandBase(Type type, Align a, Align b) : type(type), align({ a, b }) {}
 
         // Framebuffers
-        CommandBase(Type type, unsigned int id, bool refresh, const Vec4<int>& size) : type(type), id(id), refresh(refresh), size(size) {}
+        CommandBase(Type type, unsigned int id, bool refresh) : type(type), id(id), refresh(refresh) {}
 
         ~CommandBase()
         {}
@@ -90,7 +90,6 @@ namespace Graphics
             // Framebuffer
             struct 
             {
-                Vec4<int> size;
                 bool refresh;
                 unsigned int id;
             };

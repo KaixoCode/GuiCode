@@ -40,6 +40,7 @@ namespace Graphics
     glm::mat4 m_Matrix{ 1.0f };
     int m_CurrentWindowId = -1;
     bool m_WindowFocused = false;
+    Vec2<int> m_Size;
 
     void m_Translate(const glm::vec2& v) 
     { 
@@ -69,6 +70,8 @@ namespace Graphics
         m_Projection = proj; 
         m_ViewProj = m_Projection * m_Matrix;
         //m_PrecalcMvp.clear();
+        m_Size.width = 2 / m_Projection[0][0];
+        m_Size.height = 2 / m_Projection[1][1];
     }
     
     bool WindowFocused() { return m_WindowFocused; }
@@ -112,7 +115,7 @@ namespace Graphics
     void m_Ellipse(const glm::vec4& dim);
     void m_Triangle(const glm::vec4& dim, float rotation);
     void m_Text(const std::string* text, float x, float y);
-    void m_FrameBuffer(unsigned int id, bool refresh, Vec4<int> size);
+    void m_FrameBuffer(unsigned int id, bool refresh);
     void m_FrameBufferEnd();
 
     Color m_Fill{ 1, 1, 1, 1 };
@@ -165,13 +168,13 @@ namespace Graphics
             case Scale: m_Scale(a->scale); break;
             case PushMatrix: m_PushMatrix(); break;
             case PopMatrix: m_PopMatrix(); break;
-            case FrameBuffer: m_FrameBuffer(a->id, a->refresh, a->size); break;
+            case FrameBuffer: m_FrameBuffer(a->id, a->refresh); break;
             case FrameBufferEnd: m_FrameBufferEnd(); break;
             }
         }
     }
 
-    void m_FrameBuffer(unsigned int id, bool refresh, Vec4<int> size)
+    void m_FrameBuffer(unsigned int id, bool refresh)
     {
         if (id == 0)
         {
@@ -199,7 +202,7 @@ namespace Graphics
             glBindTexture(GL_TEXTURE_2D, _rt);
 
             // Give an empty image to OpenGL ( the last "0" )
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Size.width, m_Size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
             // Poor filtering. Needed !
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -215,11 +218,11 @@ namespace Graphics
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
                 exit(-1);
 
-            m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, false, size });
+            m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, false, m_Size });
         }
 
-        bool drawn = size.width == -1;
-        if (size.width != -1)
+        bool drawn = m_Size.width == -1;
+        if (m_Size.width != -1)
         {
             auto& it = m_FrameBufferDrawn.find(id);
             if (it != m_FrameBufferDrawn.end())
@@ -235,7 +238,7 @@ namespace Graphics
                 if (!m_FrameBufferStack.empty())
                     m_Translate(m_FrameBuffers[m_FrameBufferStack.top()].dimensions.position);
         
-                m_TexturedQuad(m_FrameBuffers[id].renderTexture, size);
+                m_TexturedQuad(m_FrameBuffers[id].renderTexture, Vec4<int>{ { 0, 0 }, m_Size });
                 m_PopMatrix();
             }
         }
@@ -248,12 +251,12 @@ namespace Graphics
             glClear(GL_COLOR_BUFFER_BIT);
             glClearColor(0, 0, 0, 0);
         }
-        if (!(size.width == -1 || size.height == -1) && (size.width != _texture.dimensions.width || size.height != _texture.dimensions.height))
+        if (!(m_Size.width == -1 || m_Size.height == -1) && (m_Size.width != _texture.dimensions.width || m_Size.height != _texture.dimensions.height))
         {
             m_IgnoreDraws = false;
-            _texture.dimensions = size;
+            _texture.dimensions = { {0, 0}, m_Size };
             glBindTexture(GL_TEXTURE_2D, _texture.renderTexture);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Size.width, m_Size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
         }
 
         m_FrameBuffers[id].ignoreRedraw = m_IgnoreDraws;

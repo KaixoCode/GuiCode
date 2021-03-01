@@ -33,6 +33,9 @@ public:
 			Close();
 		
 		ComponentFrame::Loop();
+
+		if (m_Close)
+			Close();
 	}
 
 	/**
@@ -40,6 +43,7 @@ public:
 	 */
 	void Close()
 	{
+		m_Close = false;
 		Component(nullptr);
 		Hide();
 	}
@@ -70,6 +74,7 @@ public:
 
 private:
 	bool m_Pressed = false; 
+	bool m_Close = false;
 
 	RightClickMenu()
 		: ComponentFrame("", 50, 50)
@@ -82,7 +87,7 @@ private:
 		m_Listener += [this](Event::MouseReleased& e)
 		{
 			if (m_Pressed)
-				Close();
+				m_Close = true;
 
 			m_Pressed = false;
 		};
