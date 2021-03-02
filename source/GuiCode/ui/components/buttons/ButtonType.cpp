@@ -158,9 +158,16 @@ namespace ButtonType
     {
         if (!::Graphics::WindowFocused())
         {
-            m_NeedsRedraw = true;
-            Active(false);
+            if (m_Counter == 0)
+            {
+                m_NeedsRedraw = true;
+                Active(false);
+            }
+            else 
+                m_Counter--;
         }
+        else
+            m_Counter = 10;
 
         Toggle::Update(viewport);
     }

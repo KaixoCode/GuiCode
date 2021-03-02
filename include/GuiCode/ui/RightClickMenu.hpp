@@ -52,7 +52,7 @@ public:
 	 * Open the right click menu.
 	 * @param menu menu to show
 	 */
-	void Open(MenuBase* menu)
+	void Open(MenuBase* menu, bool f = false)
 	{
 		// TODO: abstract this OS specific code away
 		
@@ -63,13 +63,14 @@ public:
 		POINT point; GetCursorPos(&point);
 		Location({ point.x, point.y });
 		Show();
-		SetForegroundWindow(GetWin32Handle());
+		if (f)
+			SetForegroundWindow(GetWin32Handle());
 
 		// Change the capture to this window to make sure 
 		// when releasing the mouse it doesn't immediatly
 		// unfocus this window and close it.
 		ReleaseCapture();
-		SetCapture(Get().GetWin32Handle());
+		SetCapture(GetWin32Handle());
 	}
 
 private:
