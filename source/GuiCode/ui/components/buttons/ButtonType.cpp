@@ -37,12 +37,12 @@ namespace ButtonType
             if (event.button == Event::MouseButton::LEFT)
             {
                 m_NeedsRedraw = true;
-                m_Active = false;
-                if (!Disabled() && Component::WithinBounds({ event.x, event.y }))
+                if (!Disabled() && Component::WithinBounds({ event.x, event.y }) && m_Active)
                 {
                     m_Callback();
                     m_Clicked = true;
                 }
+                m_Active = false;
             }
         };
 
