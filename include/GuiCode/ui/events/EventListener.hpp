@@ -63,18 +63,35 @@ public:
     template<typename T>
     void operator +=(T t) { AddCallback(t); }
 
+    void Clear()
+    {
+        m_EventCallbacks.clear();
+        m_KeyPressedCallbacks.clear();
+        m_KeyReleasedCallbacks.clear();
+        m_MousePressedCallbacks.clear();
+        m_MouseReleasedCallbacks.clear();
+        m_MouseClickedCallbacks.clear();
+        m_MouseMovedCallbacks.clear();
+        m_MouseDraggedCallbacks.clear();
+        m_MouseWheelCallbacks.clear();
+        m_MouseEnteredCallbacks.clear();
+        m_MouseExitedCallbacks.clear();
+        m_FocusedCallbacks.clear();
+        m_UnfocusedCallbacks.clear();
+    }
+
 private:
-    std::vector<Callback<Event>> m_EventCallbacks;
-    std::vector<Callback<Event::KeyPressed>> m_KeyPressedCallbacks;
-    std::vector<Callback<Event::KeyReleased>> m_KeyReleasedCallbacks;
-    std::vector<Callback<Event::MousePressed>> m_MousePressedCallbacks;
-    std::vector<Callback<Event::MouseReleased>> m_MouseReleasedCallbacks;
-    std::vector<Callback<Event::MouseClicked>> m_MouseClickedCallbacks;
-    std::vector<Callback<Event::MouseMoved>> m_MouseMovedCallbacks;
-    std::vector<Callback<Event::MouseDragged>> m_MouseDraggedCallbacks;
-    std::vector<Callback<Event::MouseWheel>> m_MouseWheelCallbacks;
-    std::vector<Callback<Event::MouseEntered>> m_MouseEnteredCallbacks;
-    std::vector<Callback<Event::MouseExited>> m_MouseExitedCallbacks;
-    std::vector<Callback<Event::Focused>> m_FocusedCallbacks;
-    std::vector<Callback<Event::Unfocused>> m_UnfocusedCallbacks;
+    std::vector<Callback<Event>>                 m_EventCallbacks;
+    std::vector<Callback<Event::KeyPressed>>     m_KeyPressedCallbacks;
+    std::vector<Callback<Event::KeyReleased>>    m_KeyReleasedCallbacks;
+    std::vector<Callback<Event::MousePressed>>   m_MousePressedCallbacks;
+    std::vector<Callback<Event::MouseReleased>>  m_MouseReleasedCallbacks;
+    std::vector<Callback<Event::MouseClicked>>   m_MouseClickedCallbacks;
+    std::vector<Callback<Event::MouseMoved>>     m_MouseMovedCallbacks;
+    std::vector<Callback<Event::MouseDragged>>   m_MouseDraggedCallbacks;
+    std::vector<Callback<Event::MouseWheel>>     m_MouseWheelCallbacks;
+    std::vector<Callback<Event::MouseEntered>>   m_MouseEnteredCallbacks;
+    std::vector<Callback<Event::MouseExited>>    m_MouseExitedCallbacks;
+    std::vector<Callback<Event::Focused>>        m_FocusedCallbacks;
+    std::vector<Callback<Event::Unfocused>>      m_UnfocusedCallbacks;
 };
