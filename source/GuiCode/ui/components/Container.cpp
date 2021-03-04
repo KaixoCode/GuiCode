@@ -16,14 +16,10 @@ Container::Container(Vec2<int> size)
         Event _copy = e;
         Event _copy2 = e;
 
-        if (e.type == Event::Type::KeyPressed)
+        if (e.type == Event::Type::KeyPressed || e.type == Event::Type::KeyReleased)
         {
-            if (!e.repeat)
-                for (auto& _c : m_Components)
-                    _c->AddEvent(_copy);
-            else
-                if (m_Focussed)
-                    m_Focussed->AddEvent(_copy);
+            for (auto& _c : m_Components)
+                _c->AddEvent(_copy);
 
             return;
         }
