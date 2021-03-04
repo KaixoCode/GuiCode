@@ -80,7 +80,13 @@ namespace ButtonType
          * Select or unselect this <code>Button</code>.
          * @param b select
          */
-        void Selected(bool b) { m_Selected = b; }
+        void Selected(bool b) 
+        { 
+            if (b) 
+                for (auto& _l : m_Lists[m_Id])
+                    _l->Selected(false);
+            m_Selected = b; 
+        }
 
         /**
          * Returns true when this <code>Button</code> is selected.
@@ -94,14 +100,12 @@ namespace ButtonType
          */
         static inline int NewKey()
         {
-            int key = std::rand();
-            while (m_Lists.find(key) != m_Lists.end())
-                key = std::rand();
-
-            return key;
+            m_CurrentKey++;
+            return m_CurrentKey;
         }
 
     private:
+        static inline int m_CurrentKey = 0;
         static inline std::unordered_map<int, std::vector<List*>> m_Lists;
         bool m_Selected = false;
         int m_Id = 0;
