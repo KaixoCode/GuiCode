@@ -28,12 +28,12 @@ public:
 	 */
 	void Loop() override
 	{
-		// Hide this window when it loses focus.
-		if (GetForegroundWindow() != GetWin32Handle())
-			Close();
-		
 		ComponentFrame::Loop();
 
+		// Hide this window when it loses focus.
+		if (GetForegroundWindow() != GetWin32Handle() && m_Focus)
+			Close();
+		
 		if (m_Close)
 			Close();
 	}
@@ -43,6 +43,7 @@ public:
 	 */
 	void Close()
 	{
+		m_Focus = false;
 		m_Close = false;
 		Component(nullptr);
 		Hide();
@@ -54,6 +55,8 @@ public:
 	 */
 	void Open(MenuBase* menu, bool f = false)
 	{
+		m_Focus = true;
+
 		// TODO: abstract this OS specific code away
 		
 		// Set the menu
@@ -69,13 +72,13 @@ public:
 		// Change the capture to this window to make sure 
 		// when releasing the mouse it doesn't immediatly
 		// unfocus this window and close it.
-		ReleaseCapture();
 		SetCapture(GetWin32Handle());
 	}
 
 private:
 	bool m_Pressed = false; 
 	bool m_Close = false;
+	bool m_Focus = false;
 
 	RightClickMenu()
 		: ComponentFrame("", 50, 50)
