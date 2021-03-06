@@ -62,7 +62,7 @@ namespace Graphics
                          
         // Quad/Ellipse  
         CommandBase(Type type, int x, int y, int w, int h) : type(type), dimension({ x, y, w, h }), rotation(0) {}
-        CommandBase(Type type, const Vec4<int>& d) : type(type), dimension(d), rotation(0) {}
+        CommandBase(Type type, const Vec4<int>& d) : type(type), dimension(d), angles({ 0, 0 }), rotation(0) {}
         CommandBase(Type type, const Vec2<int>& d1, const Vec2<int>& d2) : type(type), dimension({ d1.x, d1.y, d2.x, d2.y }), rotation(0) {}
                          
         // Textured Quad 
@@ -74,7 +74,10 @@ namespace Graphics
         CommandBase(Type type, int x, int y, int w, int h, double r) : type(type), dimension({ x, y, w, h }), rotation((float)r) {}
         CommandBase(Type type, const Vec4<int>& d, float r) : type(type), dimension(d), rotation(r) {}
         CommandBase(Type type, const Vec4<int>& d, double r) : type(type), dimension(d), rotation((float)r) {}
-                         
+
+        // Ellipse
+        CommandBase(Type type, const Vec4<int>& d, const Vec2<double>& a) : type(type), diameters(d), angles(a) {}
+
         // TextAlign     
         CommandBase(Type type, const Vec2<Align>& a) : type(type), align(a) {}
         CommandBase(Type type, Align a, Align b) : type(type), align({ a, b }) {}
@@ -113,6 +116,12 @@ namespace Graphics
             {
                 Vec4<int> dimension;
                 float rotation;
+            };
+
+            struct // Quad/Ellipse/Triangle
+            {
+                Vec4<int> diameters;
+                Vec2<double> angles;
             };
 
             struct

@@ -112,7 +112,7 @@ namespace Graphics
 
     void m_Quad(const glm::vec4& dim, float rotation);
     void m_TexturedQuad(unsigned int texture, const glm::vec4& dim);
-    void m_Ellipse(const glm::vec4& dim);
+    void m_Ellipse(const glm::vec4& dim, const glm::vec2& a);
     void m_Triangle(const glm::vec4& dim, float rotation);
     void m_Text(const std::string* text, float x, float y);
     void m_FrameBuffer(unsigned int id, bool refresh);
@@ -155,7 +155,7 @@ namespace Graphics
                 case Quad: m_Quad(a->dimension, a->rotation); break;
                 case TexturedQuad: m_TexturedQuad(a->texture, a->textureDimension); break;
                 case Text: m_Text(a->text, a->position.x, a->position.y); break;
-                case Ellipse: m_Ellipse(a->dimension); break;
+                case Ellipse: m_Ellipse(a->diameters, a->angles); break;
                 case Triangle: m_Triangle(a->dimension, a->rotation); break;
                 }
             }
@@ -473,7 +473,7 @@ namespace Graphics
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void m_Ellipse(const glm::vec4& dim)
+    void m_Ellipse(const glm::vec4& dim, const glm::vec2& a)
     {
         //static Shader _shader
         //{
@@ -483,8 +483,41 @@ namespace Graphics
 
         static Shader _shader
         {
-            "#version 330 core \n layout(location = 0) in vec2 aPos; uniform mat4 projection; uniform mat4 view; uniform mat4 model; out vec2 pos; void main() { gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0); } ",
-            "#version 330 core \n out vec4 FragColor; uniform vec4 color; uniform vec4 dimensions; void main() { vec2 pos = gl_FragCoord.xy; float x = dimensions.x; float y = dimensions.y; float r = (pow(pos.x - x, 2) / pow(dimensions.z / 2, 2)) + (pow(pos.y - y, 2) / pow(dimensions.w / 2, 2)); if (r > 1) { discard; } else if (r > 0.95) { FragColor = vec4(color.rgb, (0.5 / r) * color.a); } else { FragColor = color; } } "
+            "#version 330 core \n "
+            
+            "layout(location = 0) in vec2 aPos; "
+            
+            "uniform mat4 mvp; "
+            
+            "out vec2 pos; "
+            
+            "void main() { "
+            "    gl_Position = mvp * vec4(aPos, 0.0, 1.0);"
+            "} ",
+
+            "#version 330 core \n "
+            "out vec4 FragColor; "
+            "uniform vec4 color; "
+            "uniform vec2 angles; "
+            "uniform vec4 dimensions; "
+            "void main() { "
+            "    vec2 pos = gl_FragCoord.xy; "
+            "    float x = dimensions.x; "
+            "    float y = dimensions.y; "
+            "    float l = sqrt(pow(x - pos.x, 2) + pow(y - pos.y, 2)); "
+            "    float a = acos((pos.x - x)/l); "
+            "    if (y > pos.y) a = 6.28318530718-a; "
+            "    float astart = 0; "
+            "    float aend = angles.y - angles.x;"
+            "    if (aend < 0) aend = aend + 6.28318530718; "
+            "    float aa = a - angles.x;"
+            "    if (aa < 0) aa = aa + 6.28318530718; "
+            "    float r = (pow(pos.x - x, 2) / pow(dimensions.z / 2, 2)) + (pow(pos.y - y, 2) / pow(dimensions.w / 2, 2)); "
+            "    if (aa > aend) { discard; } "
+            "    else if (r > 1) { discard; } "
+            "    else if (r > 0.95) { FragColor = vec4(color.rgb, (0.5 / r) * color.a); } "
+            "    else { FragColor = color; } "
+            "} "
         };
 
         if (m_CurrentWindowId == -1)
@@ -529,10 +562,17 @@ namespace Graphics
         _model = glm::translate(_model, glm::vec3{ dim.x, dim.y, 0 });
         _model = glm::scale(_model, glm::vec3{ dim.z, dim.w, 1 });
 
-        _shader.SetMat4("model", _model);
-        _shader.SetMat4("view", m_Matrix);
-        _shader.SetMat4("projection", m_Projection);
+        _shader.SetMat4("mvp", m_ViewProj * _model);
         _shader.SetVec4("color", m_Fill);
+
+        if (a.x == 0 && a.y == 0)
+            _shader.SetVec2("angles", { 0, M_PI * 2 });
+        else
+            _shader.SetVec2("angles", { std::fmod(a.y + 4.0 * M_PI, 2.0 * M_PI), std::fmod(a.x + 4.0 * M_PI, 2.0 * M_PI) });
+
+
+
+
         glm::vec4 _dim{ dim.x + m_Matrix[3][0], dim.y + m_Matrix[3][1], dim.z, dim.w };
         _shader.SetVec4("dimensions", _dim);
 
