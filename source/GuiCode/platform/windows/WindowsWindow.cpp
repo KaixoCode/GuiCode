@@ -1,6 +1,7 @@
 #include "GuiCode/platform/windows/WindowsWindow.hpp"
 #include "GuiCode/ui/events/Event.hpp"
 #include "GuiCode/ui/graphics/Graphics.hpp"
+#include "GuiCode/ui/RightClickMenu.hpp"
 
 int WindowsWindow::m_WindowCount = 0;
 int WindowsWindow::m_WindowIdCounter = 0;
@@ -139,6 +140,9 @@ void WindowsWindow::WindowsLoop()
 
     if (Visible())
     {
+        if (RightClickMenu::Get().GetWin32Handle() != GetWin32Handle() && RightClickMenu::Get().Opened())
+            m_MousePressed = Event::MouseButton::NONE;
+
         CommandCollection d;
         Update({ 0, 0, Width(), Height() });
     
@@ -253,8 +257,8 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 
         case WM_NCLBUTTONUP:
         case WM_LBUTTONUP:
-            ReleaseCapture();
             _self->MouseButtonCallback(_self, Event::MouseButton::LEFT, Event::Type::MouseReleased, 0);
+            ReleaseCapture();
             _fCallDWP = false;
             break;
 
@@ -271,8 +275,8 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 
         case WM_NCRBUTTONUP:
         case WM_RBUTTONUP:
-            ReleaseCapture();
             _self->MouseButtonCallback(_self, Event::MouseButton::RIGHT, Event::Type::MouseReleased, 0);
+            ReleaseCapture();
             _fCallDWP = false;
             break;
 
@@ -289,8 +293,8 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 
         case WM_NCMBUTTONUP:
         case WM_MBUTTONUP:
-            ReleaseCapture();
             _self->MouseButtonCallback(_self, Event::MouseButton::MIDDLE, Event::Type::MouseReleased, 0);
+            ReleaseCapture();
             _fCallDWP = false;
             break;
         }
@@ -305,18 +309,21 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
         switch (uMsg)
         {
         case WM_NCLBUTTONDOWN:
+            RightClickMenu::Get().Close();
         case WM_LBUTTONDOWN:
             _self->MouseButtonCallback(_self, Event::MouseButton::LEFT, Event::Type::MousePressed, 0);
             _self->MouseButtonCallback(_self, Event::MouseButton::LEFT, Event::Type::MouseReleased, 0);
             break;
 
         case WM_NCRBUTTONDOWN:
+            RightClickMenu::Get().Close();
         case WM_RBUTTONDOWN:
             _self->MouseButtonCallback(_self, Event::MouseButton::RIGHT, Event::Type::MousePressed, 0);
             _self->MouseButtonCallback(_self, Event::MouseButton::RIGHT, Event::Type::MouseReleased, 0);
             break;
 
         case WM_NCMBUTTONDOWN:
+            RightClickMenu::Get().Close();
         case WM_MBUTTONDOWN:
             _self->MouseButtonCallback(_self, Event::MouseButton::MIDDLE, Event::Type::MousePressed, 0);
             _self->MouseButtonCallback(_self, Event::MouseButton::MIDDLE, Event::Type::MouseReleased, 0);
@@ -367,7 +374,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     case WM_EXITSIZEMOVE:
     case WM_SIZE:
     case WM_SIZING:
-    {    
+    {           
         RECT _rect;
         int _width = 0, _height = 0;
 

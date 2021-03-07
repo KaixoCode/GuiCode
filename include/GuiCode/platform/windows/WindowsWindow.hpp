@@ -1,3 +1,4 @@
+#pragma once
 #include "GuiCode/ui/window/WindowBase.hpp"
 
 // --------------------------------------------------------------------------

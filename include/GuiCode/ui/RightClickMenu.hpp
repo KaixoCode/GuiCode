@@ -28,11 +28,11 @@ public:
 	 */
 	void Loop() override
 	{
-		ComponentFrame::Loop();
-
 		// Hide this window when it loses focus.
 		if (GetForegroundWindow() != GetWin32Handle() && m_Focus)
 			Close();
+
+		ComponentFrame::Loop();
 		
 		if (m_Close)
 			Close();
@@ -72,8 +72,11 @@ public:
 		// Change the capture to this window to make sure 
 		// when releasing the mouse it doesn't immediatly
 		// unfocus this window and close it.
+		ReleaseCapture();
 		SetCapture(GetWin32Handle());
 	}
+
+	bool Opened() const { return m_Focus; }
 
 private:
 	bool m_Pressed = false; 
