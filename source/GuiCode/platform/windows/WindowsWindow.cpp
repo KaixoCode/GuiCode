@@ -13,6 +13,7 @@ std::unordered_map<int, std::function<void(Event&)>> WindowsWindow::m_ShellIconC
 WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool hideonclose, bool show, bool resizable, bool decorated)
     : WindowBase(name, width, height, hideonclose)
 {
+    m_InitialSize = { width, height };
     m_Projection = glm::ortho(0.0f, (float)std::max(width, 5), 0.0f, (float)std::max(height, 5));
     if (m_WindowCount == 0 && !glfwInit())
     {
@@ -78,16 +79,20 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     //if (!shadow)
     //    _margins = { 0, 0, 0, 0 };
     DwmExtendFrameIntoClientArea(GetWin32Handle(), &_margins);
+
+    //Size(Width(), Height());    
+    show ? Show() : Hide();
+
 }
 
 void WindowsWindow::Update(const Vec4<int>& viewport) 
 {
     // Need to trigger a resize after setup because otherwise
     // stuff fails for some reason...
-    if (m_InitialResize) 
-    { 
+    if (Visible() && m_InitialResize) 
+    {
         m_InitialResize = false;     
-        Size(Width(), Height());
+        Size(m_InitialSize);
     }
 
     // Go through the even queue

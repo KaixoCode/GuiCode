@@ -78,6 +78,8 @@ private:
     bool m_InitialResize = true,
         m_Aero = false;
 
+    Vec2<int> m_InitialSize;
+
     GLFWwindow* m_Window;
 
     ::Color m_Color{ 23, 23, 23, 255 };
