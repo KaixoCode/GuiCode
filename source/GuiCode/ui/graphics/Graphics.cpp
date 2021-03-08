@@ -50,7 +50,7 @@ namespace Graphics
 
     void m_Scale(const glm::vec2& v) 
     { 
-        m_Matrix = glm::scale(m_Matrix, glm::vec3(v.x, v.y, 1)); 
+        m_Matrix = glm::scale(m_Matrix, glm::vec3(v.x, v.y, 1));
         m_ViewProj = m_Projection * m_Matrix;
     }
 
