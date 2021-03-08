@@ -28,7 +28,7 @@ public:
      * @param r resizeable
      */
     Frame(const std::string& name, const int width, const int height, bool hideonclose = false, bool show = true, bool r = true)
-        : Window(name, width, height, show, r), m_Resizable(r),
+        : Window(name, width, height, hideonclose, show, r), m_Resizable(r),
         m_CloseButton(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Cross1, Graphics::Textures::Cross2, Graphics::Textures::Cross3, [&]() { this->Close(); }, "")),
         m_MaxiButton1(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Maxi1, Graphics::Textures::Maxi2, Graphics::Textures::Maxi3, [&]() { this->Restore(); }, "")),
         m_MaxiButton2(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Maxi4, Graphics::Textures::Maxi5, Graphics::Textures::Maxi6, [&]() { this->Maximize(); }, "")),
