@@ -69,7 +69,6 @@ struct LayoutManager
      */
     Vec2<int> BiggestCoords() { return { m_BiggestX, m_BiggestY }; }
 
-private:
     template<typename TypeCollection>
     void UpdateLayoutGrid(const Vec4<int>& dim, TypeCollection& components)
     {
