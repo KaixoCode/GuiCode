@@ -149,12 +149,13 @@ void WindowsWindow::WindowsLoop()
         if (RightClickMenu::Get().GetWin32Handle() != GetWin32Handle() && RightClickMenu::Get().Opened())
             m_MousePressed = Event::MouseButton::NONE;
 
-        CommandCollection d;
-        Update({ 0, 0, Width(), Height() });
-    
         Graphics::CurrentWindow(m_WindowId);
         Graphics::WindowFocused(GetForegroundWindow() == GetWin32Handle());
         Graphics::SetProjection(m_Projection);
+
+        CommandCollection d;
+        Update({ 0, 0, Width(), Height() });
+    
         //d.Command<Graphics::FrameBuffer>(9999, true, Vec4<int>{0, 0, Width(), Height()});
         Render(d);
         //d.Command<Graphics::FrameBufferEnd>();
