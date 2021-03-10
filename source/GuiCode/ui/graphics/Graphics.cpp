@@ -88,21 +88,6 @@ namespace Graphics
         Textures::AudioFileIcon.SetTexture(ASSET("textures/audiofile.png"));
         Textures::FolderIcon.SetTexture(ASSET("textures/folder.png"));
 
-        Textures::Cross1.SetTexture(ASSET("textures/cross1.png"));
-        Textures::Cross2.SetTexture(ASSET("textures/cross2.png"));
-        Textures::Cross3.SetTexture(ASSET("textures/cross3.png"));
-    
-        Textures::Maxi1.SetTexture(ASSET("textures/maxi1.png"));
-        Textures::Maxi2.SetTexture(ASSET("textures/maxi2.png"));
-        Textures::Maxi3.SetTexture(ASSET("textures/maxi3.png"));
-        Textures::Maxi4.SetTexture(ASSET("textures/maxi4.png"));
-        Textures::Maxi5.SetTexture(ASSET("textures/maxi5.png"));
-        Textures::Maxi6.SetTexture(ASSET("textures/maxi6.png"));
-    
-        Textures::Mini1.SetTexture(ASSET("textures/mini1.png"));
-        Textures::Mini2.SetTexture(ASSET("textures/mini2.png"));
-        Textures::Mini3.SetTexture(ASSET("textures/mini3.png"));
-
         Textures::Logo.SetTexture(ASSET("textures/logosmall.png"));
     }
 
