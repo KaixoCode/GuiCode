@@ -1,0 +1,3 @@
+#include "gcresource.h"
+
+IDI_FONT1 RCDATA  "Gidole-Regular.otf"

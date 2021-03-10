@@ -12,6 +12,8 @@ set(SRCGUI "${GuiCode_SOURCE_DIR}/")
 file(GLOB_RECURSE SOURCE
   "${SRCGUI}source/*.cpp"
   "${SRCGUI}include/*.hpp"
+  "${SRCGUI}resources/*.h"
+  "${SRCGUI}resources/*.rc"
   "${SRCGUI}shaders/*.shader"
 ) 
 
@@ -26,6 +28,7 @@ add_library(GLAD STATIC
 include_directories(
   libs/
   include/
+  resources/
 )
 
 add_library(GuiCode STATIC
