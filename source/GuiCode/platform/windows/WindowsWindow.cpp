@@ -541,20 +541,15 @@ void WindowsWindow::Aero(bool b)
     }
 }
 
-void WindowsWindow::Icon(int id)
+void WindowsWindow::Icon(const std::string& path)
 {
-    //GLFWimage images[1];
-    //auto a = Graphics::LoadImageFile(path);
-    //images[0].pixels = a.data;
-    //images[0].width = a.width;
-    //images[0].height = a.height;
+    GLFWimage images[1];
+    auto a = Graphics::LoadImageFile(path);
+    images[0].pixels = a.data;
+    images[0].width = a.width;
+    images[0].height = a.height;
 
-    HICON hWindowIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(id));
-    SendMessage(GetWin32Handle(), WM_SETICON, ICON_BIG, (LPARAM)hWindowIcon);
-    SendMessage(GetWin32Handle(), WM_SETICON, ICON_SMALL, (LPARAM)hWindowIcon);
+    glfwSetWindowIcon(*this, 1, images);
 
-
-    //glfwSetWindowIcon(*this, 1, images);
-
-    //Graphics::FreeImage(a);
+    Graphics::FreeImage(a);
 }

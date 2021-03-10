@@ -32,7 +32,7 @@ public:
     auto ShouldClose(bool b)   -> void override { glfwSetWindowShouldClose(m_Window, b); };
     auto Color(Color c)-> void { m_Color = c; }
     void Aero(bool b);
-    void Icon(int id);
+    void Icon(const std::string& path);
 
     operator    GLFWwindow* ()   const { return GetWindow(); }
     GLFWwindow* GetWindow()      const { return m_Window; }
@@ -53,7 +53,7 @@ public:
     void Render(CommandCollection&) override;
 
     template<typename T>
-    void AddShellIcon(int id, const std::string& title, T callback)
+    static void AddShellIcon(const std::string& path, const std::string& title, T callback)
     {
         // ERROR cant add shell icon without window.
         if (m_MainWindow == nullptr)
@@ -61,7 +61,7 @@ public:
 
         NOTIFYICONDATA& nidApp = m_ShellIcons.emplace_back();
 
-        HICON hMainIcon = (HICON)LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(id));
+        auto hMainIcon = (HICON)LoadImageA(nullptr, path.c_str(), IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE | LR_SHARED);
         nidApp.cbSize = sizeof(NOTIFYICONDATA); // sizeof the struct in bytes
         nidApp.hWnd = (HWND)m_MainWindow->GetWin32Handle();            //handle of the window which will process this app. messages
         nidApp.uID = m_ShellIconCount++;       //ID of the icon that willl appear in the system tray
