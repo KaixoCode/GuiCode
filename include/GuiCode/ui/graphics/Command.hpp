@@ -14,7 +14,7 @@ namespace Graphics
 
         Clip, ClearClip, Translate, PushMatrix, PopMatrix, Scale, Viewport,
 
-        Text, Quad, TexturedQuad, Ellipse, Triangle,
+        Text, Quad, TexturedQuad, Ellipse, Triangle, Point,
 
         FrameBuffer, FrameBufferEnd
 

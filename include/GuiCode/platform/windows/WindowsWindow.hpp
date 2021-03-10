@@ -63,7 +63,7 @@ public:
 
         HICON hMainIcon = (HICON)LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(id));
         nidApp.cbSize = sizeof(NOTIFYICONDATA); // sizeof the struct in bytes
-        nidApp.hWnd = (HWND)m_MainWindow->GetWin32Handle();            //handle of the window which will process this app. messages
+        nidApp.hWnd = (HWND)m_MainWindow->GetWin32Handle(); //handle of the window which will process this app. messages
         nidApp.uID = m_ShellIconCount++;       //ID of the icon that willl appear in the system tray
         nidApp.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_SHOWTIP; //ORing of all the flags
         nidApp.hIcon = hMainIcon; // handle of the Icon to be displayed, obtained from LoadIcon
