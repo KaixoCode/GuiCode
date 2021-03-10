@@ -26,7 +26,7 @@ namespace ButtonGraphics
         d.Command<Fill>(_c1);
         d.Command<Quad>(b.X(), b.Y(), b.Width(), b.Height() - 1);
         d.Command<Fill>(_c2);
-        d.Command<Font>(Gidole14, 14.0f);
+        d.Command<Font>(Fonts::Gidole14, 14.0f);
         d.Command<TextAlign>(Align::CENTER, Align::CENTER);
         d.Command<Text>(&b.Name(), Vec2<int>{b.X() + b.Width() / 2, b.Y() + b.Height() / 2});
     }

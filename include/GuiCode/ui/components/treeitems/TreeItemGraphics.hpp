@@ -42,13 +42,13 @@ namespace TreeItemGraphics
             int _y = b.Position().y + b.Height() / 2 - 8;
             int _w = 16;
             int _h = 16;
-            unsigned int _texture = 0;
+            unsigned int _texture = Graphics::Textures::FileIcon;
             auto& _ext = b.Extension();
             if (_ext == ".wav" || _ext == ".mp3")
-                _texture = 0;
-            d.Command<TexturedQuad>(_texture, Vec4<int>{_x, _y, _w, _h});
+                _texture = Graphics::Textures::AudioFileIcon;
+            d.Command<TexturedQuad>(_texture, _x, _y, _w, _h);
 
-            d.Command<Font>(Gidole14, 14.0f);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
             d.Command<Text>(&b.Name(), Vec2<int>{b.X() + 48, b.Y() + b.Height() / 2});
@@ -69,9 +69,9 @@ namespace TreeItemGraphics
             int _y = b.Y() + b.Height() - b.ActualHeight() / 2 - 8;
             int _w = 16;
             int _h = 16;
-            d.Command<TexturedQuad>(0, Vec4<int>{_x, _y, _w, _h});
+            d.Command<TexturedQuad>(Graphics::Textures::FolderIcon, _x, _y, _w, _h);
 
-            d.Command<Font>(Gidole14, 14.0f);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
             d.Command<Text>(&b.Name(), Vec2<int>{b.X() + 48, b.Y() + b.Height() - b.ActualHeight() / 2});

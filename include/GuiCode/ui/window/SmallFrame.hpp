@@ -25,11 +25,9 @@ public:
      */
     SmallFrame(const std::string& name, const int width, const int height, bool hideonclose = false, bool r = true)
         : Window(name, width, height, hideonclose, r),
-        m_CloseButton(&Emplace<Button<ButtonGraphics::CloseButton, ButtonType::Normal>>([&]() { this->Close(); }, "")),
+        m_CloseButton(&Emplace<Button<ButtonGraphics::Textured<>, ButtonType::Textured<ButtonType::Normal>>>(Graphics::Textures::Cross1, Graphics::Textures::Cross2, Graphics::Textures::Cross3, [&]() { this->Close(); }, "")),
         m_Panel(&Emplace<::Panel>())
-    {
-        m_CloseButton->Size({ 46, 32 });
-    }
+    {}
 
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection& d) override;

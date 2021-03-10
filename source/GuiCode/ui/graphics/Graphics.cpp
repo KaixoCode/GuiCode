@@ -80,9 +80,30 @@ namespace Graphics
 
     void Init()
     {
-        Graphics::LoadFont(IDI_FONT1, Gidole);
-        Graphics::LoadFont(IDI_FONT1, Gidole14, 14);
-        Graphics::LoadFont(IDI_FONT1, Gidole16, 16);
+        Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), Fonts::Gidole);
+        Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), Fonts::Gidole14, 14);
+        Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), Fonts::Gidole16, 16);
+
+        Textures::FileIcon.SetTexture(ASSET("textures/file.png"));
+        Textures::AudioFileIcon.SetTexture(ASSET("textures/audiofile.png"));
+        Textures::FolderIcon.SetTexture(ASSET("textures/folder.png"));
+
+        Textures::Cross1.SetTexture(ASSET("textures/cross1.png"));
+        Textures::Cross2.SetTexture(ASSET("textures/cross2.png"));
+        Textures::Cross3.SetTexture(ASSET("textures/cross3.png"));
+    
+        Textures::Maxi1.SetTexture(ASSET("textures/maxi1.png"));
+        Textures::Maxi2.SetTexture(ASSET("textures/maxi2.png"));
+        Textures::Maxi3.SetTexture(ASSET("textures/maxi3.png"));
+        Textures::Maxi4.SetTexture(ASSET("textures/maxi4.png"));
+        Textures::Maxi5.SetTexture(ASSET("textures/maxi5.png"));
+        Textures::Maxi6.SetTexture(ASSET("textures/maxi6.png"));
+    
+        Textures::Mini1.SetTexture(ASSET("textures/mini1.png"));
+        Textures::Mini2.SetTexture(ASSET("textures/mini2.png"));
+        Textures::Mini3.SetTexture(ASSET("textures/mini3.png"));
+
+        Textures::Logo.SetTexture(ASSET("textures/logosmall.png"));
     }
 
     // --------------------------------------------------------------------------
@@ -103,10 +124,10 @@ namespace Graphics
     
     // Text stuff
     float m_FontSize = 16.0f;
-    int m_Font = 0;
-    std::unordered_map<int, std::unordered_map<char, Graphics::Character>> m_Fonts;
-    std::unordered_map<int, std::unordered_map<char, int>> m_FontAdvance;
-    std::unordered_map<int, int> m_Fontsizes;
+    Fonts m_Font = Fonts::Gidole;
+    std::unordered_map<Fonts, std::unordered_map<char, Graphics::Character>> m_Fonts;
+    std::unordered_map<Fonts, std::unordered_map<char, int>> m_FontAdvance;
+    std::unordered_map<Fonts, int> m_Fontsizes;
     
     Vec2<Align> m_TextAlign = { Align::LEFT, Align::BOTTOM };
 
@@ -130,7 +151,7 @@ namespace Graphics
                 case Stroke: m_Stroke = a->stroke / 255.0; break;
                 case TextAlign: m_TextAlign = a->align; break;
                 case FontSize: m_FontSize = a->fontSize; break;
-                case Font: m_Font = a->font, m_FontSize = a->fontSize; break;
+                case Font: m_Font = (Fonts)a->font, m_FontSize = a->fontSize; break;
                 case Quad: m_Quad(a->dimension, a->rotation); break;
                 case TexturedQuad: m_TexturedQuad(a->texture, a->textureDimension); break;
                 case Text: m_Text(a->text, a->position.x, a->position.y); break;
@@ -756,12 +777,12 @@ namespace Graphics
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void LoadFont(int id, int name)
+    void LoadFont(const std::string& path, Graphics::Fonts name)
     {
-        LoadFont(id, name, 48);
+        LoadFont(path, name, 48);
     }
 
-    void LoadFont(int id, int name, unsigned int size)
+    void LoadFont(const std::string& path, Graphics::Fonts name, unsigned int size)
     {
         static FT_Library _ft;
         if (!_ft && FT_Init_FreeType(&_ft))
@@ -770,29 +791,8 @@ namespace Graphics
             return;
         }
 
-        auto hInstance = ::GetModuleHandle(nullptr);
-        auto hres = FindResourceEx(hInstance, RT_RCDATA, MAKEINTRESOURCE(id), MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL));
-        if (!hres)
-        {
-            LOG("failed to find font");
-            return;
-        }
-        auto hresLoad = LoadResource(hInstance, hres);
-        if (!hresLoad)
-        {
-            LOG("failed to load font resource");
-            return;
-        }
-        auto hreslock = LockResource(hresLoad);
-        if (!hreslock)
-        {
-            LOG("failed to lock font resource");
-            return;
-        }
-        auto hressize = SizeofResource(hInstance, hres);
-
         FT_Face _face;
-        if (FT_New_Memory_Face(_ft, (FT_Byte*)hreslock, hressize, 0, &_face))
+        if (FT_New_Face(_ft, path.c_str(), 0, &_face))
         {
             LOG("ERROR::FREETYPE: Failed to load font");
             return;
@@ -800,7 +800,7 @@ namespace Graphics
         else
         {
             Graphics::m_Fonts.insert(
-                std::pair<int, std::unordered_map<char, Graphics::Character>>(
+                std::pair<Fonts, std::unordered_map<char, Graphics::Character>>(
                     name, std::unordered_map<char, Graphics::Character>{}));
 
             FT_Set_Pixel_Sizes(_face, 0, size);
@@ -883,49 +883,6 @@ namespace Graphics
         SetTexture(path);
     }
 
-    Texture::Texture(HICON i)
-    {
-        SetTexture(i);
-    }
-
-    void Texture::SetTexture(HICON id)
-    {
-        glGenTextures(1, &TextureID);
-        glBindTexture(GL_TEXTURE_2D, TextureID);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-
-        //Load the image
-        int channels;
-        ICONINFO info;
-        GetIconInfo(id, &info);
-        BITMAP bpm;
-        int size = 0;
-        const int a = GetObject(info.hbmColor, sizeof(bpm), &bpm);
-        if (a > 0)
-            size = (bpm.bmBitsPixel * bpm.bmWidth * bpm.bmHeight) / 8.0;
-
-        auto lockr = LockResource(id);
-
-        unsigned char* _data = stbi_load_from_memory((stbi_uc*)lockr, size, &Width, &Height, &channels, 0);
-        if (_data) {
-            if (channels == 4)
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
-            else
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, _data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else {
-            LOG("Failed to load texture, path: " << id);
-        }
-
-        stbi_image_free(_data);
-    }
     void Texture::SetTexture(const std::string& path)
     {
         glGenTextures(1, &TextureID);
@@ -940,7 +897,6 @@ namespace Graphics
 
         //Load the image
         int channels;
-
         unsigned char* _data = stbi_load(path.c_str(), &Width, &Height, &channels, 0);
         if (_data) {
             if (channels == 4) 

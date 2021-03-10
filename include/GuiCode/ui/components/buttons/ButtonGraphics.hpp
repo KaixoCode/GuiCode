@@ -12,78 +12,6 @@ namespace ButtonGraphics
 {
     using namespace Graphics;
 
-
-    struct CloseButton
-    {
-        static void Render(ButtonBase& b, CommandCollection& d)
-        {
-            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Active() ? Color{ 170, 0, 0, 111 } : b.Hovering() ? Color{ 255, 0, 0, 111 } : Color{ 0, 0, 0, 0 };
-            Color _c2 = Color{ 255, 255, 255, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
-
-            d.Command<Fill>(_c1);
-            d.Command<Quad>(b.Position(), b.Size());
-            d.Command<Fill>(_c2);
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 7, b.Y() + b.Height() / 2, 14, 1}, 45.0f);
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 7, b.Y() + b.Height() / 2, 14, 1}, -45.0f);
-
-        }
-    };
-
-    struct Maxi1Button
-    {
-        static void Render(ButtonBase& b, CommandCollection& d)
-        {
-            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Active() ? Color{ 255, 255, 255, 58 } : b.Hovering() ? Color{ 255, 255, 255, 31 } : Color{ 0, 0, 0, 0 };
-            Color _c2 = Color{ 255, 255, 255, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
-
-            d.Command<Fill>(_c1);
-            d.Command<Quad>(b.Position(), b.Size());
-            d.Command<Fill>(_c2);
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 5, b.Y() + b.Height() / 2 + 2, 8, 1});
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 + 2, b.Y() + b.Height() / 2 - 5, 1, 8});
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 5, b.Y() + b.Height() / 2 - 5, 8, 1});
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 5, b.Y() + b.Height() / 2 - 5, 1, 8});
-            
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 3, b.Y() + b.Height() / 2 + 3, 1, 2});
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 3, b.Y() + b.Height() / 2 + 4, 8, 1});
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 + 3, b.Y() + b.Height() / 2 - 3, 2, 1});
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 + 4, b.Y() + b.Height() / 2 - 3, 1, 8});
-
-        }
-    };
-
-    struct Maxi2Button
-    {
-        static void Render(ButtonBase& b, CommandCollection& d)
-        {
-            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Active() ? Color{ 255, 255, 255, 58 } : b.Hovering() ? Color{ 255, 255, 255, 31 } : Color{ 0, 0, 0, 0 };
-            Color _c2 = Color{ 255, 255, 255, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
-
-            d.Command<Fill>(_c1);
-            d.Command<Quad>(b.Position(), b.Size());
-            d.Command<Fill>(_c2);
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 5, b.Y() + b.Height() / 2 + 4, 10, 1});
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 + 4, b.Y() + b.Height() / 2 - 5, 1, 10});
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 5, b.Y() + b.Height() / 2 - 5, 10, 1});
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 5, b.Y() + b.Height() / 2 - 5, 1, 10});
-        }
-    };
-
-    struct MiniButton
-    {
-        static void Render(ButtonBase& b, CommandCollection& d)
-        {
-            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Active() ? Color{ 255, 255, 255, 58 } : b.Hovering() ? Color{ 255, 255, 255, 31 } : Color{ 0, 0, 0, 0 };
-            Color _c2 = Color{ 255, 255, 255, 255 } *(Graphics::WindowFocused() ? 1.0f : 0.8f);
-
-            d.Command<Fill>(_c1);
-            d.Command<Quad>(b.Position(), b.Size());
-            d.Command<Fill>(_c2);
-            d.Command<Quad>(Vec4<int>{b.X() + b.Width() / 2 - 5, b.Y() + b.Height() / 2, 10, 1});
-            
-        }
-    };
-
     // --------------------------------------------------------------------------
     // ------------------------------- Normal -----------------------------------
     // --------------------------------------------------------------------------
@@ -111,7 +39,7 @@ namespace ButtonGraphics
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
             d.Command<Fill>(Color{ 255, 255, 255, 255 });
-            d.Command<Font>(Gidole14, 14.0f);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<TextAlign>(Hori, Vert);
             if (Hori == Align::CENTER)
                 d.Command<Text>(&b.Name(), b.X() + b.Width() / 2, b.Y() + b.Height() / 2);
@@ -146,7 +74,7 @@ namespace ButtonGraphics
 
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
-            d.Command<Font>(Gidole14, 14.0f);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
             d.Command<Text>(&b.Name(), _padding + b.X() + 6, b.Y() + b.Height() / 2);
@@ -173,7 +101,7 @@ namespace ButtonGraphics
                 int _p = 2;
                 d.Command<Quad>(b.Position() + Vec2<int>{ _p, _p }, Vec2<int>{ b.Size().y - _p * 2, b.Size().y - _p * 2 });
             }
-            d.Command<Font>(Gidole14, 14.0f);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
             d.Command<Text>(&b.Name(), _padding + b.X() + 6, b.Y() + b.Height() / 2);
@@ -200,7 +128,7 @@ namespace ButtonGraphics
                 int _p = 2;
                 d.Command<Quad>(b.Position() + Vec2<int>{ _p, _p }, Vec2<int>{ b.Size().y - _p * 2, b.Size().y - _p * 2 });
             }
-            d.Command<Font>(Gidole14, 14.0f);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
             d.Command<Text>(&b.Name(), _padding + b.X() + 6, b.Y() + b.Height() / 2);
@@ -220,7 +148,7 @@ namespace ButtonGraphics
             
             d.Command<Fill>(_c1);
             d.Command<Quad>(b.Position(), b.Size());
-            d.Command<Font>(Gidole14, 14);
+            d.Command<Font>(Fonts::Gidole14, 14);
             d.Command<Fill>(_c2);
             d.Command<TextAlign>(Align::LEFT, Align::CENTER);
             d.Command<Text>(&b.Name(), _padding + b.X() + 6, b.Y() + b.Height() / 2);
@@ -294,9 +222,9 @@ namespace ButtonGraphics
         {
             Graphics::Texture& _t = b.Active() ? b.m_Texture3 : b.Hovering() ? b.m_Texture2 : b.m_Texture1;
             b.Size({ _t.Width, _t.Height });
-            d.Command<TexturedQuad>(_t, Vec4<int>{b.X(), b.Y(), b.Width(), b.Height()});
+            d.Command<TexturedQuad>(_t, b.X(), b.Y(), b.Width(), b.Height());
             d.Command<Fill>(Color{ 255, 255, 255, 255 });
-            d.Command<Font>(Gidole14, 14.0f);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
             d.Command<TextAlign>(Hori, Vert);
             if (Hori == Align::CENTER)
                 d.Command<Text>(&b.Name(), b.X() + b.Width() / 2, b.Y() + b.Height() / 2);
