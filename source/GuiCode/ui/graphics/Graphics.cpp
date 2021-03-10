@@ -1,5 +1,7 @@
 #include "GuiCode/ui/graphics/Graphics.hpp"
-
+#include <windows.h>
+#include <olectl.h>
+#pragma comment(lib, "oleaut32.lib")
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 
@@ -80,9 +82,7 @@ namespace Graphics
 
     void Init()
     {
-        Graphics::LoadFont(IDI_FONT1, Gidole);
-        Graphics::LoadFont(IDI_FONT1, Gidole14, 14);
-        Graphics::LoadFont(IDI_FONT1, Gidole16, 16);
+
     }
 
     // --------------------------------------------------------------------------
@@ -444,12 +444,13 @@ namespace Graphics
         _shader.SetMat4("view", m_Matrix);
         _shader.SetMat4("projection", m_Projection);
 
-        _shader.SetInt("theTexture", 1);
-        glActiveTexture(GL_TEXTURE1);
+        _shader.SetInt("theTexture", 0);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(_VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
     }
 
     void m_Ellipse(const glm::vec4& dim, const glm::vec2& a)
@@ -702,7 +703,7 @@ namespace Graphics
 
         long _totalWidth = 0;
         long _totalHeight = m_FontSize * 0.7 * _scale;
-        const char* _data = text->data();
+        const char* _data = text->c_str();
 
         auto& _font = Graphics::m_Fonts[m_Font];
 
@@ -753,7 +754,9 @@ namespace Graphics
             x += (_ch.Advance >> 6) * _scale / m_Matrix[0][0];
         }
         
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        glDisable(GL_TEXTURE_2D_ARRAY);
+
     }
 
     void LoadFont(int id, int name)
@@ -859,6 +862,7 @@ namespace Graphics
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
             glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+            glDisable(GL_TEXTURE_2D_ARRAY);
             m_Fontsizes.emplace(name, size);
         }
 
@@ -890,42 +894,8 @@ namespace Graphics
 
     void Texture::SetTexture(HICON id)
     {
-        glGenTextures(1, &TextureID);
-        glBindTexture(GL_TEXTURE_2D, TextureID);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-
-        //Load the image
-        int channels;
-        ICONINFO info;
-        GetIconInfo(id, &info);
-        BITMAP bpm;
-        int size = 0;
-        const int a = GetObject(info.hbmColor, sizeof(bpm), &bpm);
-        if (a > 0)
-            size = (bpm.bmBitsPixel * bpm.bmWidth * bpm.bmHeight) / 8.0;
-
-        auto lockr = LockResource(id);
-
-        unsigned char* _data = stbi_load_from_memory((stbi_uc*)lockr, size, &Width, &Height, &channels, 0);
-        if (_data) {
-            if (channels == 4)
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
-            else
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, _data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else {
-            LOG("Failed to load texture, path: " << id);
-        }
-
-        stbi_image_free(_data);
     }
+
     void Texture::SetTexture(const std::string& path)
     {
         glGenTextures(1, &TextureID);
@@ -952,6 +922,8 @@ namespace Graphics
         else {
             LOG("Failed to load texture, path: " << path);
         }
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
 
         stbi_image_free(_data);
     } 

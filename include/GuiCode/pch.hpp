@@ -44,8 +44,6 @@
 // Rarely updated local headers
 #include "GuiCode/data/Vec.hpp"
 
-#include "gcresource.h"
-
 //struct Color : public Vec4<float>
 //{
 //    constexpr Color(const Color& o)

@@ -40,7 +40,6 @@ void Frame::Render(CommandCollection& d)
     d.Command<Fill>(::Color{ 179, 179, 179, 255 });
     d.Command<TextAlign>(Align::CENTER, Align::CENTER);
     d.Command<Text>(&_line, _x += 45, _y + 16);
-
     if (m_Menu->Components().size() != 0)
     {
         m_Menu->Position({ _x + 6, _y });
