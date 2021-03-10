@@ -47,36 +47,20 @@ namespace Graphics
         int Height = -1;
 
         Texture();
+        Texture(HICON a);
         Texture(unsigned int a);
         Texture(const std::string& path);
         void SetTexture(const std::string& path);
+        void SetTexture(HICON a);
         operator unsigned int() { return TextureID; }
-    };
-
-    struct Textures
-    {
-        inline static Texture
-            FileIcon,
-            FolderIcon,
-            AudioFileIcon,
-            Cross1, Cross2, Cross3,
-            Maxi1, Maxi2, Maxi3,
-            Maxi4, Maxi5, Maxi6,
-            Mini1, Mini2, Mini3,
-            Logo;
     };
 
     // --------------------------------------------------------------------------
     // -------------------------- Text Rendering --------------------------------
     // --------------------------------------------------------------------------
-    
-    enum Fonts
-    {
-        Gidole, Gidole14, Gidole16
-    };
 
-    void LoadFont(const std::string& path, Fonts name);
-    void LoadFont(const std::string& path, Fonts name, unsigned int size);
+    void LoadFont(int id, int name);
+    void LoadFont(int id, int name, unsigned int size);
 
     void Init();
 };

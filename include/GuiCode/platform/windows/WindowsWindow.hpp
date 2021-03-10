@@ -1,5 +1,6 @@
 #pragma once
 #include "GuiCode/ui/window/WindowBase.hpp"
+#include "GuiCode/ui/graphics/Graphics.hpp"
 
 // --------------------------------------------------------------------------
 // -------------------------- Windows Window --------------------------------
@@ -74,7 +75,7 @@ public:
         m_ShellIconCallbacks.emplace(nidApp.uID, callback);
     }
 
-private:
+protected:
     bool m_InitialResize = true,
         m_Aero = false;
 
@@ -94,6 +95,9 @@ private:
     
     GLFWcursor* m_GLFWCursor = 0;
     glm::mat4 m_Projection;
+
+    HICON m_hWindowIcon;
+    Graphics::Texture m_IconTexture;
 
     std::queue<Event> m_EventQueue;
 

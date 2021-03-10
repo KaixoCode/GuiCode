@@ -66,7 +66,7 @@ namespace Graphics
         CommandBase(Type type, const Vec2<int>& d1, const Vec2<int>& d2) : type(type), dimension({ d1.x, d1.y, d2.x, d2.y }), rotation(0) {}
                          
         // Textured Quad 
-        CommandBase(Type type, unsigned int t, int x, int y, int w, int h) : type(type), texture(t), textureDimension({ x, y, w, h }) {}
+        //CommandBase(Type type, unsigned int t, int x, int y, int w, int h) : type(type), texture(t), textureDimension({ x, y, w, h }) {}
         CommandBase(Type type, unsigned int t, const Vec4<int>& d) : type(type), texture(t), textureDimension(d) {}
                          
         // Triangle      

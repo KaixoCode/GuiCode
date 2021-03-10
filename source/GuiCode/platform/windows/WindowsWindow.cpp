@@ -549,9 +549,11 @@ void WindowsWindow::Icon(int id)
     //images[0].width = a.width;
     //images[0].height = a.height;
 
-    HICON hWindowIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(id));
-    SendMessage(GetWin32Handle(), WM_SETICON, ICON_BIG, (LPARAM)hWindowIcon);
-    SendMessage(GetWin32Handle(), WM_SETICON, ICON_SMALL, (LPARAM)hWindowIcon);
+    m_IconTexture.SetTexture(m_hWindowIcon);
+
+    m_hWindowIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(id));
+    SendMessage(GetWin32Handle(), WM_SETICON, ICON_BIG, (LPARAM)m_hWindowIcon);
+    SendMessage(GetWin32Handle(), WM_SETICON, ICON_SMALL, (LPARAM)m_hWindowIcon);
 
 
     //glfwSetWindowIcon(*this, 1, images);

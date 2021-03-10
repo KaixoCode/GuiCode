@@ -44,6 +44,8 @@
 // Rarely updated local headers
 #include "GuiCode/data/Vec.hpp"
 
+#include "resource.h"
+
 //struct Color : public Vec4<float>
 //{
 //    constexpr Color(const Color& o)
@@ -127,3 +129,8 @@ int sleepfor = ns - diffl; \
 if (sleepfor > 0) \
 std::this_thread::sleep_for(std::chrono::nanoseconds(sleepfor)); \
 beginl = std::chrono::steady_clock::now();
+
+
+#define Gidole 1
+#define Gidole14 2
+#define Gidole16 3

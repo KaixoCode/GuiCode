@@ -21,7 +21,7 @@ void SmallFrame::Render(CommandCollection& d)
     int _y = Height() - 32 + _offset;
     static const std::string _line = "|";
 
-    d.Command<TexturedQuad>(Graphics::Textures::Logo, _x + 12, Height() - 26 + _offset, 20, 20);
+    d.Command<TexturedQuad>(m_IconTexture, Vec4<int>{_x + 12, Height() - 26 + _offset, 20, 20});
     d.Command<Fill>(::Color{ 179, 179, 179, 255 });
     d.Command<TextAlign>(Align::CENTER, Align::CENTER);
     d.Command<Text>(&_line, _x += 45, _y + 16);
