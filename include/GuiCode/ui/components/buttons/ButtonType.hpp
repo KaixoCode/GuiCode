@@ -104,7 +104,7 @@ namespace ButtonType
             return m_CurrentKey;
         }
 
-    private:
+    protected:
         static inline int m_CurrentKey = 0;
         static inline std::unordered_map<int, std::vector<List*>> m_Lists;
         bool m_Selected = false;
