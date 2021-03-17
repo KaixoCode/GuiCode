@@ -23,8 +23,8 @@ public:
      * @param hideonclose when true this window will not exit the program but simply hide the window when closed.
      * @param r resizeable
      */
-    SmallFrame(const std::string& name, const int width, const int height, bool hideonclose = false, bool r = true)
-        : Window(name, width, height, hideonclose, r),
+    SmallFrame(const std::string& name, const int width, const int height, bool hideonclose = false, bool show = false, bool r = true)
+        : Window(name, width, height, hideonclose, show, r),
         m_CloseButton(&Emplace<Button<ButtonGraphics::CloseButton, ButtonType::Normal>>([&]() { this->Close(); }, "")), 
         m_Panel(&Emplace<::Panel>())
     {
