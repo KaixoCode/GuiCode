@@ -3,6 +3,168 @@
 #include "GuiCode/ui/components/Component.hpp"
 #include "GuiCode/ui/events/EventListener.hpp"
 
+struct Div;
+struct Div : public Component
+{
+    /**
+     * When DivSize is set to AUTO (-1), the layout interpretter will equally divide
+     * available space between all Divs marked AUTO within a Div.
+     */
+    static inline int AUTO = -1;
+
+    /**
+     * Allignment of objects inside of a Div.
+     */
+    enum class Alignment
+    {
+        Left, Right, Top, Bottom, Center, // For an Object only
+        Vertical, Horizontal			  // For Divs only.
+    };
+
+    /**
+     * Type of Div. Either containing a single Object or more Divs.
+     */
+    enum class Type
+    {
+        Divs, Object
+    };
+
+    /**
+     * Constructor.
+     * @param t alignment
+     */
+    Div(Alignment t = Alignment::Horizontal)
+        : m_Align(t)
+    {}
+
+    /**
+     * Get the type of this Div, either Divs or Object.
+     */
+    auto DivType() -> Type { return m_Type; }
+
+    /**
+     * Depending on the Div type: Set the alignment of the Divs contained in this Div or the alignment of the Object in this Div.
+     * @param a alignment
+     */
+    void Align(Alignment a) { m_Align = a; }
+
+    /**
+     * Get the current alignment of this Div.
+     */
+    auto Align() -> Alignment { return m_Align; }
+
+    /**
+     * Get the object if this Div is of type Object.
+     * @return object
+     */
+    auto Object() -> Component& { return *m_Object; }
+
+    /**
+     * Set the object if this Div is of type Object.
+     * @param o object
+     */
+    void Object(Component* o)
+    {
+        if (m_Align == Alignment::Vertical || m_Align == Alignment::Horizontal)
+            m_Align = Alignment::Center;
+        m_Type = Type::Object; m_Object = o;
+    }
+
+    /**
+     * Set the object if this Div is of type Object.
+     * @param o object
+     */
+    void Object(Component& o)
+    {
+        if (m_Align == Alignment::Vertical || m_Align == Alignment::Horizontal)
+            m_Align = Alignment::Center;
+        m_Type = Type::Object; m_Object = &o;
+    }
+
+    /**
+     * Set padding for this Div.
+     * @param s padding
+     */
+    void Padding(int s) { m_Padding = s; }
+
+    /**
+     * Get padding for this Div.
+     * @return padding
+     */
+    int  Padding() { return m_Padding; }
+
+    /**
+     * When Dividers is set to true, the interpretter will put dividers between the Divs
+     * contained in this Div.
+     * @param s dividers
+     */
+    void Dividers(bool s) { m_Dividers = s; }
+
+    /**
+     * Returns true when dividers should be displayed between the Divs inside this Div.
+     * @returns true if has dividers
+     */
+    bool Dividers() { return m_Dividers; }
+
+    /**
+     * Set the size of this Div in pixels.
+     * @param s size
+     */
+    void DivSize(int s) { m_CellSize = s; }
+
+    /**
+     * Get the size of this Div in pixels.
+     * @return size
+     */
+    int  DivSize() { return m_CellSize; }
+
+    /**
+     * Returns all the Divs inside this Div.
+     * @return all the Divs in this Div
+     */
+    auto Divs() ->std::vector<std::unique_ptr<Div>>& { return m_Divs; }
+
+    /**
+     * Set the amount of Divs in this Div.
+     * @param i amount of Divs
+     */
+    void Divs(int i)
+    {
+        m_Cells = i;
+        m_Type = Type::Divs;
+        while (m_Divs.size() < i)
+            m_Divs.emplace_back(std::make_unique<Div>());
+    }
+
+    /**
+     * Get the Div at the index.
+     * @param index index
+     */
+    Div& operator[](int index) { return *m_Divs[index]; }
+
+    /**
+     * Set the object if this Div is of type Object.
+     * @param o object
+     */
+    void operator=(Component& o) { Object(o); }
+
+    /**
+     * Set the object if this Div is of type Object.
+     * @param o object
+     */
+    void operator=(Component* o) { Object(o); }
+
+private:
+    std::vector<std::unique_ptr<Div>> m_Divs;
+    Component* m_Object;
+    Type m_Type = Type::Divs;
+    Alignment m_Align = Alignment::Center;
+    int m_CellSize = AUTO;
+    int m_Cells = 0;
+    int m_Padding = 0;
+    bool m_Dividers = false;
+};
+
 // --------------------------------------------------------------------------
 // --------------------------- LayoutManager --------------------------------
 // --------------------------------------------------------------------------
@@ -45,6 +207,7 @@ struct LayoutManager
         else if (m_Layout == Layout::Stack) UpdateLayoutStack(dim, components);
         else if (m_Layout == Layout::SidewaysStack) UpdateLayoutSidewaysStack(dim, components);
         else if (m_Layout == Layout::Border) UpdateLayoutBorder(dim, components);
+        else if (m_Layout == Layout::Divs) UpdateLayoutDivs(dim, components);
         m_MousePress = Event::MouseButton::NONE;
     }
 
@@ -69,6 +232,7 @@ struct LayoutManager
      */
     Vec2<int> BiggestCoords() { return { m_BiggestX, m_BiggestY }; }
 
+    ::Div& Div() { return m_Div; }
 
     template<typename TypeCollection>
     void UpdateLayoutGrid(const Vec4<int>& dim, TypeCollection& components)
@@ -407,6 +571,155 @@ struct LayoutManager
         m_BiggestY = dim.y + dim.height;
     }
 
+    template<typename TypeCollection>
+    void UpdateLayoutDivs(const Vec4<int>& dim, TypeCollection& components)
+    {
+        m_Dividers.clear();
+        UpdateDiv(Div(), dim);
+    }
+
+    void UpdateDiv(::Div& div, const Vec4<int>& dim)
+    {
+        if (div.DivType() == Div::Type::Object)
+            SetObject(div, dim);
+
+        else
+            if (div.Align() == Div::Alignment::Horizontal)
+            {
+                // Get all the sizes of the sub-divs
+                std::vector<int> sizes;
+                int width = dim.width, amt = 0, obamt = 0;
+                for (auto& i : div.Divs())
+                    if (i->DivSize() == Div::AUTO)
+                    {
+                        if (i->DivType() == Div::Type::Object)
+                            sizes.push_back(i->Object().Size().width + i->Padding()), width -= i->Object().Size().width + i->Padding(), obamt++;
+                        else
+                            sizes.push_back(0), amt++;
+                    }
+                    else
+                        width -= i->DivSize(), sizes.push_back(-i->DivSize());
+
+                // See what's left to divide
+                int x = dim.x;
+                int w = width;
+                if (amt)
+                    w /= amt;
+                else if (obamt)
+                    w /= obamt;
+
+                // If there's some space left, either give it to divs or objects
+                if (w > 0)
+                    for (auto& i : sizes)
+                        if (amt && i == 0) // Give space to div with no given size
+                            i = w;
+                        else if (obamt && i > 0) // Give space to object
+                            i += w;
+
+                // if we're short on space, take some away from objects or divs.
+                if (width < 0)
+                    for (auto& i : sizes)
+                        if (i > 0 && obamt) // Take away from object
+                            i -= w;
+                        else if (i < 0 && !obamt) // Take away from div with a given size
+                            i -= w;
+
+                // Set sizes and positions
+                for (int i = 0; i < div.Divs().size(); i++)
+                {
+                    if (div.Dividers() && i != 0)
+                        m_Dividers.emplace_back(Vec4<int>{ x, dim.y + 8, 1, dim.height - 16 });
+
+                    if (sizes[i] < 0) // If div with given space, size is negative so negate
+                        UpdateDiv(*div.Divs()[i], { x + div.Padding(), dim.y + div.Padding(), -sizes[i] - 2 * div.Padding(), dim.height - 2 * div.Padding() }), x += -sizes[i];
+                    else // Otherwise just recurse
+                        UpdateDiv(*div.Divs()[i], { x + div.Padding(), dim.y + div.Padding(), sizes[i] - 2 * div.Padding(), dim.height - 2 * div.Padding() }), x += sizes[i];
+                }
+            }
+            else
+            {
+                // Get all the sizes of the sub-divs
+                std::vector<int> sizes;
+                int height = dim.height, amt = 0, obamt = 0;
+                for (auto& i : div.Divs())
+                    if (i->DivSize() == Div::AUTO)
+                    {
+                        if (i->DivType() == Div::Type::Object)
+                            sizes.push_back(i->Object().Size().height + i->Padding()), height -= i->Object().Size().height + i->Padding(), obamt++;
+                        else
+                            sizes.push_back(0), amt++;
+                    }
+                    else
+                        height -= i->DivSize(), sizes.push_back(-i->DivSize());
+
+                // See what's left to divide
+                int y = dim.y;
+                int h = height;
+                if (amt)
+                    h /= amt;
+                else if (obamt)
+                    h /= obamt;
+
+                // If there's some space left, either give it to divs or objects
+                if (h > 0)
+                    for (auto& i : sizes)
+                        if (amt && i == 0) // Give space to div with no given size
+                            i = h;
+                        else if (obamt && i > 0) // Give space to object
+                            i += h;
+
+                // if we're short on space, take some away from objects or divs.
+                if (height < 0)
+                    for (auto& i : sizes)
+                        if (i > 0 && obamt) // Take away from object
+                            i += h;
+                        else if (i < 0 && !obamt) // Take away from div with a given size
+                            i += h;
+
+                // Set sizes and positions
+                for (int i = 0; i < div.Divs().size(); i++)
+                {
+                    if (div.Dividers() && i != 0)
+                        m_Dividers.emplace_back(Vec4<int>{ dim.x + 8, y, dim.width - 16, 1 });
+
+                    if (sizes[i] < 0) // If div with given space, size is negative so negate
+                        UpdateDiv(*div.Divs()[i], { dim.x + div.Padding(), y + div.Padding(), dim.width - 2 * div.Padding(), -sizes[i] - 2 * div.Padding() }), y += -sizes[i];
+                    else // Otherwise just recurse
+                        UpdateDiv(*div.Divs()[i], { dim.x + div.Padding(), y + div.Padding(), dim.width - 2 * div.Padding(), sizes[i] - 2 * div.Padding() }), y += sizes[i];
+                }
+            }
+    }
+
+    void SetObject(::Div& div, const Vec4<int>& dim)
+    {
+        // Get the object from the div
+        Component* object = &div.Object();
+
+        // Calculate the position using the alignment
+        Vec2<int> position = { dim.x, dim.y };
+        if (div.Align() == Div::Alignment::Center)
+            position += { dim.width / 2 - object->Size().width / 2, dim.height / 2 - object->Size().height / 2 };
+        else if (div.Align() == Div::Alignment::Right)
+            position += { dim.width - object->Size().width, dim.height / 2 - object->Size().height / 2 };
+        else if (div.Align() == Div::Alignment::Left)
+            position += { 0, dim.height / 2 - object->Size().height / 2 };
+        else if (div.Align() == Div::Alignment::Bottom)
+            position += { dim.width / 2 - object->Size().width / 2, 0 };
+        else if (div.Align() == Div::Alignment::Top)
+            position += { dim.width / 2 - object->Size().width / 2, dim.height - object->Size().height };
+
+        object->Position(position);
+    }
+
+    void DrawDividers(CommandCollection& d)
+    {
+        d.Command<Graphics::Fill>(m_DivColor);
+        for (auto& i : m_Dividers)
+            d.Command<Graphics::Quad>(i);
+    }
+
+    void DividerColor(const Color& c) { m_DivColor = c; }
+
     int m_Constrain(int a, int b, int c)
     {
         if (c == -1)
@@ -415,8 +728,13 @@ struct LayoutManager
             return a < b ? b : a > c ? c : a;
     }
 
+
     ::Layout m_Layout = { ::Layout::Free };
     EventListener m_Listener;
+    ::Div m_Div;
+
+    Color m_DivColor;
+    std::vector<Vec4<int>> m_Dividers;
 
     int m_MouseX = 0,
         m_MouseY = 0,

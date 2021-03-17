@@ -61,6 +61,7 @@ void Panel::Render(CommandCollection& d)
         d.Command<FrameBuffer>(m_PanelId, m_NeedsRedraw);
         Background(d);
         Container::Render(d);
+        m_LayoutManager.DrawDividers(d);
         d.Command<FrameBufferEnd>();
         d.Command<PopMatrix>();
     }
@@ -72,6 +73,7 @@ void Panel::Render(CommandCollection& d)
         Background(d);
 
         Container::Render(d);
+        m_LayoutManager.DrawDividers(d);
         d.Command<PopMatrix>();
     }
         

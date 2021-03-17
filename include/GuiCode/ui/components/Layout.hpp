@@ -30,6 +30,11 @@ struct Layout
          * Border layout, with a North, East, South, West, and Center component.
          */
         Border, 
+
+        /**
+         * Components are located inside divs, easily expandable and highly customizable.
+         */
+        Divs,
         
         /**
          * Free roaming layout. Practically no layout.

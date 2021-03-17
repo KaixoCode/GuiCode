@@ -78,9 +78,12 @@ public:
     bool NeedsRedraw() override { if (m_SmartPanel) return false; else return m_NeedsRedraw; }
     void NeedsRedraw(bool v) override { m_NeedsRedraw = v; }
 
+    LayoutManager& LayoutManager() { return m_LayoutManager; }
+    Div& Div() { return m_LayoutManager.Div(); }
+
 protected:
     ::Color m_Background = { 0, 0, 0, 0 };
-    LayoutManager m_LayoutManager;
+    ::LayoutManager m_LayoutManager;
     bool m_AutoResizeX = false, 
         m_AutoResizeY = false,
         m_SmartPanel = false;
