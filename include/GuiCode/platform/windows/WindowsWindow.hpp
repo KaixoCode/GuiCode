@@ -28,6 +28,7 @@ public:
     auto Iconify()             -> void override { glfwIconifyWindow(*this); }
     auto Close()               -> void override { glfwSetWindowShouldClose(*this, GL_TRUE); }
     auto Show()                -> void override { ReleaseCapture(); ShowWindow(GetWin32Handle(), SW_SHOW); }
+    auto Visible(bool b)       -> void override { WindowBase::Visible(b); }
     auto Hide()                -> void override { ShowWindow(GetWin32Handle(), SW_HIDE); }
     auto ShouldClose(bool b)   -> void override { glfwSetWindowShouldClose(m_Window, b); };
     auto Color(Color c)-> void { m_Color = c; }

@@ -154,6 +154,16 @@ struct Div : public Component
      */
     void operator=(Component* o) { Object(o); }
 
+    /**
+     * Clear this div and all sub divs.
+     */
+    void Clear()
+    {
+        m_Divs.clear();
+        m_Object = nullptr;
+        m_Cells = 0;
+    }
+
 private:
     std::vector<std::unique_ptr<Div>> m_Divs;
     Component* m_Object;
@@ -574,6 +584,10 @@ struct LayoutManager
     template<typename TypeCollection>
     void UpdateLayoutDivs(const Vec4<int>& dim, TypeCollection& components)
     {
+        if (m_PrevDim == dim)
+            return;
+
+        m_PrevDim = dim;
         m_Dividers.clear();
         UpdateDiv(Div(), dim);
     }
@@ -709,6 +723,12 @@ struct LayoutManager
             position += { dim.width / 2 - object->Size().width / 2, dim.height - object->Size().height };
 
         object->Position(position);
+
+        if (object->Width() + position.x > m_BiggestX)
+            m_BiggestX = object->Width() + position.x;
+
+        if (object->Height() + position.y > m_BiggestY)
+            m_BiggestY = object->Height() + position.y;
     }
 
     void DrawDividers(CommandCollection& d)
@@ -735,6 +755,7 @@ struct LayoutManager
 
     Color m_DivColor;
     std::vector<Vec4<int>> m_Dividers;
+    Vec4<int> m_PrevDim;
 
     int m_MouseX = 0,
         m_MouseY = 0,

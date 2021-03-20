@@ -29,6 +29,7 @@ public:
     virtual auto Close()               -> void = 0;
     virtual auto Show()                -> void = 0;
     virtual auto Hide()                -> void = 0;
+    virtual auto Visible(bool b)       -> void { b ? Show() : Hide(); };
     virtual auto ShouldClose(bool b)   -> void = 0;
     virtual auto Loop()                -> void = 0;
 
