@@ -139,7 +139,7 @@ namespace ButtonType
          * @param size size
          * @param key keycombo
          */
-        Toggle(ToggleCallback a = [] (bool state) {}, const std::string& name = "Button",
+        Toggle(ToggleCallback a = [] (bool& state) {}, const std::string& name = "Button",
             Key key = Key::NONE);
 
         /**
@@ -151,7 +151,7 @@ namespace ButtonType
         Toggle(const std::string& name = "Button",
             Key key = Key::NONE);
 
-        auto Active(bool a) -> void override { if (m_Link) *m_Link = a; m_Active = a; if (m_ToggleCallback) m_ToggleCallback(a); }
+        auto Active(bool a) -> void override { if (m_Link) *m_Link = a; m_Active = a; if (m_ToggleCallback) m_ToggleCallback(m_Active); }
         bool Active() const override { return m_Active; }
 
         void Update(const Vec4<int>& viewport) override;

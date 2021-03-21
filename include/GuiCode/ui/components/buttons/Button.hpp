@@ -2,7 +2,7 @@
 #include "GuiCode/ui/components/Container.hpp"
 
 using Callback = std::function<void()>;
-using ToggleCallback = std::function<void(bool)>;
+using ToggleCallback = std::function<void(bool&)>;
 
 // --------------------------------------------------------------------------
 // ---------------------------- Button Base ---------------------------------
