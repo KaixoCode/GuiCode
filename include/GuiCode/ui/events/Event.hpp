@@ -253,7 +253,7 @@ public:
             if (_f)
                 _str = _str + "F" + std::to_string(_l - 0x6F);
             if (_l == 188) _str += ',';
-            else
+            else if (!_f)
                 _str += static_cast<char>(_l);
 
             return _keys.emplace(m_Value, std::move(_str)).first->second;
