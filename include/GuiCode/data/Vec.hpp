@@ -92,7 +92,7 @@ struct Vec4
 {
     union 
     {
-        Vec2<T> position;
+        Vec2<T> position{ 0, 0 };
         struct
         {
             union { T x, r; };
@@ -102,7 +102,7 @@ struct Vec4
     
     union 
     {
-        Vec2<T> size;
+        Vec2<T> size{ 0, 0 };
         struct
         {
             union { T z, b, width; };
