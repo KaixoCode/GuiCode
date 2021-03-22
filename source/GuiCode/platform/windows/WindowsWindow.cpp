@@ -346,6 +346,8 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
     }
     break;
+    case WM_SYSKEYDOWN:
+    case WM_SYSKEYUP:
     case WM_KEYDOWN:
     case WM_KEYUP:
     {
@@ -356,8 +358,8 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             | ((GetKeyState(VK_CAPITAL) & 0x8000) ? Event::Mod::CAPS_LOCK : 0);
 
         int _repeat = (lParam & 0x40000000);
-        _self->KeyCallback(_self, wParam, _repeat, uMsg == WM_KEYDOWN || uMsg == WM_CHAR ? Event::Type::KeyPressed : Event::Type::KeyReleased, _mod);
-        break;
+        _self->KeyCallback(_self, wParam, _repeat, uMsg == WM_SYSKEYDOWN || uMsg == WM_KEYDOWN || uMsg == WM_CHAR ? Event::Type::KeyPressed : Event::Type::KeyReleased, _mod);
+        return 0;
     }
     case WM_MOUSEWHEEL:
     {
@@ -477,7 +479,7 @@ void WindowsWindow::MouseWheelCallback(WindowsWindow* window, int amount, int mo
 void WindowsWindow::KeyCallback(WindowsWindow* window, int key, int repeat, Event::Type action, int mod)
 {
     auto _self = window;
-
+    
     _self->m_EventQueue.emplace(action, key, mod, repeat);
 }
 
