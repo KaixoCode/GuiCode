@@ -57,7 +57,7 @@ namespace ButtonType
         {
             m_Listener += [this](Event::MouseReleased& event)
             {
-                if (event.button == Event::MouseButton::LEFT)
+                if (event.button == Event::MouseButton::LEFT && Active())
                 {
                     if (!Disabled() && Component::WithinBounds({ event.x, event.y }))
                     {
