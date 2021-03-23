@@ -95,6 +95,7 @@ namespace Graphics
     // --------------------------- Basic Shapes ---------------------------------
     // --------------------------------------------------------------------------
 
+    void m_Line(const glm::vec4& dim, float width);
     void m_Quad(const glm::vec4& dim, float rotation);
     void m_TexturedQuad(unsigned int texture, const glm::vec4& dim);
     void m_Ellipse(const glm::vec4& dim, const glm::vec2& a);
@@ -138,6 +139,7 @@ namespace Graphics
                 case FontSize: m_FontSize = a->fontSize; break;
                 case Font: m_Font = (Fonts)a->font, m_FontSize = a->fontSize; break;
                 case Quad: m_Quad(a->dimension, a->rotation); break;
+                case Line: m_Line(a->dimension, a->rotation); break;
                 case TexturedQuad: m_TexturedQuad(a->texture, a->textureDimension); break;
                 case Text: m_Text(a->text, a->position.x, a->position.y); break;
                 case Ellipse: m_Ellipse(a->diameters, a->angles); break;
@@ -267,6 +269,122 @@ namespace Graphics
     // --------------------------- Basic Shapes ---------------------------------
     // --------------------------------------------------------------------------
 
+    void m_Line(const glm::vec4& dim, float width)
+    {
+        //static Shader _shader
+        //{
+        //    SHADER("QuadVertex.shader"),
+        //    SHADER("QuadFragment.shader")
+        //};
+
+        static Shader _shader
+        {
+            // Vertex shader
+            "#version 330 core \n "
+            "layout(location = 0) in vec2 aPos; "
+            "uniform vec4 dim; "
+            "void main() { "
+            "    gl_Position = vec4(aPos.x * dim.z + dim.x, aPos.y * dim.w + dim.y, 0.0, 1.0); "
+            "}",
+
+            // Fragment shader
+            "#version 330 core \n "
+            "out vec4 FragColor; \n"
+            "uniform vec4 color; \n"
+            "uniform vec4 realdim; \n"
+            "uniform float width; \n"
+            "float minimum_distance(vec2 v, vec2 w, vec2 p) {\n"
+            "    // Return minimum distance between line segment vw and point p\n"
+            "    float l2 = pow(distance(w, v), 2);  // i.e. |w-v|^2 -  avoid a sqrt\n"
+            "    if (l2 == 0.0) return distance(p, v);   // v == w case\n"
+            "    // Consider the line extending the segment, parameterized as v + t (w - v).\n"
+            "    // We find projection of point p onto the line.\n "
+            "    // It falls where t = [(p-v) . (w-v)] / |w-v|^2\n"
+            "    // We clamp t from [0,1] to handle points outside the segment vw.\n"
+            "    float t = max(0, min(1, dot(p - v, w - v) / l2));\n"
+            "    vec2 projection = v + t * (w - v);  // Projection falls on the segment\n"
+            "    return distance(p, projection);\n"
+            "}\n"
+            "void main() { \n"
+            "    float dist = minimum_distance(realdim.zw, realdim.xy, gl_FragCoord.xy);\n"
+            "    if (dist / width > 0.5) FragColor = vec4(color.rgb, 2 * (1 - (dist / width)) * color.a); \n"
+            "    else FragColor = color; \n"
+            "} \n"
+
+        };
+
+        if (m_CurrentWindowId == -1)
+            return;
+
+        static std::unordered_map<int, unsigned int> _VAOs;
+        std::unordered_map<int, unsigned int>::iterator _it;
+        static unsigned int _VAO, _VBO, _EBO;
+        if ((_it = _VAOs.find(m_CurrentWindowId)) != _VAOs.end())
+            _VAO = std::get<1>(*_it);
+
+        else
+        {
+            float _vertices[] = {
+                0.0f, 0.0f,
+                1.0f, 1.0f,
+            };
+
+            glGenVertexArrays(1, &_VAO);
+            glGenBuffers(1, &_VBO);
+
+            glBindVertexArray(_VAO);
+
+            glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+            glEnableVertexAttribArray(0);
+
+            _VAO = std::get<1>(_VAOs.emplace(m_CurrentWindowId, _VAO));
+        }
+
+        if (prevShader != 7)
+            _shader.Use();
+        prevShader = 7;
+
+        glm::vec4 _tdim = dim;
+        float delta_x = _tdim.z - _tdim.x;
+        float delta_y = _tdim.w - _tdim.y;
+        float angle = std::atan2(delta_y, delta_x);
+        float dx = std::cos(angle);
+        float dy = std::sin(angle);
+        _tdim.x -= dx * width * 0.25;
+        _tdim.z += dx * width * 0.25;
+        _tdim.y -= dy * width * 0.25;
+        _tdim.w += dy * width * 0.25;
+
+        glm::vec4 _dim;
+        _dim.x = (_tdim.x + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
+        _dim.y = (_tdim.y + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];
+        _dim.z = (_tdim.z + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0] - _dim.x;
+        _dim.w = (_tdim.w + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1] - _dim.y;
+
+        glm::vec4 _rdim{ dim.x + m_Matrix[3][0], dim.y + m_Matrix[3][1], dim.z + m_Matrix[3][0], dim.w + m_Matrix[3][1] };
+
+        delta_x = _rdim.z - _rdim.x;
+        delta_y = _rdim.w - _rdim.y;
+        angle = std::atan2(delta_y, delta_x);
+        dx = std::cos(angle);
+        dy = std::sin(angle);
+        _rdim.x += dx * width * 0.25;
+        _rdim.z -= dx * width * 0.25;
+        _rdim.y += dy * width * 0.25;
+        _rdim.w -= dy * width * 0.25;
+
+        _shader.SetVec4("dim", _dim);
+        _shader.SetVec4("realdim", _rdim);
+        _shader.SetFloat("width", width * 0.5f);
+        _shader.SetVec4("color", m_Fill);
+        
+        glLineWidth(width);
+        glBindVertexArray(_VAO);
+        glDrawArrays(GL_LINES, 0, 2);
+    }
 
 
     void m_Quad(const glm::vec4& dim, float rotation)
@@ -474,8 +592,6 @@ namespace Graphics
             
             "uniform mat4 mvp; "
             
-            "out vec2 pos; "
-            
             "void main() { "
             "    gl_Position = mvp * vec4(aPos, 0.0, 1.0);"
             "} ",
@@ -500,7 +616,7 @@ namespace Graphics
             "    float r = (pow(pos.x - x, 2) / pow(dimensions.z / 2, 2)) + (pow(pos.y - y, 2) / pow(dimensions.w / 2, 2)); "
             "    if (aa > aend) { discard; } "
             "    else if (r > 1) { discard; } "
-            "    else if (r > 0.9) { FragColor = vec4(color.rgb, (0.5 / r) * color.a); } "
+            "    else if (r > 0.90) { FragColor = vec4(color.rgb, 10 * (1 - r) * color.a); } "
             "    else { FragColor = color; } "
             "} "
         };
