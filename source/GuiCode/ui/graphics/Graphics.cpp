@@ -203,7 +203,7 @@ namespace Graphics
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
                 exit(-1);
 
-            m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, false, m_Size });
+            m_FrameBuffers.emplace(id, FrameBufferTexture{ _fb, _rt, false, { 0, 0, m_Size } });
         }
 
         bool drawn = m_Size.width == -1;
