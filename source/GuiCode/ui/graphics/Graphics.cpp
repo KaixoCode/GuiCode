@@ -155,12 +155,13 @@ namespace Graphics
                 glScissor(
                     std::ceil((a->dimension.x + m_Matrix[3][0]) / m_Scaling), 
                     std::ceil((a->dimension.y + m_Matrix[3][1]) / m_Scaling),
-                    std::ceil(a->dimension.z / m_Scaling), std::ceil(a->dimension.w / m_Scaling)); break;
+                    std::ceil(a->dimension.z / m_Scaling), 
+                    std::ceil(a->dimension.w / m_Scaling)); break;
             case Viewport: glViewport(
-                std::ceil(a->dimension.x / m_Scaling), 
-                std::ceil(a->dimension.y / m_Scaling),
-                std::ceil(a->dimension.z / m_Scaling), 
-                std::ceil(a->dimension.w / m_Scaling)); break;
+                std::floor(a->dimension.x / m_Scaling),
+                std::floor(a->dimension.y / m_Scaling),
+                std::floor(a->dimension.z / m_Scaling),
+                std::floor(a->dimension.w / m_Scaling)); break;
             case ClearClip: glDisable(GL_SCISSOR_TEST); break;
             case Translate: m_Translate(a->translate); break;
             case Scale: m_Scale(a->scale); break;
