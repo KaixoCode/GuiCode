@@ -12,7 +12,7 @@ class Gui
 public:
 	Gui()
 	{
-		RightClickMenu::Get().Hide();
+		//RightClickMenu::Get().Hide();
 		//Dragging::Get().Hide();
 	}
 

@@ -39,6 +39,7 @@ namespace Graphics
     std::stack<glm::mat4> m_MatrixStack;
     glm::mat4 m_Matrix{ 1.0f };
     int m_CurrentWindowId = -1;
+    float m_Scaling = 1;
     bool m_WindowFocused = false;
     Vec2<int> m_Size;
 
@@ -77,6 +78,7 @@ namespace Graphics
     bool WindowFocused() { return m_WindowFocused; }
     void WindowFocused(bool a) { m_WindowFocused = a; }
     void CurrentWindow(int a) { m_CurrentWindowId = a; }
+    void Scaling(float scale) { m_Scaling = scale; }
 
     void Init()
     {
@@ -148,8 +150,17 @@ namespace Graphics
             }
             switch (a->type)
             {
-            case Clip: glEnable(GL_SCISSOR_TEST); glScissor(a->dimension.x + m_Matrix[3][0], a->dimension.y + m_Matrix[3][1], a->dimension.z, a->dimension.w); break;
-            case Viewport: glViewport(a->dimension.x, a->dimension.y, a->dimension.z, a->dimension.w); break;
+            case Clip: 
+                glEnable(GL_SCISSOR_TEST); 
+                glScissor(
+                    std::ceil((a->dimension.x + m_Matrix[3][0]) / m_Scaling), 
+                    std::ceil((a->dimension.y + m_Matrix[3][1]) / m_Scaling),
+                    std::ceil(a->dimension.z / m_Scaling), std::ceil(a->dimension.w / m_Scaling)); break;
+            case Viewport: glViewport(
+                std::ceil(a->dimension.x / m_Scaling), 
+                std::ceil(a->dimension.y / m_Scaling),
+                std::ceil(a->dimension.z / m_Scaling), 
+                std::ceil(a->dimension.w / m_Scaling)); break;
             case ClearClip: glDisable(GL_SCISSOR_TEST); break;
             case Translate: m_Translate(a->translate); break;
             case Scale: m_Scale(a->scale); break;
@@ -347,6 +358,8 @@ namespace Graphics
             _shader.Use();
         prevShader = 7;
 
+        width /= m_Scaling;
+
         glm::vec4 _tdim = dim;
         float delta_x = _tdim.z - _tdim.x;
         float delta_y = _tdim.w - _tdim.y;
@@ -364,7 +377,11 @@ namespace Graphics
         _dim.z = (_tdim.z + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0] - _dim.x;
         _dim.w = (_tdim.w + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1] - _dim.y;
 
-        glm::vec4 _rdim{ dim.x + m_Matrix[3][0], dim.y + m_Matrix[3][1], dim.z + m_Matrix[3][0], dim.w + m_Matrix[3][1] };
+        glm::vec4 _rdim{ 
+            (dim.x + m_Matrix[3][0]) / m_Scaling, 
+            (dim.y + m_Matrix[3][1]) / m_Scaling, 
+            (dim.z + m_Matrix[3][0]) / m_Scaling, 
+            (dim.w + m_Matrix[3][1]) / m_Scaling };
 
         delta_x = _rdim.z - _rdim.x;
         delta_y = _rdim.w - _rdim.y;
@@ -674,7 +691,7 @@ namespace Graphics
 
 
 
-        glm::vec4 _dim{ dim.x + m_Matrix[3][0], dim.y + m_Matrix[3][1], dim.z, dim.w };
+        glm::vec4 _dim{ (dim.x + m_Matrix[3][0]) / m_Scaling, (dim.y + m_Matrix[3][1]) / m_Scaling, dim.z / m_Scaling, dim.w / m_Scaling };
         _shader.SetVec4("dimensions", _dim);
 
         glBindVertexArray(_VAO);
@@ -751,11 +768,18 @@ namespace Graphics
     {
         if (text->empty())
             return;
+        
 
-        int _size = m_Fontsizes[m_Font];
+        auto _fafa = m_Font;
+        if (m_Scaling < 1)
+            _fafa = Graphics::Fonts::Gidole;
+
+        auto& _font = Graphics::m_Fonts[_fafa];
+
+        int _size = m_Fontsizes[_fafa];
         float _scale = 1;
         if (_size != 0)
-            _scale = m_FontSize / _size;
+            _scale = m_FontSize / (float)_size;
 
         static Shader _shader
         {
@@ -823,10 +847,10 @@ namespace Graphics
         }
 
         long _totalWidth = 0;
-        long _totalHeight = m_FontSize * 0.7 * _scale;
+        long _totalHeight = m_FontSize * 0.7;
         const char* _data = text->data();
 
-        auto& _font = Graphics::m_Fonts[m_Font];
+
 
         if (m_TextAlign.x == Align::RIGHT || m_TextAlign.x == Align::CENTER)
             for (int i = 0; i < text->size(); i++)
@@ -849,18 +873,22 @@ namespace Graphics
         {
             Character _ch = _font[_data[i]];
             
-            int _xpos = x * m_Matrix[0][0] + _ch.Bearing.x * _scale;
+            float _xpos = x * m_Matrix[0][0] + _ch.Bearing.x * _scale;
             if (m_TextAlign.x == Align::CENTER)
                 _xpos -= 0.5 * _totalWidth * _scale;
             else if (m_TextAlign.x == Align::RIGHT)
                 _xpos -= _totalWidth * _scale;
 
-            int _ypos = y - (_ch.Size.y - _ch.Bearing.y) * _scale;
+            float _ypos = y - (_ch.Size.y - _ch.Bearing.y) * _scale;
             if (m_TextAlign.y == Align::CENTER)
                 _ypos -= 0.5 * _totalHeight;
             else if (m_TextAlign.y == Align::TOP)
                 _ypos -= _totalHeight / 0.7;
            
+            if (m_Scaling == 1)
+                _ypos = std::round(_ypos),
+                _xpos = std::round(_xpos);
+
             glm::vec4 _dim;
             _dim.x = (_xpos + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
             _dim.y = (_ypos + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];

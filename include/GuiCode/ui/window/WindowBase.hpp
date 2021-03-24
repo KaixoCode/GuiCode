@@ -32,6 +32,7 @@ public:
     virtual auto Visible(bool b)       -> void { b ? Show() : Hide(); };
     virtual auto ShouldClose(bool b)   -> void = 0;
     virtual auto Loop()                -> void = 0;
+    virtual auto Scale(float)          -> void = 0;
 
     virtual Vec2<int> Size()        const = 0;
     virtual Vec2<int> Location()    const = 0;

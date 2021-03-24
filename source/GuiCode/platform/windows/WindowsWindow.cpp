@@ -14,7 +14,7 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     : WindowBase(name, width, height, hideonclose)
 {
     m_InitialSize = { width, height };
-    m_Projection = glm::ortho(0.0f, (float)std::max(width, 5), 0.0f, (float)std::max(height, 5));
+    m_Projection = glm::ortho(0.0f, (float)std::max(width / m_Scale, 5.0f), 0.0f, (float)std::max(height / m_Scale, 5.0f));
     if (m_WindowCount == 0 && !glfwInit())
     {
         LOG("Failed to initialize GLFW");
@@ -150,6 +150,7 @@ void WindowsWindow::WindowsLoop()
             m_MousePressed = Event::MouseButton::NONE;
 
         Graphics::CurrentWindow(m_WindowId);
+        Graphics::Scaling(m_Scale);
         Graphics::WindowFocused(GetForegroundWindow() == GetWin32Handle());
         Graphics::SetProjection(m_Projection);
 
@@ -166,7 +167,7 @@ void WindowsWindow::WindowsLoop()
 }
 
 // Hit test the frame for resizing and moving.
-LRESULT HitTestNCA(HWND hWnd, WPARAM wParam, LPARAM lParam)
+LRESULT HitTestNCA(HWND hWnd, WPARAM wParam, LPARAM lParam, float scale)
 {
     // Get the point coordinates for the hit test.
     POINT _ptMouse = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
@@ -185,8 +186,8 @@ LRESULT HitTestNCA(HWND hWnd, WPARAM wParam, LPARAM lParam)
     bool _fOnResizeBorder = false;
 
     // Determine if the point is at the top or bottom of the window.
-    int _padding = 8;
-    if (_ptMouse.y >= _rcWindow.top && _ptMouse.y < _rcWindow.top + 32)
+    int _padding = 8 / scale;
+    if (_ptMouse.y >= _rcWindow.top && _ptMouse.y < _rcWindow.top + 32 / scale)
     {
         _fOnResizeBorder = (_ptMouse.y < (_rcWindow.top - _rcFrame.top));
         _uRow = 0;
@@ -244,9 +245,9 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 
     // Buttons if not on the edge or top bar
     int _offset = IsMaximized(hWnd) ? -8 : 0;
-    int _padding = 8;
-    if (_self->m_Hovering != nullptr && _self->CursorPos().y > _self->Height() - 32 + _offset || _self->m_MousePressed != Event::MouseButton::NONE ||
-        _self->CursorPos().y < _self->Height() - 32 + _offset && _self->CursorPos().x > _padding && _self->CursorPos().x < _self->Width() - _padding && _self->CursorPos().y > _padding)
+    double _padding = 8.0 / _self->m_Scale;
+    if (_self->m_Hovering != nullptr && _self->CursorPos().y > _self->Height() - (32 + _offset) / _self->m_Scale || _self->m_MousePressed != Event::MouseButton::NONE ||
+        _self->CursorPos().y < _self->Height() - (32 + _offset) / _self->m_Scale && _self->CursorPos().x > _padding && _self->CursorPos().x < _self->Width() - _padding && _self->CursorPos().y > _padding)
     {
         bool _dblclk = false;
         switch (uMsg)
@@ -419,7 +420,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     }
     // Handle hit testing in the NCA if not handled by DwmDefWindowProc.
     case WM_NCHITTEST:
-        if (_lRet == 0 && (_lRet = HitTestNCA(hWnd, wParam, lParam)) != HTNOWHERE)
+        if (_lRet == 0 && (_lRet = HitTestNCA(hWnd, wParam, lParam, _self->m_Scale)) != HTNOWHERE)
             _fCallDWP = false;
     }
 
@@ -438,15 +439,15 @@ void WindowsWindow::CursorPosCallback(WindowsWindow* window, int x, int y)
 {
     auto _self = window;
 
-    y = _self->Height() - y;
+    y = _self->m_Size.height - y;
 
-    _self->m_MouseX = x;
-    _self->m_MouseY = y;
+    _self->m_MouseX = x * _self->m_Scale;
+    _self->m_MouseY = y * _self->m_Scale;
 
     if (_self->m_MousePressed != Event::MouseButton::NONE)
-        _self->m_EventQueue.emplace(Event::Type::MouseDragged, x, y, _self->m_MousePressed);
+        _self->m_EventQueue.emplace(Event::Type::MouseDragged, _self->m_MouseX, _self->m_MouseY, _self->m_MousePressed);
     else
-        _self->m_EventQueue.emplace(Event::Type::MouseMoved, x, y);
+        _self->m_EventQueue.emplace(Event::Type::MouseMoved, _self->m_MouseX, _self->m_MouseY);
 }
 
 void WindowsWindow::MouseButtonCallback(WindowsWindow* window, Event::MouseButton button, Event::Type action, int mod)
@@ -490,7 +491,7 @@ void WindowsWindow::WindowSizeCallback(WindowsWindow* window, int width, int hei
     _self->m_Size.width = width;
     _self->m_Size.height = height;
 
-    _self->m_Projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
+    _self->m_Projection = glm::ortho(0.0f, (float)std::max(width * _self->m_Scale, 5.0f), 0.0f, (float)std::max(height * _self->m_Scale, 5.0f));
 
     _self->WindowsLoop();
 }

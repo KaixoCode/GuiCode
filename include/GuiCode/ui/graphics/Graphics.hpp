@@ -23,6 +23,7 @@ namespace Graphics
     bool WindowFocused();
     void WindowFocused(bool a);
     void CurrentWindow(int a);
+    void Scaling(float scale);
 
     void RunCommands(const ::CommandCollection&);
     
