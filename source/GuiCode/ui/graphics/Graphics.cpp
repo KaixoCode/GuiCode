@@ -896,34 +896,36 @@ namespace Graphics
         for (int i = 0; i < text->size(); i++)
         {
             Character _ch = _font[_data[i]];
-            
-            float _xpos = x * m_Matrix[0][0] + _ch.Bearing.x * _scale;
-            if (m_TextAlign.x == Align::CENTER)
-                _xpos -= 0.5 * _totalWidth * _scale;
-            else if (m_TextAlign.x == Align::RIGHT)
-                _xpos -= _totalWidth * _scale;
 
-            float _ypos = y - (_ch.Size.y - _ch.Bearing.y) * _scale;
-            if (m_TextAlign.y == Align::CENTER)
-                _ypos -= 0.5 * _totalHeight;
-            else if (m_TextAlign.y == Align::TOP)
-                _ypos -= _totalHeight / 0.7;
+            if (_data[i] != ' ')
+            {
+                float _xpos = x * m_Matrix[0][0] + _ch.Bearing.x * _scale;
+                if (m_TextAlign.x == Align::CENTER)
+                    _xpos -= 0.5 * _totalWidth * _scale;
+                else if (m_TextAlign.x == Align::RIGHT)
+                    _xpos -= _totalWidth * _scale;
+
+                float _ypos = y - (_ch.Size.y - _ch.Bearing.y) * _scale;
+                if (m_TextAlign.y == Align::CENTER)
+                    _ypos -= 0.5 * _totalHeight;
+                else if (m_TextAlign.y == Align::TOP)
+                    _ypos -= _totalHeight / 0.7;
            
-            if (m_Scaling == 1)
-                _ypos = std::round(_ypos),
-                _xpos = std::round(_xpos);
+                if (m_Scaling == 1)
+                    _ypos = std::round(_ypos),
+                    _xpos = std::round(_xpos);
 
-            glm::vec4 _dim;
-            _dim.x = (_xpos + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
-            _dim.y = (_ypos + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];
-            _dim.z = m_FontSize * m_Projection[0][0];
-            _dim.w = m_FontSize * m_Projection[1][1];
+                glm::vec4 _dim;
+                _dim.x = (_xpos + m_Matrix[3][0]) * m_Projection[0][0] + m_Projection[3][0];
+                _dim.y = (_ypos + m_Matrix[3][1]) * m_Projection[1][1] + m_Projection[3][1];
+                _dim.z = m_FontSize * m_Projection[0][0];
+                _dim.w = m_FontSize * m_Projection[1][1];
 
-            _shader.SetVec4("dim", _dim);
-            _shader.SetInt("theTexture", _data[i]);
+                _shader.SetVec4("dim", _dim);
+                _shader.SetInt("theTexture", _data[i]);
 
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+            }
             x += (_ch.Advance >> 6) * _scale / m_Matrix[0][0];
         }
         
