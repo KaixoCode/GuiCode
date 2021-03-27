@@ -26,6 +26,8 @@ namespace Graphics
     std::unordered_map<unsigned int, bool> m_FrameBufferDrawn;
     bool m_IgnoreDraws = false;
 
+    std::stack<Vec4<int>> m_ClipStack;
+
     struct Character
     {
         unsigned int TextureID;
@@ -141,7 +143,7 @@ namespace Graphics
                 case FontSize: m_FontSize = a->fontSize; break;
                 case Font: m_Font = (Fonts)a->font, m_FontSize = a->fontSize; break;
                 case Quad: m_Quad(a->dimension, a->rotation); break;
-                case Line: m_Line(a->dimension, a->rotation); break;
+                case Line: m_Line(a->positions, a->thickness); break;
                 case TexturedQuad: m_TexturedQuad(a->texture, a->textureDimension); break;
                 case Text: m_Text(a->text, a->position.x, a->position.y); break;
                 case Ellipse: m_Ellipse(a->diameters, a->angles); break;
@@ -150,13 +152,34 @@ namespace Graphics
             }
             switch (a->type)
             {
-            case Clip: 
-                glEnable(GL_SCISSOR_TEST); 
-                glScissor(
-                    std::ceil((a->dimension.x + m_Matrix[3][0]) / m_Scaling), 
-                    std::ceil((a->dimension.y + m_Matrix[3][1]) / m_Scaling),
-                    std::ceil(a->dimension.z / m_Scaling), 
-                    std::ceil(a->dimension.w / m_Scaling)); break;
+            case Clip:
+            {
+                glEnable(GL_SCISSOR_TEST);
+                Vec4<int> clip = {
+                    std::ceil((a->dimension.x + m_Matrix[3][0]) / m_Scaling),
+                        std::ceil((a->dimension.y + m_Matrix[3][1]) / m_Scaling),
+                        std::ceil(a->dimension.z / m_Scaling),
+                        std::ceil(a->dimension.w / m_Scaling)
+                };
+                if (!m_ClipStack.empty())
+                    clip = clip.Overlap(m_ClipStack.top());
+                m_ClipStack.push(clip);
+                glScissor(clip.x, clip.y, clip.width, clip.height); break;
+            }
+            case PopClip:
+            {
+                m_ClipStack.pop();
+                if (m_ClipStack.size() == 0)
+                {
+                    glDisable(GL_SCISSOR_TEST);
+                } 
+                else
+                {
+                    glEnable(GL_SCISSOR_TEST);
+                    Vec4<int> clip2 = m_ClipStack.top();
+                    glScissor(clip2.x, clip2.y, clip2.width, clip2.height); break;
+                }
+            }
             case Viewport: glViewport(
                 std::floor(a->dimension.x / m_Scaling),
                 std::floor(a->dimension.y / m_Scaling),

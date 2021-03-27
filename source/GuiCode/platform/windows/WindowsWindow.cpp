@@ -124,6 +124,7 @@ void WindowsWindow::Render(CommandCollection& d)
     d.Command<Fill>(m_Color);
     d.Command<Quad>(0, 0, Width(), Height());
     WindowBase::Render(d);
+    d.Command<PopClip>();
 }
 
 void WindowsWindow::Loop()

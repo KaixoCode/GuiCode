@@ -110,8 +110,10 @@ void ScrollPanel::Render(CommandCollection& d)
             d.Command<Fill>(Color{ 55, 55, 55, 0 });
             d.Command<Quad>(Width() - yw, 0, yw, xh);
         }
+        d.Command<PopClip>();
+        d.Command<PopClip>();
     }
     d.Command<PopMatrix>();
-    d.Command<ClearClip>();
+    d.Command<PopClip>();
     NeedsRedraw(false);
 }

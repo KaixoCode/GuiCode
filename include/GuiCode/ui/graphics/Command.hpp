@@ -12,7 +12,7 @@ namespace Graphics
 
         FontSize, Font, TextAlign,
 
-        Clip, ClearClip, Translate, PushMatrix, PopMatrix, Scale, Viewport,
+        Clip, PopClip, ClearClip, Translate, PushMatrix, PopMatrix, Scale, Viewport,
 
         Text, Line, Quad, TexturedQuad, Ellipse, Triangle, Point,
 
@@ -75,6 +75,9 @@ namespace Graphics
         CommandBase(Type type, const Vec4<int>& d, float r) : type(type), dimension(d), rotation(r) {}
         CommandBase(Type type, const Vec4<int>& d, double r) : type(type), dimension(d), rotation((float)r) {}
 
+        // Line
+        CommandBase(Type type, const Vec4<float>& d, float r) : type(type), positions(d), thickness(r) {}
+
         // Ellipse
         CommandBase(Type type, const Vec4<int>& d, const Vec2<double>& a) : type(type), diameters(d), angles(a) {}
 
@@ -118,7 +121,13 @@ namespace Graphics
                 float rotation;
             };
 
-            struct // Quad/Ellipse/Triangle
+            struct // Line
+            {
+                Vec4<float> positions;
+                float thickness;
+            };
+
+            struct 
             {
                 Vec4<int> diameters;
                 Vec2<double> angles;
