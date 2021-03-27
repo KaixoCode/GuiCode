@@ -95,6 +95,7 @@ void ScrollPanel::Render(CommandCollection& d)
     {
         d.Command<Clip>(0, m_ScrollbarX->Height() * m_ScrollbarX->Visible(), Width() - m_ScrollbarY->Width() * m_ScrollbarY->Visible(), Height() - m_ScrollbarX->Height() * m_ScrollbarX->Visible());
         Background(d);
+        d.Command<PopClip>();
 
         m_Panel->Render(d);
         d.Command<Clip>(0, 0, Width(), Height());
@@ -110,7 +111,6 @@ void ScrollPanel::Render(CommandCollection& d)
             d.Command<Fill>(Color{ 55, 55, 55, 0 });
             d.Command<Quad>(Width() - yw, 0, yw, xh);
         }
-        d.Command<PopClip>();
         d.Command<PopClip>();
     }
     d.Command<PopMatrix>();
