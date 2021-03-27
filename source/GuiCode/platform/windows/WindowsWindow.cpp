@@ -155,10 +155,14 @@ void WindowsWindow::WindowsLoop()
         Graphics::WindowFocused(GetForegroundWindow() == GetWin32Handle());
         Graphics::SetProjection(m_Projection);
 
-        CommandCollection d;
         Update({ 0, 0, Width(), Height() });
+    }
     
+    if (Visible())
+    {
+
         //d.Command<Graphics::FrameBuffer>(9999, true, Vec4<int>{0, 0, Width(), Height()});
+        CommandCollection d;
         Render(d);
         //d.Command<Graphics::FrameBufferEnd>();
         Graphics::RunCommands(d);
