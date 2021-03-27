@@ -65,7 +65,6 @@ public:
 		// Show the window at the cursor position
 		POINT point; GetCursorPos(&point);
 		Location({ point.x, point.y });
-		Show();
 		if (f)
 			SetForegroundWindow(GetWin32Handle());
 
@@ -74,6 +73,7 @@ public:
 		// unfocus this window and close it.
 		ReleaseCapture();
 		SetCapture(GetWin32Handle());
+		Visible(true);
 	}
 
 	bool Opened() const { return m_Focus; }
