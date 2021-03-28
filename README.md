@@ -15,4 +15,4 @@ Here's some projects I myself used GuiCode in:
  - Collecto (https://github.com/KaixoCode/Collecto)
  ![Collecto1](https://imgur.com/Hlopltp.png)
  - SoundMixr (https://github.com/KaixoCode/SoundMixr)
- ![Image](https://i.imgur.com/4IFCLEw.png)
+ ![Image](https://i.ibb.co/7Gr81cP/Screenshot-1302.png)
