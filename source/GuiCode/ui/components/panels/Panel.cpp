@@ -10,7 +10,7 @@ Panel::Panel(Vec2<int> size)
     m_Listener += [this](Event& e)
     {
         // Make event coords relative to this panel
-        if (e.type != Event::Type::KeyPressed && e.type != Event::Type::KeyReleased)
+        if (e.type != Event::Type::KeyPressed && e.type != Event::Type::KeyReleased && e.type != Event::Type::KeyTyped)
             e.x -= X(), e.y -= Y();
 
         m_LayoutManager.AddEvent(e);

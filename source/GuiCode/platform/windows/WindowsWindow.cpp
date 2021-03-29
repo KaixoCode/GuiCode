@@ -2,6 +2,10 @@
 #include "GuiCode/ui/events/Event.hpp"
 #include "GuiCode/ui/graphics/Graphics.hpp"
 #include "GuiCode/ui/RightClickMenu.hpp"
+#include <iostream>
+#include <locale>
+#include <string>
+#include <codecvt>
 
 int WindowsWindow::m_WindowCount = 0;
 int WindowsWindow::m_WindowIdCounter = 0;
@@ -356,15 +360,19 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     case WM_SYSKEYUP:
     case WM_KEYDOWN:
     case WM_KEYUP:
+    case WM_SYSCHAR:
+    case WM_CHAR:
     {
         int _mod = ((GetKeyState(VK_CONTROL) & 0x8000) ? Event::Mod::CONTROL : 0)
-            | ((GetKeyState(VK_MENU) & 0x8000) ? Event::Mod::ALT : 0)
+            | (((GetKeyState(VK_MENU) & 0x8000) || GetKeyState(VK_RMENU) & 0x8000) ? Event::Mod::ALT : 0)
             | ((GetKeyState(VK_SHIFT) & 0x8000) ? Event::Mod::SHIFT : 0)
             | ((GetKeyState(VK_NUMLOCK) & 0x8000) ? Event::Mod::NUM_LOCK : 0)
             | ((GetKeyState(VK_CAPITAL) & 0x8000) ? Event::Mod::CAPS_LOCK : 0);
 
         int _repeat = (lParam & 0x40000000);
-        _self->KeyCallback(_self, wParam, _repeat, uMsg == WM_SYSKEYDOWN || uMsg == WM_KEYDOWN || uMsg == WM_CHAR ? Event::Type::KeyPressed : Event::Type::KeyReleased, _mod);
+        _self->KeyCallback(_self, wParam, _repeat, 
+            uMsg == WM_SYSKEYDOWN || uMsg == WM_KEYDOWN ? Event::Type::KeyPressed : 
+            uMsg == WM_CHAR || uMsg == WM_SYSCHAR ? Event::Type::KeyTyped : Event::Type::KeyReleased, _mod);
         return 0;
     }
     case WM_MOUSEWHEEL:
@@ -486,7 +494,14 @@ void WindowsWindow::KeyCallback(WindowsWindow* window, int key, int repeat, Even
 {
     auto _self = window;
     
-    _self->m_EventQueue.emplace(action, key, mod, repeat);
+    if (action == Event::Type::KeyTyped)
+    {
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conversion;
+        _self->m_EventQueue.emplace(action, conversion.to_bytes(key)[0], mod, ((char)key) == 0xffff);
+    }
+
+    else
+        _self->m_EventQueue.emplace(action, key, mod, repeat);
 }
 
 void WindowsWindow::WindowSizeCallback(WindowsWindow* window, int width, int height)

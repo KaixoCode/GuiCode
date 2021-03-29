@@ -9,6 +9,7 @@ public:
 
     void AddCallback(Callback<Event> c) { m_EventCallbacks.emplace_back(c); }
     void AddCallback(Callback<Event::KeyPressed> c) { m_KeyPressedCallbacks.emplace_back(c); }
+    void AddCallback(Callback<Event::KeyTyped> c) { m_KeyTypedCallbacks.emplace_back(c); }
     void AddCallback(Callback<Event::KeyReleased> c) { m_KeyReleasedCallbacks.emplace_back(c); }
     void AddCallback(Callback<Event::MousePressed> c) { m_MousePressedCallbacks.emplace_back(c); }
     void AddCallback(Callback<Event::MouseReleased> c) { m_MouseReleasedCallbacks.emplace_back(c); }
@@ -33,6 +34,7 @@ public:
         switch (e.type)
         {
         case Event::Type::KeyPressed:    AddEvent(e.keyPressed);    break;
+        case Event::Type::KeyTyped:      AddEvent(e.keyTyped);      break;
         case Event::Type::KeyReleased:   AddEvent(e.keyReleased);   break;
         case Event::Type::MousePressed:  AddEvent(e.mousePressed);  break;
         case Event::Type::MouseReleased: AddEvent(e.mouseReleased); break;
@@ -48,6 +50,7 @@ public:
     }
 
     void AddEvent(Event::KeyPressed& e) { for (auto& a = m_KeyPressedCallbacks.rbegin(); a != m_KeyPressedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::KeyTyped& e) { for (auto& a = m_KeyTypedCallbacks.rbegin(); a != m_KeyTypedCallbacks.rend(); ++a) a->operator()(e); }
     void AddEvent(Event::KeyReleased& e) { for (auto& a = m_KeyReleasedCallbacks.rbegin(); a != m_KeyReleasedCallbacks.rend(); ++a) a->operator()(e); }
     void AddEvent(Event::MousePressed& e) { for (auto& a = m_MousePressedCallbacks.rbegin(); a != m_MousePressedCallbacks.rend(); ++a) a->operator()(e); }
     void AddEvent(Event::MouseReleased& e) { for (auto& a = m_MouseReleasedCallbacks.rbegin(); a != m_MouseReleasedCallbacks.rend(); ++a) a->operator()(e); }
@@ -67,6 +70,7 @@ public:
     {
         m_EventCallbacks.clear();
         m_KeyPressedCallbacks.clear();
+        m_KeyTypedCallbacks.clear();
         m_KeyReleasedCallbacks.clear();
         m_MousePressedCallbacks.clear();
         m_MouseReleasedCallbacks.clear();
@@ -83,6 +87,7 @@ public:
 private:
     std::vector<Callback<Event>>                 m_EventCallbacks;
     std::vector<Callback<Event::KeyPressed>>     m_KeyPressedCallbacks;
+    std::vector<Callback<Event::KeyTyped>>       m_KeyTypedCallbacks;
     std::vector<Callback<Event::KeyReleased>>    m_KeyReleasedCallbacks;
     std::vector<Callback<Event::MousePressed>>   m_MousePressedCallbacks;
     std::vector<Callback<Event::MouseReleased>>  m_MouseReleasedCallbacks;

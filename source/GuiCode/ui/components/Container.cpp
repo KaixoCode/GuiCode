@@ -16,7 +16,7 @@ Container::Container(Vec2<int> size)
         Event _copy = e;
         Event _copy2 = e;
 
-        if (e.type == Event::Type::KeyPressed || e.type == Event::Type::KeyReleased)
+        if (e.type == Event::Type::KeyPressed || e.type == Event::Type::KeyReleased || e.type == Event::Type::KeyTyped)
         {
             for (auto& _c : m_Components)
                 _c->AddEvent(_copy);

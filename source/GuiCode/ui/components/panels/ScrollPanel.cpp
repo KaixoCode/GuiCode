@@ -9,7 +9,10 @@ ScrollPanel::ScrollPanel()
 {
     m_Listener += [this](Event::MouseWheel& e)
     {
-        if (!e.wheelmod && m_ScrollbarY->Visible())
+        if (e.wheelmod & Event::Mod::SHIFT || e.wheelmod & Event::Mod::CONTROL)
+            return;
+
+        if (m_Hovering && m_ScrollbarY->Visible())
             m_ScrollbarY->Scroll(-e.amount / 4);
     };
 
@@ -25,6 +28,16 @@ ScrollPanel::ScrollPanel()
     m_Listener += [this](Event::MouseReleased& e)
     {
         m_Dragging = false;
+    };
+
+    m_Listener += [this](Event::MouseEntered& e)
+    {
+        m_Hovering = true;
+    };
+
+    m_Listener += [this](Event::MouseExited& e)
+    {
+        m_Hovering = false;
     };
 
     m_Listener += [this](Event::MouseDragged& e)

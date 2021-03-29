@@ -89,9 +89,13 @@ namespace Graphics
 
     void Init()
     {
-        Fonts::Gidole = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"));
-        Fonts::Gidole14 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 14);
-        Fonts::Gidole16 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 16);
+        //Fonts::Gidole = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"));
+        //Fonts::Gidole14 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 14);
+        //Fonts::Gidole16 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 16);
+
+        Fonts::Gidole = Graphics::LoadFont(ASSET("fonts/DIN.otf"));
+        Fonts::Gidole14 = Graphics::LoadFont(ASSET("fonts/DIN.otf"), 14);
+        Fonts::Gidole16 = Graphics::LoadFont(ASSET("fonts/DIN.otf"), 16);
 
         Textures::FileIcon.SetTexture(ASSET("textures/file.png"));
         Textures::AudioFileIcon.SetTexture(ASSET("textures/audiofile.png"));
@@ -109,7 +113,7 @@ namespace Graphics
     void m_TexturedQuad(unsigned int texture, const glm::vec4& dim);
     void m_Ellipse(const glm::vec4& dim, const glm::vec2& a);
     void m_Triangle(const glm::vec4& dim, float rotation);
-    void m_Text(const std::string* text, float x, float y);
+    void m_Text(const char* text, int size, float x, float y);
     void m_FrameBuffer(unsigned int id, bool refresh);
     void m_FrameBufferEnd();
 
@@ -150,7 +154,8 @@ namespace Graphics
                 case Quad: m_Quad(a->dimension, a->rotation); break;
                 case Line: m_Line(a->positions, a->thickness); break;
                 case TexturedQuad: m_TexturedQuad(a->texture, a->textureDimension); break;
-                case Text: m_Text(a->text, a->position.x, a->position.y); break;
+                case Text: m_Text(a->text->c_str(), a->text->size(), a->position.x, a->position.y); break;
+                case TextView: m_Text(a->textview->data(), a->textview->length(), a->position.x, a->position.y); break;
                 case Ellipse: m_Ellipse(a->diameters, a->angles); break;
                 case Triangle: m_Triangle(a->dimension, a->rotation); break;
                 }
@@ -793,9 +798,9 @@ namespace Graphics
     // -------------------------- Text Rendering --------------------------------
     // --------------------------------------------------------------------------
 
-    void m_Text(const std::string* text, float x, float y)
+    void m_Text(const char* text, int size, float x, float y)
     {
-        if (text->empty() || m_Font == -1)
+        if (size == 0 || m_Font == -1)
             return;
         
 
@@ -877,12 +882,12 @@ namespace Graphics
 
         long _totalWidth = 0;
         long _totalHeight = m_FontSize * 0.7;
-        const char* _data = text->data();
+        const char* _data = text;
 
 
 
         if (m_TextAlign.x == Align::RIGHT || m_TextAlign.x == Align::CENTER)
-            for (int i = 0; i < text->size(); i++)
+            for (int i = 0; i < size; i++)
             {
                 _totalWidth += (_font[_data[i]].Advance >> 6);
             }
@@ -898,8 +903,11 @@ namespace Graphics
         _shader.SetInt("Texture", 0);
 
         glBindVertexArray(_VAO);
-        for (int i = 0; i < text->size(); i++)
+        for (int i = 0; i < size; i++)
         {
+            if (_data[i] == '\n')
+                continue;
+
             Character _ch = _font[_data[i]];
 
             if (_data[i] != ' ')
@@ -1104,8 +1112,27 @@ namespace Graphics
         return _width;
     };
 
+    int StringWidth(const std::string_view& str, int font, int size)
+    {
+        auto& _font = m_Fonts[font];
+        auto& _size = m_Fontsizes[font];
+        float _scale = 1;
+        if (size != -1 && _size != 0)
+            _scale = size / (float)_size;
+
+        int _width = 0;
+        for (auto& i : str)
+            if (i != '\n')
+                _width += (_font[i].Advance >> 6) * _scale;
+
+        return _width;
+    };
+
     int CharWidth(const char& c, int font, int size)
     {
+        if (c == '\n')
+            return 0;
+
         auto& _font = m_Fonts[font];
         auto& _size = m_Fontsizes[font];
         float _scale = 1;

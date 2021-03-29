@@ -14,7 +14,7 @@ namespace Graphics
 
         Clip, PopClip, ClearClip, Translate, PushMatrix, PopMatrix, Scale, Viewport,
 
-        Text, Line, Quad, TexturedQuad, Ellipse, Triangle, Point,
+        Text, TextView, Line, Quad, TexturedQuad, Ellipse, Triangle, Point,
 
         FrameBuffer, FrameBufferEnd
 
@@ -58,6 +58,8 @@ namespace Graphics
         // Text          
         CommandBase(Type type, const std::string* t, const Vec2<int>& p) : type(type), text(t), position(p) {}
         CommandBase(Type type, const std::string* t, int x, int y) : type(type), text(t), position({ x, y }) {}
+        CommandBase(Type type, const std::string_view* t, const Vec2<int>& p) : type(type), textview(t), positionview(p) {}
+        CommandBase(Type type, const std::string_view* t, int x, int y) : type(type), textview(t), positionview({ x, y }) {}
         CommandBase(Type type, int t, float s) : type(type), font(t), fontSize(s) {}
 
         // Quad/Ellipse  
@@ -113,6 +115,12 @@ namespace Graphics
             {
                 const std::string* text;
                 Vec2<int> position;
+            };
+
+            struct // Text
+            {
+                const std::string_view* textview;
+                Vec2<int> positionview;
             };
 
             struct // Quad/Ellipse/Triangle

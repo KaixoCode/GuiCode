@@ -80,6 +80,7 @@ namespace Graphics
     int LoadFont(const std::string& path, unsigned int size);
 
     int StringWidth(const std::string&, int font, int size = -1);
+    int StringWidth(const std::string_view&, int font, int size = -1);
     int CharWidth(const char&, int font, int size = -1);
 
     void Init();

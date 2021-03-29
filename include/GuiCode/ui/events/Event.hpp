@@ -12,7 +12,7 @@ struct Event
      */
     enum class Type
     {
-        KeyPressed, KeyReleased, MousePressed, MouseReleased,
+        KeyTyped, KeyPressed, KeyReleased, MousePressed, MouseReleased,
         MouseClicked, MouseMoved, MouseDragged, MouseWheel, 
         MouseExited, MouseEntered, Focused, Unfocused
     };
@@ -62,6 +62,16 @@ struct Event
     {}
 
     /**
+     * Constructor for <code>KeyTyped</code> events.
+     * @param t type
+     * @param c char
+     * @param keymod keymod
+     */
+    Event(Type t, char c, int keymod, int coded)
+        : type(t), key(c), keymod(keymod), coded(coded)
+    {}
+
+    /**
      * Constructor for <code>MouseDragged</code> events.
      * @param t type
      * @param x x
@@ -101,6 +111,7 @@ struct Event
     // --------------------------------------------------------------------------
 
     struct KeyPressed { int key; int keymod; int repeat, b; };
+    struct KeyTyped { char key; int keymod, coded, c; };
     struct KeyReleased { int key; int keymod; int a, b; };
 
     // --------------------------------------------------------------------------
@@ -125,11 +136,12 @@ struct Event
         {
             union { int key, x; };
             union { int keymod; int y; };
-            union { MouseButton button; int amount, repeat; };
+            union { MouseButton button; int amount, repeat, coded; };
             union { int mod; int wheelmod; };
         };
 
         KeyPressed keyPressed;
+        KeyTyped keyTyped;
         KeyReleased keyReleased;
 
         MousePressed mousePressed;
@@ -190,8 +202,17 @@ public:
         CTRL_SHIFT_W = ('W' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         ALT_F4 = (VK_F4 << 8) | Event::Mod::ALT,
         CTRL_F4 = (VK_F4 << 8) | Event::Mod::CONTROL,
+        BACKSPACE = 0x8,
+        TAB = 0x9,
+        DEL = 0x2e,
+        ENTER = 0xa,
+        LEFT = 0x25,
+        RIGHT = 0x27,
+        UP = 0x26,
+        DOWN = 0x28,
+        SHIFT = 0x10
     };
-
+    
     /**
      * Constructor
      */
