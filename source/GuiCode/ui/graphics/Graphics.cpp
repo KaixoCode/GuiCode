@@ -8,6 +8,11 @@
 // --------------------------------------------------------------------------
 namespace Graphics
 {
+    namespace Fonts
+    {
+        int Gidole, Gidole14, Gidole16;
+    };
+
     struct FrameBufferTexture
     {
         GLuint frameBuffer;
@@ -84,9 +89,9 @@ namespace Graphics
 
     void Init()
     {
-        Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), Fonts::Gidole);
-        Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), Fonts::Gidole14, 14);
-        Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), Fonts::Gidole16, 16);
+        Fonts::Gidole = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"));
+        Fonts::Gidole14 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 14);
+        Fonts::Gidole16 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 16);
 
         Textures::FileIcon.SetTexture(ASSET("textures/file.png"));
         Textures::AudioFileIcon.SetTexture(ASSET("textures/audiofile.png"));
@@ -114,10 +119,10 @@ namespace Graphics
     
     // Text stuff
     float m_FontSize = 16.0f;
-    Fonts m_Font = Fonts::Gidole;
-    std::unordered_map<Fonts, std::unordered_map<char, Graphics::Character>> m_Fonts;
-    std::unordered_map<Fonts, std::unordered_map<char, int>> m_FontAdvance;
-    std::unordered_map<Fonts, int> m_Fontsizes;
+    int m_Font = Fonts::Gidole;
+    std::unordered_map<int, std::unordered_map<char, Graphics::Character>> m_Fonts;
+    std::unordered_map<int, std::unordered_map<char, int>> m_FontAdvance;
+    std::unordered_map<int, int> m_Fontsizes;
     
     Vec2<Align> m_TextAlign = { Align::LEFT, Align::BOTTOM };
 
@@ -141,7 +146,7 @@ namespace Graphics
                 case Stroke: m_Stroke = a->stroke / 255.0; break;
                 case TextAlign: m_TextAlign = a->align; break;
                 case FontSize: m_FontSize = a->fontSize; break;
-                case Font: m_Font = (Fonts)a->font, m_FontSize = a->fontSize; break;
+                case Font: m_Font = a->font, m_FontSize = a->fontSize; break;
                 case Quad: m_Quad(a->dimension, a->rotation); break;
                 case Line: m_Line(a->positions, a->thickness); break;
                 case TexturedQuad: m_TexturedQuad(a->texture, a->textureDimension); break;
@@ -790,7 +795,7 @@ namespace Graphics
 
     void m_Text(const std::string* text, float x, float y)
     {
-        if (text->empty())
+        if (text->empty() || m_Font == -1)
             return;
         
 
@@ -926,37 +931,40 @@ namespace Graphics
 
                 glDrawArrays(GL_TRIANGLES, 0, 6);
             }
-            x += (_ch.Advance >> 6) * _scale / m_Matrix[0][0];
+            x += (_ch.Advance >> 6) * _scale;
         }
         
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void LoadFont(const std::string& path, Graphics::Fonts name)
+    int LoadFont(const std::string& path)
     {
-        LoadFont(path, name, 48);
+        return LoadFont(path, 48);
     }
-
-    void LoadFont(const std::string& path, Graphics::Fonts name, unsigned int size)
+    
+    int LoadFont(const std::string& path, unsigned int size)
     {
         static FT_Library _ft;
+        static int m_FontIdCounter = 0;
+        m_FontIdCounter++;
+        int _fontid = m_FontIdCounter;
         if (!_ft && FT_Init_FreeType(&_ft))
         {
             LOG("ERROR::FREETYPE: Could not init FreeType Library");
-            return;
+            return -1;
         }
 
         FT_Face _face;
         if (FT_New_Face(_ft, path.c_str(), 0, &_face))
         {
             LOG("ERROR::FREETYPE: Failed to load font");
-            return;
+            return -1;
         }
         else
         {
             Graphics::m_Fonts.insert(
-                std::pair<Fonts, std::unordered_map<char, Graphics::Character>>(
-                    name, std::unordered_map<char, Graphics::Character>{}));
+                std::pair<int, std::unordered_map<char, Graphics::Character>>(
+                    _fontid, std::unordered_map<char, Graphics::Character>{}));
 
             FT_Set_Pixel_Sizes(_face, 0, size);
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -973,7 +981,7 @@ namespace Graphics
                     -1
             };
 
-            Graphics::m_Fonts[name].insert(std::pair<char, Graphics::Character>((char)-1, _character0));
+            Graphics::m_Fonts[_fontid].insert(std::pair<char, Graphics::Character>((char)-1, _character0));
 
             for (unsigned char _c = 0; _c < 128; _c++)
             {
@@ -1003,10 +1011,10 @@ namespace Graphics
                     _face->glyph->bitmap.buffer
                 );
 
-                Graphics::m_Fonts[name].insert(
+                Graphics::m_Fonts[_fontid].insert(
                     std::pair<char, Graphics::Character>(_c, _character));
 
-                Graphics::m_FontAdvance[name].insert(std::pair<char, int>(_c, _character.Advance));
+                Graphics::m_FontAdvance[_fontid].insert(std::pair<char, int>(_c, _character.Advance));
             }
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -1014,12 +1022,13 @@ namespace Graphics
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
             glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-            m_Fontsizes.emplace(name, size);
+            m_Fontsizes.emplace(_fontid, size);
         }
 
         FT_Done_Face(_face);
         _ft = {};
         FT_Done_FreeType(_ft);
+        return _fontid;
     }
 
     // --------------------------------------------------------------------------
@@ -1079,4 +1088,31 @@ namespace Graphics
     {
         stbi_image_free(image.data);
     }
+
+    int StringWidth(const std::string& str, int font, int size) 
+    {
+        auto& _font = m_Fonts[font];
+        auto& _size = m_Fontsizes[font];
+        float _scale = 1;
+        if (size != -1 && _size != 0)
+            _scale = size / (float)_size;
+
+        int _width = 0;
+        for (auto& i : str)
+            _width += (_font[i].Advance >> 6) * _scale;
+        
+        return _width;
+    };
+
+    int CharWidth(const char& c, int font, int size)
+    {
+        auto& _font = m_Fonts[font];
+        auto& _size = m_Fontsizes[font];
+        float _scale = 1;
+        if (size != -1 && _size != 0)
+            _scale = size / (float)_size;
+
+        return (_font[c].Advance >> 6) * _scale;
+    };
 }
+

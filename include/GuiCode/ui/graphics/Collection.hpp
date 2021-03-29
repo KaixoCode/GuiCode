@@ -16,9 +16,25 @@ public:
     template<Graphics::Type T, typename ...Args>
     void Command(Args ...args)
     {
-       // m_CommandCollection.emplace_back(std::make_unique<Graphics::Command<T>>(std::forward<Args>(args)...));
         m_CommandCollection.emplace_back(T, args...);
     }
+
+    template<>
+    void Command<Graphics::Type::Font, int, float>(int font, float size)
+    {
+        m_Font = font;
+        m_FontSize = size;
+        m_CommandCollection.emplace_back(Graphics::Type::Font, font, size);
+    }
+
+    template<>
+    void Command<Graphics::Type::FontSize, float>(float size)
+    {
+        m_FontSize = size;
+        m_CommandCollection.emplace_back(Graphics::Type::Font, m_Font, size);
+    }
+
+    int Width(const std::string& s);
 
     /**
      * Returns the vector of <code>Graphics::CommandBase</code>.
@@ -38,5 +54,7 @@ public:
     }
 
 private:
+    int m_Font = -1;
+    int m_FontSize = 48;
     std::vector<Graphics::CommandBase> m_CommandCollection;
 };

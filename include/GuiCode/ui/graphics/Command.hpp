@@ -59,7 +59,7 @@ namespace Graphics
         CommandBase(Type type, const std::string* t, const Vec2<int>& p) : type(type), text(t), position(p) {}
         CommandBase(Type type, const std::string* t, int x, int y) : type(type), text(t), position({ x, y }) {}
         CommandBase(Type type, int t, float s) : type(type), font(t), fontSize(s) {}
-                         
+
         // Quad/Ellipse  
         CommandBase(Type type, int x, int y, int w, int h) : type(type), dimension({ x, y, w, h }), rotation(0) {}
         CommandBase(Type type, const Vec4<int>& d) : type(type), dimension(d), angles({ 0, 0 }), rotation(0) {}

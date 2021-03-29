@@ -71,13 +71,16 @@ namespace Graphics
     // -------------------------- Text Rendering --------------------------------
     // --------------------------------------------------------------------------
     
-    enum Fonts
+    namespace Fonts
     {
-        Gidole, Gidole14, Gidole16
+        extern int Gidole, Gidole14, Gidole16;
     };
 
-    void LoadFont(const std::string& path, Fonts name);
-    void LoadFont(const std::string& path, Fonts name, unsigned int size);
+    int LoadFont(const std::string& path);
+    int LoadFont(const std::string& path, unsigned int size);
+
+    int StringWidth(const std::string&, int font, int size = -1);
+    int CharWidth(const char&, int font, int size = -1);
 
     void Init();
 };

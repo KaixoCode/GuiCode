@@ -2,6 +2,7 @@
 #include "GuiCode/ui/window/WindowBase.hpp"
 #include "GuiCode/ui/RightClickMenu.hpp"
 #include "GuiCode/ui/Dragging.hpp"
+#include "GuiCode/ui/graphics/Graphics.hpp"
 
 // --------------------------------------------------------------------------
 // -------------------------------- Gui -------------------------------------
@@ -26,14 +27,7 @@ public:
 	T& AddWindow(Args...args)
 	{
 		auto& _w = m_Windows.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-		static bool _init = false;
-		if (!_init)
-		{
-			Graphics::Init();
-			RightClickMenu::Get().Hide();
-			//Dragging::Get().Hide();
-		}
-		_init = true;
+		m_Init();
 		return *dynamic_cast<T*>(_w.get());;
 	}
 
@@ -76,6 +70,20 @@ public:
 	}
 
 private:
+
+	void m_Init()
+	{
+		static bool _init = false;
+		if (!_init)
+		{
+			Graphics::Init();
+			RightClickMenu::Get().Hide();
+			//Dragging::Get().Hide();
+		}
+		_init = true;
+	}
+
+
 	std::vector<std::unique_ptr<WindowBase>> m_Windows;
 	bool m_Running = true;
 };
