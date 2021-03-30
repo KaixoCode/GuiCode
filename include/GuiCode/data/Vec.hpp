@@ -20,6 +20,7 @@ struct Vec2
     Vec2& operator+=(const Vec2& other) { x += other.x; y += other.y; return *this; }
     Vec2& operator-=(const Vec2& other) { x -= other.x; y -= other.y; return *this; }
     bool operator==(const Vec2& other) const { return x == other.x && y == other.y; }
+    bool operator!=(const Vec2& other) const { return x != other.x || y != other.y; }
 
     operator glm::vec2() const { return { x, y }; }
 

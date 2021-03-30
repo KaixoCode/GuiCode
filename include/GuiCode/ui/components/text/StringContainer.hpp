@@ -20,6 +20,7 @@ public:
 	void Editable(bool e) { m_Editable = e; }
 	int  Length() const { return m_Content.length(); }
 	auto Selection() -> Selection& { return m_Selection; }
+	auto SelectionString() -> std::string_view { return std::string_view(m_Content).substr(m_Selection.Lowest(), m_Selection.Highest() - m_Selection.Lowest()); }
 	bool Selected() { return m_Selection.start != m_Selection.end; }
 	void Select(const ::Selection& s) { m_Selection = s; ConstrainSelection(); }
 	void Select(int pos) { m_Selection = { pos, pos }; ConstrainSelection(); }
