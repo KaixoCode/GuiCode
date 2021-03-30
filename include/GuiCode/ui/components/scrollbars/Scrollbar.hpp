@@ -84,6 +84,11 @@ public:
      * @return true when mouse over scrollbar
      */
     virtual bool Hovering() const { return m_Hovering; }
+
+    /**
+     * Returns true when the mouse is dragging the scrollbar.
+     * @return true when mouse dragging
+     */
     virtual bool Dragging() const = 0;
 
     void Update(const Vec4<int>& viewport) override;

@@ -1,111 +1,158 @@
 #pragma once
 #include "GuiCode/ui/components/panels/ScrollPanel.hpp"
-#include "GuiCode/ui/components/text/StringDisplayer.hpp"
+#include "GuiCode/ui/components/text/TextDisplayer.hpp"
 
+// --------------------------------------------------------------------------
+// -------------------------------- TextBox ---------------------------------
+// --------------------------------------------------------------------------
+
+/**
+ * Single line TextBox.
+ */
 class TextBox : public Panel
 {
 public:
-    TextBox()
-        : m_Displayer(Emplace<StringDisplayer>())
-    {
 
-        m_Listener += [this](Event::MousePressed& e)
-        {
-            if (e.button != Event::MouseButton::LEFT)
-                return;
+    /**
+     * Constructor.
+     */
+    TextBox();
 
-            m_Mouse = { e.x, e.y };
-        };
-
-        m_Listener += [this](Event::MouseDragged& e)
-        {
-            if (e.button != Event::MouseButton::LEFT)
-                return;
-
-            m_Mouse = { e.x, e.y };
-        };
-
-        m_Listener += [this](Event::KeyPressed& e)
-        {
-            UpdateScroll();
-        };
-
-        m_Listener += [this](Event::KeyTyped& e)
-        {
-            UpdateScroll();
-        };
-
-        Background(Color{ 255, 255, 255, 255 });
-        m_Displayer.TextWrap(StringDisplayer::Wrap::None);
-    }
-
-    void Update(const Vec4<int>& v)
-    {
-        m_Displayer.LineHeight(Height());
-        Panel::Update(v);
-
-        m_Displayer.Position({ -m_ScrollX, 0 });
-        m_Displayer.Height(Height());
-
-        m_Displayer.MinWidth(Width());
-
-        if (m_Displayer.Dragging() && m_Displayer.Width() - m_Displayer.Padding() * 2 > Width())
-        {
-            if (m_Mouse.x < Width() * 0.1)
-                m_ScrollX += -5 * 0.02 * ((Width() * 0.1 - m_Mouse.x));
-
-            if (m_Mouse.x > Width() - Width() * 0.1)
-                m_ScrollX += 5 * 0.02 * ((m_Mouse.x - (Width() - Width() * 0.1)));
-        }
-
-        m_ScrollX = constrain(m_ScrollX, 0, std::max(m_Displayer.Width() - Width(), 0));
-    }
-
-    void Render(CommandCollection& d)
-    {
-        using namespace Graphics;
-        d.Command<Clip>(X(), Y(), Width(), Height());
-        d.Command<PushMatrix>();
-        d.Command<Translate>(Vec2<int>{ X(), Y() });
-        Background(d);
-        m_Displayer.Render(d);
-        d.Command<PopMatrix>();
-        d.Command<PopClip>();
-        NeedsRedraw(false);
-        Component::Render(d);
-    }
+    void Update(const Vec4<int>& v) override;
+    void Render(CommandCollection& d) override;
     
-    void  AlignLines(Align a) { m_Displayer.AlignLines(a); }
-    void  Content(const std::string& c) { m_Displayer.Container().Content(c); }
-    void  Editable(bool e) { m_Displayer.Container().Editable(e); }
-    void  TextColor(Color c) { m_Displayer.TextColor(c); }
-    void  SelectColor(Color c) { m_Displayer.SelectColor(c); }
-    void  Font(int f, float size) { m_Displayer.Font(f, size); };
-    void  Padding(int p) { m_Displayer.Padding(p); };
-    auto  AlignLines() -> Align { return m_Displayer.AlignLines(); }
-    auto  Content() -> std::string& { return m_Displayer.Container().Content(); }
-    bool  Editable() { return m_Displayer.Container().Editable(); }
-    auto  TextColor() const -> Color { return m_Displayer.TextColor(); }
-    auto  SelectColor() const -> Color { return m_Displayer.SelectColor(); }
-    int   Font() const { return m_Displayer.Font(); };
+    /**
+     * Set the horizontal alignment of the lines in this TextDisplayer.
+     * @param a alignment
+     */
+    void AlignLines(Align a) { m_Displayer.AlignLines(a); }
+
+    /**
+     * Set the content of this container.
+     * @param c content
+     */
+    void Content(const std::string& c) { m_Displayer.Content(c); }
+
+    /**
+     * Set if this container is editable.
+     * @param a editable
+     */
+    void Editable(bool e) { m_Displayer.Editable(e); }
+
+    /**
+     * Set the text color.
+     * @param c color
+     */
+    void TextColor(Color c) { m_Displayer.TextColor(c); }
+
+    /**
+     * Set the selection color.
+     * @param c color
+     */
+    void SelectColor(Color c) { m_Displayer.SelectColor(c); }
+
+    /**
+     * Set the text wrap mode.
+     * @param wrap wrap mode
+     */
+    void TextWrap(TextDisplayer::Wrap wrap) { m_Displayer.TextWrap(wrap); }
+
+    /**
+     * Set the line height.
+     * @param h line height
+     */
+    void LineHeight(int h) { m_Displayer.LineHeight(h); };
+
+    /**
+     * Set the font and font size.
+     * @param f font
+     * @param size font size
+     */
+    void Font(int f, float size) { m_Displayer.Font(f, size); };
+
+    /**
+     * Set the padding around the text.
+     * @param p padding
+     */
+    void Padding(int p) { m_Displayer.Padding(p); };
+
+    /**
+     * Get the current horizontal alignment of the text.
+     * @return text alignment
+     */
+    auto AlignLines() -> Align { return m_Displayer.AlignLines(); }
+
+    /**
+     * Get the entire content of this container as a string.
+     * @return content
+     */
+    auto Content() -> std::string& { return m_Displayer.Content(); }
+
+    /**
+     * Returns true when this text container is editable.
+     * @return true if editable
+     */
+    bool Editable() { return m_Displayer.Container().Editable(); }
+
+    /**
+     * Get the text color.
+     * @return text color
+     */
+    auto TextColor() const -> Color { return m_Displayer.TextColor(); }
+
+    /**
+     * Get the selection color.
+     * @return selection color
+     */
+    auto SelectColor() const -> Color { return m_Displayer.SelectColor(); }
+
+    /**
+     * Get the current wrap mode.
+     * @return wrap
+     */
+    auto TextWrap() const -> TextDisplayer::Wrap { return m_Displayer.TextWrap(); }
+
+    /**
+     * Get the current line height.
+     * @return line height
+     */
+    int LineHeight() const { return m_Displayer.LineHeight(); };
+
+    /**
+     * Get the current font.
+     * @return font
+     */
+    int Font() const { return m_Displayer.Font(); };
+
+    /**
+     * Get the current font size.
+     * @return font size
+     */
     float FontSize() const { return m_Displayer.FontSize(); };
-    int   Padding() const { return m_Displayer.Padding(); };
+
+    /**
+     * Get the current padding around the text.
+     * @return padding
+     */
+    int Padding() const { return m_Displayer.Padding(); };
+    
+    /**
+     * Set a placeholder string.
+     * @param p placeholder
+     */
+    void Placeholder(const std::string& p) { m_Displayer.Placeholder(p); }
+
+    /**
+     * Get the placeholder string.
+     * @return placeholder
+     */
+    auto Placeholder() -> std::string& { return m_Displayer.Placeholder(); }
 
 protected:
-    StringDisplayer& m_Displayer;
-    Vec2<int> m_Mouse;
+    TextDisplayer& m_Displayer;
+    Vec2<int> m_Mouse{ 0, 0 };
 
     int m_ScrollX = 0;
 
-    void UpdateScroll()
-    {
-        auto pos = m_Displayer.IndexToPosition(m_Displayer.Container().Selection().start);
-
-        if (pos.x > m_ScrollX + Width() - m_Displayer.Padding() * 2) {
-            m_ScrollX = pos.x - Width() + m_Displayer.Padding() * 2;
-        }
-        else if (pos.x < m_ScrollX + m_Displayer.Padding()) {
-            m_ScrollX = pos.x - m_Displayer.Padding();
-        }
-    }
+    void UpdateScroll();
 };

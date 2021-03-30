@@ -26,12 +26,6 @@ public:
     {}
 
     /**
-     * Implicit bool operator, returns true when this <code>Button</code> is clicked.
-     * @return true once when this button is clicked, sets value to false after call.
-     */
-    operator bool() { return m_Clicked && ((m_Clicked = false) == false); }
-
-    /**
      * Enable this <code>Button</code>.
      */
     virtual void Enable() { m_Enabled = true; }

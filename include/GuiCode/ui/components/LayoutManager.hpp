@@ -21,6 +21,23 @@ struct Div : public Component
         Vertical, Horizontal			  // For Divs only.
     };
 
+    struct Settings
+    {
+        int divs;
+        Alignment align = Alignment::Horizontal;
+        int padding = 0;
+        bool dividers = false;
+        int size = AUTO;
+    };
+
+    struct ObjectSettings 
+    {
+        Component& component;
+        Alignment align = Alignment::Center;
+        int size = AUTO;
+        bool resize = false;
+    };
+
     /**
      * Type of Div. Either containing a single Object or more Divs.
      */
@@ -91,7 +108,7 @@ struct Div : public Component
      * Get padding for this Div.
      * @return padding
      */
-    int  Padding() { return m_Padding; }
+    int Padding() { return m_Padding; }
 
     /**
      * When Dividers is set to true, the interpretter will put dividers between the Divs
@@ -105,6 +122,18 @@ struct Div : public Component
      * @returns true if has dividers
      */
     bool Dividers() { return m_Dividers; }
+
+    /**
+     * Enable the autoresizing of the component to the div size.
+     * @param r resize
+     */
+    void ResizeComponent(bool r) { m_ResizeComponent = r; }
+
+    /**
+     * Returns true when auto resizing is enabled.
+     * @return if auto resize
+     */
+    bool ResizeComponent() { return m_ResizeComponent; }
 
     /**
      * Set the size of this Div in pixels.
@@ -146,13 +175,25 @@ struct Div : public Component
      * Set the object if this Div is of type Object.
      * @param o object
      */
-    void operator=(Component& o) { Object(o); }
+    Div& operator=(Component& o) { Object(o); return *this; }
 
     /**
      * Set the object if this Div is of type Object.
      * @param o object
      */
-    void operator=(Component* o) { Object(o); }
+    Div& operator=(Component* o) { Object(o); return *this; }
+
+    /**
+     * Set the object if this Div is of type Object.
+     * @param o object
+     */
+    Div& operator=(const Settings& o) { Padding(o.padding); Divs(o.divs); Align(o.align); DivSize(o.size); Dividers(o.dividers); return *this; }
+    
+    /**
+     * Set the object if this Div is of type Object.
+     * @param o object
+     */
+    Div& operator=(const ObjectSettings& o) { Object(o.component); DivSize(o.size); Align(o.align); ResizeComponent(o.resize); return *this; }
 
     /**
      * Clear this div and all sub divs.
@@ -173,6 +214,7 @@ private:
     int m_Cells = 0;
     int m_Padding = 0;
     bool m_Dividers = false;
+    bool m_ResizeComponent = false;
 };
 
 // --------------------------------------------------------------------------
@@ -606,7 +648,7 @@ struct LayoutManager
                 for (auto& i : div.Divs())
                     if (i->DivSize() == Div::AUTO)
                     {
-                        if (i->DivType() == Div::Type::Object)
+                        if (!i->ResizeComponent() && i->DivType() == Div::Type::Object)
                             sizes.push_back(i->Object().Size().width + i->Padding()), width -= i->Object().Size().width + i->Padding(), obamt++;
                         else
                             sizes.push_back(0), amt++;
@@ -642,7 +684,7 @@ struct LayoutManager
                 for (int i = 0; i < div.Divs().size(); i++)
                 {
                     if (div.Dividers() && i != 0)
-                        m_Dividers.emplace_back(Vec4<int>{ x, dim.y + 8, 1, dim.height - 16 });
+                        m_Dividers.emplace_back(Vec4<int>{ x, dim.y + div.Padding(), 1, dim.height - 2 * div.Padding() });
 
                     if (sizes[i] < 0) // If div with given space, size is negative so negate
                         UpdateDiv(*div.Divs()[i], { x + div.Padding(), dim.y + div.Padding(), -sizes[i] - 2 * div.Padding(), dim.height - 2 * div.Padding() }), x += -sizes[i];
@@ -658,7 +700,7 @@ struct LayoutManager
                 for (auto& i : div.Divs())
                     if (i->DivSize() == Div::AUTO)
                     {
-                        if (i->DivType() == Div::Type::Object)
+                        if (!i->ResizeComponent() && i->DivType() == Div::Type::Object)
                             sizes.push_back(i->Object().Size().height + i->Padding()), height -= i->Object().Size().height + i->Padding(), obamt++;
                         else
                             sizes.push_back(0), amt++;
@@ -694,7 +736,7 @@ struct LayoutManager
                 for (int i = 0; i < div.Divs().size(); i++)
                 {
                     if (div.Dividers() && i != 0)
-                        m_Dividers.emplace_back(Vec4<int>{ dim.x + 8, y, dim.width - 16, 1 });
+                        m_Dividers.emplace_back(Vec4<int>{ dim.x + div.Padding(), y, dim.width - 2 * div.Padding(), 1 });
 
                     if (sizes[i] < 0) // If div with given space, size is negative so negate
                         UpdateDiv(*div.Divs()[i], { dim.x + div.Padding(), y + div.Padding(), dim.width - 2 * div.Padding(), -sizes[i] - 2 * div.Padding() }), y += -sizes[i];
@@ -723,6 +765,11 @@ struct LayoutManager
             position += { dim.width / 2 - object->Size().width / 2, dim.height - object->Size().height };
 
         object->Position(position);
+
+        if (div.ResizeComponent())
+            if (object->Size() != dim.size)
+                m_PrevDim = { 0, 0, 0, 0 }, 
+                object->Size(dim.size);
 
         if (object->Width() + position.x > m_BiggestX)
             m_BiggestX = object->Width() + position.x;

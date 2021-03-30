@@ -121,6 +121,36 @@ namespace ButtonGraphics
         }
     };
 
+
+    class Dropdown
+    {
+    public:
+
+        template<typename T>
+        static void Render(T& b, CommandCollection& d)
+        {
+            using namespace Graphics;
+            int _p = 6;            
+            Color _c1 = b.Disabled() ? Color{ 0, 0, 0, 0 } : b.Active() ? Color{ 255, 255, 255, 26 } : b.Hovering() ? Color{ 255, 255, 255, 13 } : Color{ 0, 0, 0, 0 };
+            Color _c2 = Color{ 255, 255, 255, 255 };
+            Color _c3 = Color{ 128, 128, 128, 255 };
+
+
+            d.Command<Fill>(_c1);
+            d.Command<Quad>(Vec4<int>{b.Position() + 1, b.Size() - 2});
+            d.Command<Fill>(_c2);
+            d.Command<Font>(Fonts::Gidole14, 14.0f);
+            d.Command<TextAlign>(Align::LEFT, Align::CENTER);
+            d.Command<Text>(&b.Name(), Vec2<int>{ b.X() + 4, b.Y() + b.Height() / 2 });
+
+            int _w = 8;
+            int _padding = 4;
+            d.Command<Fill>(_c3);
+            d.Command<Triangle>(Vec4<int>{b.X() + b.Width() - _w / 2 - _padding, b.Y() + b.Height() / 2, _w, _w / 2}, -90.0f);
+        }
+
+    };
+
     // --------------------------------------------------------------------------
     // -------------------------------- Menu ------------------------------------
     // --------------------------------------------------------------------------

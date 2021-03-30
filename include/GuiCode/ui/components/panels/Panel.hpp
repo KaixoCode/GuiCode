@@ -78,7 +78,17 @@ public:
     bool NeedsRedraw() override { if (m_SmartPanel) return false; else return m_NeedsRedraw; }
     void NeedsRedraw(bool v) override { m_NeedsRedraw = v; }
 
+    /**
+     * Get the <code>LayoutManager</code> of this <code>Panel</code>
+     * @return layout manager
+     */
     LayoutManager& LayoutManager() { return m_LayoutManager; }
+
+    /**
+     * Get the <code>Div</code> of this <code>Panel</code>. Only used when the layout is 
+     * set to <code>Layout::Divs</code>
+     * @return div
+     */
     Div& Div() { return m_LayoutManager.Div(); }
 
 protected:
