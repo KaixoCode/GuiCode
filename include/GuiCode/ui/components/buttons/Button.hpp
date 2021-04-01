@@ -76,8 +76,7 @@ public:
 
 
 protected:
-    bool m_Clicked = false,
-        m_Active = false,
+    bool m_Active = false,
         m_Enabled = true,
         m_InMenu = false;
 

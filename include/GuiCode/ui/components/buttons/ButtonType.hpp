@@ -28,6 +28,8 @@ namespace ButtonType
          */
         Normal(Callback c = []() {}, const std::string& name = "Button", Key key = Key::NONE);
 
+        void Update(const Vec4<int>&) override;
+
     private:
         Callback m_Callback;
     };

@@ -38,7 +38,6 @@ namespace ButtonType
                 if (!Disabled() && Hovering() && m_Active)
                 {
                     m_Callback();
-                    m_Clicked = true;
                 }
                 m_Active = false;
             }
@@ -50,7 +49,7 @@ namespace ButtonType
                 m_Callback();
 
             if (event.key == Key::ENTER && Focused() && !Active() && !Disabled())
-                m_Callback(), m_Clicked = true;
+                m_Active = true, m_Callback();
 
             if (!Focused())
                 return;
@@ -73,8 +72,15 @@ namespace ButtonType
         m_Listener += [this](Event::KeyReleased& event)
         {
             if (event.key == Key::ENTER)
-                m_Clicked = false;
+                m_Active = false;
         };
+    }
+
+    void Normal::Update(const Vec4<int>& v)
+    {
+        if (!Focused())
+            m_Active = false;
+        ButtonBase::Update(v);
     }
 
     // --------------------------------------------------------------------------

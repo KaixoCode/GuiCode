@@ -53,7 +53,7 @@ public:
 	 * @param e callback
 	 */
 	DropDown(Callback e = [](Enum v) {})
-		: m_Callback(e), ButtonType::Normal{ [this] { RightClickMenu::Get().Open(&m_Menu); } },
+		: m_Callback(e), ButtonType::Normal{ [this] { RightClickMenu::Get().Open(&m_Menu); m_Active = false; } },
 		m_Key(ButtonType::List::NewKey())
 	{
 		m_Menu.ButtonSize({ 140, 20 });
