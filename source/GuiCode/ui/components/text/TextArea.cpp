@@ -7,7 +7,6 @@
 TextArea::TextArea()
     : m_Displayer(Panel<TextDisplayer>())
 {
-
     m_Listener += [this](Event::MousePressed& e)
     {
         if (e.button != Event::MouseButton::LEFT)
@@ -42,6 +41,12 @@ TextArea::TextArea()
 void TextArea::Update(const Vec4<int>& v)
 {
     ScrollPanel::Update(v);
+
+    if (Focused())
+    {
+        m_FocusedComponent = &m_Displayer;
+        m_Displayer.Focused(true);
+    }
 
     if (m_Displayer.Dragging())
     {

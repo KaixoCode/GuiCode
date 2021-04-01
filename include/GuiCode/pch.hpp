@@ -22,6 +22,7 @@
 #include <memory>
 #include <mutex>
 #include <queue>
+#include <regex>
 #include <sstream>
 #include <stack>
 #include <string>

@@ -24,7 +24,7 @@ namespace TreeItemType
          * @param path path to file
          * @param size size
          */
-        Normal(const std::filesystem::path &path, Vec2<int> size = { 250, 22 });
+        Normal(const std::filesystem::path &path);
     };
 
     // --------------------------------------------------------------------------
@@ -42,7 +42,7 @@ namespace TreeItemType
          * @param path path to file
          * @param size size
          */
-        Folder(const std::filesystem::path& path, Vec2<int> size = { 250, 22 });
+        Folder(const std::filesystem::path& path);
 
         auto Size(const Vec2<int>& size) -> void override { m_Size = size; m_ActualHeight = size.height; }
         auto Width(int w)                -> void override { m_Size = { w, m_Size.height }; }

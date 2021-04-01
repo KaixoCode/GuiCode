@@ -17,7 +17,7 @@ public:
      * Constructor
      * @param size size
      */
-    Panel(Vec2<int> size = { 40, 70 });
+    Panel();
 
     /**
      * A smart panel only redraws whenever a component inside this panel requests a redraw.
@@ -37,8 +37,8 @@ public:
     { 
         auto a = m_LayoutManager.WantsCursor() ? m_LayoutManager.Cursor() :
             !m_Pressed && m_LayoutManager.Cursor() != -1 ? m_LayoutManager.Cursor() :
-            m_Pressed && m_Focussed ? m_Focussed->Cursor() : 
-            m_Hovering ? m_Hovering->Cursor() : 
+            m_Pressed && m_FocusedComponent ? m_FocusedComponent->Cursor() : 
+            m_HoveringComponent ? m_HoveringComponent->Cursor() : 
             m_Cursor; 
         return a;
     }

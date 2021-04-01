@@ -22,11 +22,11 @@ namespace MenuType
 
         // Switch deactivate the active button and activate the button under the mouse
         ButtonBase* _ed2;
-        if (_ed != nullptr && _ed->Active() && (_ed2 = dynamic_cast<ButtonBase*>(m_Hovering)) != nullptr && _ed != _ed2)
+        if (_ed != nullptr && _ed->Active() && (_ed2 = dynamic_cast<ButtonBase*>(m_HoveringComponent)) != nullptr && _ed != _ed2)
         {
             m_NeedsRedraw = true;
             _ed->Active(false);
-            m_Focussed = _ed2;
+            m_FocusedComponent = _ed2;
             _ed2->Active(true);
         }
 

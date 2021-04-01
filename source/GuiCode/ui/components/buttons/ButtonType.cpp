@@ -16,20 +16,18 @@ namespace ButtonType
         m_Listener += [this](Event::MousePressed& event)
         {
             m_NeedsRedraw = true;
-            if (event.button == Event::MouseButton::LEFT && Component::WithinBounds({ event.x, event.y }))
+            if (event.button == Event::MouseButton::LEFT && Hovering())
                 m_Active = true;
         };
 
         m_Listener += [this](Event::MouseExited& event)
         {
             m_NeedsRedraw = true;
-            m_Hovering = false;
         };
 
         m_Listener += [this](Event::MouseEntered& event)
         {
             m_NeedsRedraw = true;
-            m_Hovering = true;
         };
 
         m_Listener += [this](Event::MouseReleased& event)
@@ -37,7 +35,7 @@ namespace ButtonType
             if (event.button == Event::MouseButton::LEFT)
             {
                 m_NeedsRedraw = true;
-                if (!Disabled() && Component::WithinBounds({ event.x, event.y }) && m_Active)
+                if (!Disabled() && Hovering() && m_Active)
                 {
                     m_Callback();
                     m_Clicked = true;
@@ -50,6 +48,32 @@ namespace ButtonType
         {
             if (m_KeyCombo == event && !Disabled())
                 m_Callback();
+
+            if (event.key == Key::ENTER && Focused() && !Active() && !Disabled())
+                m_Callback(), m_Clicked = true;
+
+            if (!Focused())
+                return;
+
+            if (m_InMenu && event.key == Key::DOWN && m_Post != nullptr)
+            {
+                event.key = -1;
+                Focused(false);
+                m_Post->Focused(true);
+            }
+
+            if (m_InMenu && event.key == Key::UP && m_Pre != nullptr)
+            {
+                event.key = -1;
+                Focused(false);
+                m_Pre->Focused(true);
+            }
+        };
+
+        m_Listener += [this](Event::KeyReleased& event)
+        {
+            if (event.key == Key::ENTER)
+                m_Clicked = false;
         };
     }
 
@@ -103,8 +127,11 @@ namespace ButtonType
 
         m_Listener += [this](Event::KeyPressed& event)
         {
-            if (m_KeyCombo == event && !Disabled())
+            if ((m_KeyCombo == event || (event.key == Key::ENTER && Focused() && !m_EnterPressed)) && !Disabled())
             {
+                if (event.key == Key::ENTER && Focused()) 
+                    m_EnterPressed = true;
+                
                 if (m_Link)
                 {
                     *m_Link ^= true;
@@ -118,6 +145,29 @@ namespace ButtonType
                 else
                     m_Active ^= true;
             }
+
+            if (!Focused())
+                return;
+
+            if (m_InMenu && event.key == Key::DOWN && m_Post != nullptr)
+            {
+                event.key = -1;
+                Focused(false);
+                m_Post->Focused(true);
+            }
+
+            if (m_InMenu && event.key == Key::UP && m_Pre != nullptr)
+            {
+                event.key = -1;
+                Focused(false);
+                m_Pre->Focused(true);
+            }
+        };
+
+        m_Listener += [this](Event::KeyReleased& event)
+        {
+            if (event.key == Key::ENTER)
+                m_EnterPressed = false;
         };
 
         m_Listener += [this](Event::MousePressed& event)
@@ -152,6 +202,12 @@ namespace ButtonType
             m_NeedsRedraw = true;
             Active(false);
         };
+
+        m_Listener += [this](Event::KeyPressed& event)
+        {
+            if (event.key == Key::ENTER && Focused())
+                event.key = -1;
+        };
     }
 
     void FocusToggle::Update(const Vec4<int>& viewport)
@@ -179,6 +235,14 @@ namespace ButtonType
     Hover::Hover(const std::string& name)
         : ButtonBase(name, Key::NONE)
     {
+        m_Listener += [this](Event::KeyPressed& event)
+        {
+            if (m_KeyCombo == event && !Disabled())
+            {
+                m_Active ^= true;
+            }
+        };
+
         m_Listener += [this](Event::MouseEntered& event)
         {
             m_NeedsRedraw = true;
@@ -193,4 +257,9 @@ namespace ButtonType
             m_Active = false;
         };
     };
+
+    void Hover::Update(const Vec4<int>& v)
+    {
+        ButtonBase::Update(v);
+    }
 }

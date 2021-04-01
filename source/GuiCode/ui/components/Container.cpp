@@ -1,7 +1,7 @@
 #include "GuiCode/ui/components/Container.hpp"
 
-Container::Container(Vec2<int> size)
-    : Component(size)
+Container::Container()
+    : Component()
 {
     // General event listener to forward the events to the appropriate components
     // inside this container.
@@ -25,16 +25,16 @@ Container::Container(Vec2<int> size)
         }
 
         // If there was an unfocus event, unfocus the focussed component
-        if (m_Focussed && e.type == Event::Type::Unfocused)
+        if (m_FocusedComponent && e.type == Event::Type::Unfocused)
         {
-            m_Focussed->AddEvent(_copy);
+            m_FocusedComponent->AddEvent(_copy);
             return;
         }
 
         if (e.type == Event::Type::MouseEntered)
         {
-            if (m_Hovering) 
-                m_Hovering->AddEvent(_copy);
+            if (m_HoveringComponent) 
+                m_HoveringComponent->AddEvent(_copy);
             
             return;
         }
@@ -44,11 +44,11 @@ Container::Container(Vec2<int> size)
             this->Determine(e);
 
         // Send events to hovering and focussed if it's not the same component.
-        if (m_Hovering) 
-            m_Hovering->AddEvent(_copy);
+        if (m_HoveringComponent) 
+            m_HoveringComponent->AddEvent(_copy);
         
-        if (m_Hovering != m_Focussed && m_Focussed) 
-            m_Focussed->AddEvent(_copy2);
+        if (m_HoveringComponent != m_FocusedComponent && m_FocusedComponent) 
+            m_FocusedComponent->AddEvent(_copy2);
         
         // If the mouse is released update the hovering and focussed after sending the events.
         if (e.type == Event::Type::MouseReleased)
@@ -67,6 +67,7 @@ void Container::Update(const Vec4<int>& viewport)
     
     // Update all the components that lie within the viewport and are visible.
     for (auto& _c : m_Components)
+    {
         if (_c->Visible() &&
             _c->X() + _c->Width() >= m_Viewport.x && _c->Y() + _c->Height() >= m_Viewport.y &&
             _c->X() <= m_Viewport.x + m_Viewport.width && _c->Y() <= m_Viewport.y + m_Viewport.height)
@@ -76,6 +77,26 @@ void Container::Update(const Vec4<int>& viewport)
 
             _c->Update(viewport);
         }
+
+        // If a sub component gained focus on its own, also focus this container.
+        if (m_FocusedComponent == nullptr && _c->Focused())
+            m_FocusedComponent = _c.get(), Focused(true);
+    }
+
+    // If the focused component lost focus, check if it swapped to other component, otherwise
+    // remove focus from this container as well.
+    if (m_FocusedComponent && !m_FocusedComponent->Focused())
+    {
+        m_FocusedComponent = nullptr;
+
+        bool _found = false;
+        for (auto& _c : m_Components)
+            if (_c->Focused())
+                m_FocusedComponent = _c.get(), Focused(true), _found = true;
+
+        if (!_found)
+            Focused(false), m_FocusedComponent = nullptr;
+    }
 }
 
 void Container::Render(CommandCollection& d)
@@ -106,49 +127,73 @@ void Container::Determine(Event& e)
                 _nextHover = _c.get();
 
     // If it is different, send MouseEntered and MouseExited events.
-    if (_nextHover != m_Hovering)
+    if (_nextHover != m_HoveringComponent)
     {
-        if (m_Hovering)
+        if (m_HoveringComponent)
         {
             Event _e{ Event::Type::MouseExited, e.x, e.y };
-            m_Hovering->AddEvent(_e);
+            m_HoveringComponent->AddEvent(_e);
+            m_HoveringComponent->Hovering(false);
         }
 
         if (_nextHover != nullptr)
         {
             Event _e{ Event::Type::MouseEntered, e.x, e.y };
             _nextHover->AddEvent(_e);
+            _nextHover->Hovering(true);
         }
-        m_Hovering = _nextHover;
+        m_HoveringComponent = _nextHover;
     }
 
     // If MousePressed and Hovering is not focussed, send focus events.
-    if (e.type == Event::Type::MousePressed && m_Hovering != m_Focussed)
+    if (e.type == Event::Type::MousePressed && m_HoveringComponent != m_FocusedComponent)
     {
-        if (m_Focussed != nullptr)
+        if (m_FocusedComponent != nullptr)
         {
             Event _e{ Event::Type::Unfocused };
-            m_Focussed->AddEvent(_e);
+            m_FocusedComponent->Focused(false);
+            m_FocusedComponent->AddEvent(_e);
         }
 
-        m_Focussed = m_Hovering;
-        if (m_Focussed != nullptr)
+        m_FocusedComponent = m_HoveringComponent;
+        if (m_FocusedComponent != nullptr)
         {
             Event _e{ Event::Type::Focused };
-            m_Focussed->AddEvent(_e);
+            m_FocusedComponent->Focused(true);
+            m_FocusedComponent->AddEvent(_e);
         }
     }
+}
+
+void Container::Focused(bool v)
+{
+    m_Focused = v;
+
+    // Make sure all sub components are also unfocused.
+    if (!v)
+        for (auto& _c : m_Components)
+            _c->Focused(false);
+}
+
+void Container::Hovering(bool v)
+{
+    m_Hovering = v;
+
+    // Make sure all sub components are also unfocused.
+    if (!v)
+        for (auto& _c : m_Components)
+            _c->Hovering(false);
 }
 
 void Container::Remove(int index)
 {
     // Make sure hovering and focussed dont point to nothing
     auto& a = m_Components.at(index);
-    if (a.get() == m_Hovering)
-        m_Hovering = nullptr;
+    if (a.get() == m_HoveringComponent)
+        m_HoveringComponent = nullptr;
 
-    if (a.get() == m_Focussed)
-        m_Focussed = nullptr;
+    if (a.get() == m_FocusedComponent)
+        m_FocusedComponent = nullptr;
 
     m_Components.erase(m_Components.begin() + index);
 }

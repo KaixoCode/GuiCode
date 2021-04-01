@@ -11,16 +11,7 @@ public:
     /**
      * Constructor
      */
-    Component()
-    {}
-
-    /**
-     * Constructor
-     * @param size size
-     */
-    Component(Vec2<int> size)
-        : m_Size(size)
-    {}
+    Component();
 
     virtual ~Component()
     {}
@@ -212,6 +203,19 @@ public:
     virtual bool Visible() const { return m_Visible; }
 
     /**
+     * True when the mouse is hovering over this <code>Component</code>.
+     */
+    virtual bool Hovering() const { return m_Hovering; }
+
+    /**
+     * True when this <code>Component</code> is focused.
+     */
+    virtual bool Focused() const { return m_Focused; }
+
+    virtual void Hovering(bool v) { m_Hovering = v; }
+    virtual void Focused(bool v) { m_Focused = v; }
+
+    /**
      * Get the <code>Layout::Hint</code> of the <code>Component</code>
      * @return <code>Layout::Hint</code>
      */
@@ -235,7 +239,7 @@ public:
      * Render the <code>Component</code>
      * @param d the <code>CommandCollection</code> to append draw instructions to
      */
-    virtual void Render(CommandCollection& d) { m_NeedsRedraw = false; }
+    virtual void Render(CommandCollection& d);
     
     /**
      * Update the <code>Component</code>
@@ -249,7 +253,35 @@ public:
      */
     void AddEvent(Event& e) { m_Listener.AddEvent(e); }
 
+    /**
+     * Set the tab component, when pressing Tab, the focus will be
+     * moved to that component if this component currently has focus.
+     * @param c component
+     */
+    void TabComponent(Component* c);
+
+    /**
+     * Set the back-tab component, when pressing Shift + Tab, the focus will be
+     * moved to that component if this component currently has focus.
+     * @param c component
+     */
+    void BackTabComponent(Component* c);
+
+    /**
+     * Get the tab component.
+     * @return tab component
+     */
+    auto TabComponent() -> Component& { return *m_TabComponent; }
+
+    /**
+     * Get the back-tab component.
+     * @return back-tab component
+     */
+    auto BackTabComponent() -> Component& { return *m_BackTabComponent; }
+
 protected:
+    Component* m_TabComponent = nullptr, * m_BackTabComponent = nullptr;
+
     Vec4<int> m_Viewport{ -1, -1, -1, -1 };
 
     Vec2<int> m_Pos{ 0, 0 };
@@ -262,7 +294,10 @@ protected:
     int m_Cursor = GLFW_CURSOR_NORMAL;
 
     bool m_Visible = true,
-        m_NeedsRedraw = true;
+        m_NeedsRedraw = true,
+        m_Hovering = false,
+        m_Focused = false,
+        m_TabSwitch = false;
     
     EventListener m_Listener;
 };

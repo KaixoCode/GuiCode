@@ -255,7 +255,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     // Buttons if not on the edge or top bar
     int _offset = IsMaximized(hWnd) ? -8 : 0;
     double _padding = 8.0 / _self->m_Scale;
-    if (_self->m_Hovering != nullptr && _self->CursorPos().y > _self->Height() - (32 + _offset) / _self->m_Scale || _self->m_MousePressed != Event::MouseButton::NONE ||
+    if (_self->m_HoveringComponent != nullptr && _self->CursorPos().y > _self->Height() - (32 + _offset) / _self->m_Scale || _self->m_MousePressed != Event::MouseButton::NONE ||
         _self->CursorPos().y < _self->Height() - (32 + _offset) / _self->m_Scale && _self->CursorPos().x > _padding && _self->CursorPos().x < _self->Width() - _padding && _self->CursorPos().y > _padding)
     {
         bool _dblclk = false;

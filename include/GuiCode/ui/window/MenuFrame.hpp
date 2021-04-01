@@ -50,7 +50,13 @@ public:
     ComponentFrame(const std::string& name, const int width, const int height)
         : Window(name, width, height, true, false, true, false),
         m_Panel(&Emplace<::ComponentFramePanel>())
-    {}
+    {
+        m_Listener += [this](Event::KeyPressed& e)
+        {
+            if (e.key == Key::ESC && Visible())
+                Close();
+        };
+    }
 
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection& d) override;
@@ -72,6 +78,9 @@ public:
      * @return pointer to the component
      */
     ::Component* Component() const { return m_Component; }
+
+
+    virtual void Close() = 0;
         
 private:
     ::ComponentFramePanel* m_Panel;

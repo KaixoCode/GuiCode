@@ -46,12 +46,6 @@ public:
 	bool Dragging() { return m_Dragging; }
 
 	/**
-	 * Returns true if this component is focused.
-	 * @return true if focused
-	 */
-	bool Focused() { return m_Focused; }
-
-	/**
 	 * Converts an (x, y) position on this TextDisplayer to an index in 
 	 * the content of the TextContainer.
 	 * @return index
@@ -192,6 +186,10 @@ public:
 	 */
 	auto Placeholder() -> std::string& { return m_Placeholder; }
 
+	bool Focused() const override { return Panel::Focused(); }
+	void Focused(bool v) override { m_Timer = 60; Panel::Focused(v); }
+
+
 private:
 	TextContainer m_Container;
 
@@ -207,8 +205,7 @@ private:
 		m_Timer = 60;
 
 	bool m_Shift = false,
-		m_Dragging = false,
-		m_Focused = false;
+		m_Dragging = false;
 
 	Color m_TextColor{ 0, 0, 0, 255 }, 
 		m_SelectColor{ 128, 128, 255, 255 };

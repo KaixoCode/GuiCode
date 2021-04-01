@@ -12,9 +12,7 @@
 class MenuBase : public Container
 {
 public:
-    MenuBase()
-        : Container()
-    {};
+    MenuBase();
 
     /**
      * Adjust the default button size, can be overwritten on a per button basis.
@@ -53,6 +51,16 @@ public:
                 _ta.Width(m_ButtonSize.width);
             if (m_ButtonSize.height != -1)
                 _ta.Height(m_ButtonSize.height);
+
+            _ta.InMenu(true);
+
+            if (m_Prev)
+            {
+                auto p = dynamic_cast<ButtonBase*>(m_Prev);
+                p->PostButton(&_ta);
+                _ta.PreButton(p);
+            }
+            m_Prev = &_ta;
         }
         return _ta;
     }
@@ -77,6 +85,16 @@ public:
                 _ta.Width(m_ButtonSize.width);
             if (m_ButtonSize.height != -1)
                 _ta.Height(m_ButtonSize.height);
+
+            _ta.InMenu(true);
+
+            if (m_Prev)
+            {
+                auto p = dynamic_cast<ButtonBase*>(m_Prev);
+                p->PostButton(&_ta);
+                _ta.PreButton(p);
+            }
+            m_Prev = &_ta;
         }
         return _ta;
     }
@@ -84,6 +102,9 @@ public:
 
 protected:
     Vec2<int> m_ButtonSize{ -1, -1 };
+
+private:
+    Component* m_Prev = nullptr;
 };
 
 // --------------------------------------------------------------------------

@@ -11,9 +11,9 @@
 class TreeItemBase : public Container
 {
 public:
-    TreeItemBase(const std::filesystem::path& path, Vec2<int> size = { 250, 22 })
+    TreeItemBase(const std::filesystem::path& path)
         : m_Path(path), m_Name(path.filename().string()), 
-        m_Extension(m_Path.extension().string()), Container(size)
+        m_Extension(m_Path.extension().string()), Container()
     {}
 
     /**

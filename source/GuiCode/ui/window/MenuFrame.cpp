@@ -58,4 +58,6 @@ void ComponentFrame::Component(::Component* component)
 {
     m_Panel->Component(component);
     m_Component = component;
+    if (component)
+        component->Focused(true);
 }

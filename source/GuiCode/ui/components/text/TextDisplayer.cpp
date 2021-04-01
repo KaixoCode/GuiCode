@@ -14,7 +14,7 @@ TextDisplayer::TextDisplayer()
 
 	m_Listener += [this](Event::KeyPressed& e)
 	{
-		if (!m_Focused)
+		if (!Focused())
 			return;
 
 		m_Timer = 60;
@@ -32,10 +32,13 @@ TextDisplayer::TextDisplayer()
 
 	m_Listener += [this](Event::KeyTyped& e)
 	{
-		if (!m_Focused)
+		if (!Focused())
 			return;
 
 		m_Timer = 60;
+
+		if (e.key == Key::TAB)
+			return;
 
 		if (e.keymod & Event::Mod::CONTROL)
 			CtrlTypeActions(e);
@@ -98,12 +101,10 @@ TextDisplayer::TextDisplayer()
 	m_Listener += [this](Event::Unfocused& e)
 	{
 		m_Container.Select(m_Container.Selection().start);
-		m_Focused = false;
 	};
 	m_Listener += [this](Event::Focused& e)
 	{
 		RecalculateLines();
-		m_Focused = true;
 	};
 
 	m_Cursor = GLFW_IBEAM_CURSOR;
@@ -146,7 +147,7 @@ void TextDisplayer::Render(CommandCollection& d)
 	auto sel = m_Container.Selection();
 	d.Command<Graphics::Fill>(m_TextColor);
 	int index = 0;
-	if (m_Lines.size() == 1 && m_Lines[0].length() == 0 && !m_Focused)
+	if (m_Lines.size() == 1 && m_Lines[0].length() == 0 && !Focused())
 	{
 		int nx = 0;
 		if (m_Align == Align::CENTER)
@@ -170,9 +171,9 @@ void TextDisplayer::Render(CommandCollection& d)
 		bool low = sel.Lowest() <= beginindex + i.length() && sel.Lowest() > beginindex - 1;
 		bool high = sel.Highest() <= beginindex + i.length() && sel.Highest() > beginindex - 1;
 		bool between = beginindex > sel.Lowest() && beginindex + i.length() < sel.Highest();
-		bool pos = m_Focused && m_Timer > 30 && m_Container.Editable() &&
-			(sel.start < beginindex + i.length() && sel.start > beginindex -1 || 
-				i == *(m_Lines.end() - 1) && sel.start == i.length() + beginindex);
+		bool pos = Focused() && m_Timer > 30 && m_Container.Editable() &&
+			(sel.start < beginindex + i.length() && sel.start > beginindex -1 ||
+				index == m_Lines.size() - 1&& sel.start == m_Container.Content().size());
 
 		int nx = 0;
 		if (m_Align == Align::CENTER)
@@ -334,6 +335,7 @@ void TextDisplayer::CalcLinesWordWrap()
 			int j = index - lineindex;
 			int len = ctrl - lineindex - j;
 
+
 			if (j + len > m_Lines[i].length() || j < 0 || j > m_Lines[i].length())
 				break;
 
@@ -357,11 +359,12 @@ void TextDisplayer::CalcLinesWordWrap()
 						b = k;
 						break;
 					}
-				}
-				if (index == b)
 					index++;
-				else
-					index = b;
+				}
+				//if (index == b)
+				//	index++;
+				//else
+				//	index = b;
 
 				break;
 			}
@@ -460,7 +463,7 @@ void TextDisplayer::KeyTypeActions(Event::KeyTyped& e)
 	{
 	case Key::BACKSPACE: m_Container.Backspace(); break;
 	case Key::TAB: m_Container.Insert("    "); break;
-	case '\r': m_Container.Insert("\n"); break;
+	case Key::ENTER: m_Container.Insert("\n"); break;
 	default: m_Container.Insert(e.key);
 	}
 }

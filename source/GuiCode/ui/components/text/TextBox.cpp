@@ -40,8 +40,12 @@ TextBox::TextBox()
 void TextBox::Update(const Vec4<int>& v)
 {
     m_Displayer.LineHeight(Height() - 2 * Padding());
+    if (!m_Displayer.Focused() && Focused())
+    {
+        m_Displayer.Focused(true);
+        m_FocusedComponent = &m_Displayer;
+    }
     Panel::Update(v);
-
     m_Displayer.Position({ -m_ScrollX, 0 });
     m_Displayer.Height(Height());
 

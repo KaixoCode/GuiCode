@@ -69,6 +69,17 @@ namespace ButtonType
                 }
             };
 
+            m_Listener += [this](Event::KeyPressed& event)
+            {
+                if (event.key == Key::ENTER && Focused() && !Disabled())
+                {
+                    for (auto& _l : m_Lists[m_Id])
+                        _l->Selected(false);
+
+                    Selected(true);
+                }
+            };
+
             auto& _exists = m_Lists.find(id);
             if (_exists == m_Lists.end())
                 m_Lists.emplace(id, std::vector<List*>());
@@ -158,6 +169,7 @@ namespace ButtonType
 
     protected:
         bool* m_Link = { 0 };
+        bool m_EnterPressed = false;
 
         virtual void SetupCallbacks();
         ToggleCallback m_ToggleCallback = nullptr;
@@ -206,6 +218,8 @@ namespace ButtonType
          * @param size size
          */
         Hover(const std::string& name = "Button");
+
+        void Update(const Vec4<int>& v) override;
     };
 
     // --------------------------------------------------------------------------
@@ -259,10 +273,78 @@ namespace ButtonType
         template<typename ...Args>
         Menu(Args&&...args)
             : ButtonType(args...), m_Menu(&ButtonType::Emplace<::Menu<Graphics, MenuType>>())
-        {}
+        {
+            m_Listener += [this](Event::KeyPressed& event)
+            {
+                if (!Focused() || Disabled())
+                    return;
+
+                if (!Active() && m_InMenu && event.key == Key::DOWN && m_Post != nullptr)
+                {
+                    event.key = -1;
+                    Focused(false);
+                    m_Post->Focused(true);
+                }
+
+                if (!Active() && m_InMenu && event.key == Key::UP && m_Pre != nullptr)
+                {
+                    event.key = -1;
+                    Focused(false);
+                    m_Pre->Focused(true);
+                }
+
+                if (Active() && m_InMenu && event.key == Key::LEFT)
+                {
+                    auto bttn = dynamic_cast<ButtonBase*>(m_Menu->FocusedComponent());
+                    if (bttn && bttn->Active())
+                        return;
+
+                    m_Menu->FocusedComponent(nullptr);
+                    for (auto& i : m_Menu->Components())
+                        i->Focused(false);
+                    event.key = -1;
+                    m_CloseMenu = true;
+                }
+
+                if (Active() && m_InMenu && event.key == Key::ESC)
+                {
+                    auto bttn = dynamic_cast<ButtonBase*>(m_Menu->FocusedComponent());
+                    if (bttn && bttn->Active())
+                        return;
+
+                    m_Menu->FocusedComponent(nullptr);
+                    for (auto& i : m_Menu->Components())
+                        i->Focused(false);
+                    event.key = -1;
+                    m_CloseMenu = true;
+                }
+
+                if (!Active() && m_InMenu && event.key == Key::RIGHT && Focused() && Visible())
+                {
+                    Active(true);
+                }
+            };
+        }
 
         void Update(const Vec4<int>& viewport) override
         {
+            if (m_CloseMenu)
+            {
+                m_CloseMenu = false;
+                Active(false);
+            }
+
+            if (!m_Menu->Visible() && Active() && Focused())
+            {
+                m_Menu->Focused(true);
+            }
+
+            if (m_Menu->Visible() && !Active())
+            {
+                m_Menu->FocusedComponent(nullptr);
+                for (auto& i : m_Menu->Components())
+                    i->Focused(false);
+            }
             m_Menu->Visible(Active());
             if (A == Align::CENTER || A == Align::BOTTOM)
                 m_Menu->Position({ X(), Y() - m_Menu->Height() });
@@ -301,5 +383,7 @@ namespace ButtonType
 
     private:
         ::MenuBase* m_Menu;
+
+        bool m_CloseMenu = false, m_OpenMenu = false;
     };
 }

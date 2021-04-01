@@ -16,8 +16,10 @@ namespace MenuAccessories
     {
     public:
         Divider(int size, int stroke, int paddingx, int paddingy)
-            : m_Size(size), m_PaddingX(paddingx), m_PaddingY(paddingy), m_Stroke(stroke), Component({ size, stroke + paddingy * 2 })
-        {}
+            : m_Size(size), m_PaddingX(paddingx), m_PaddingY(paddingy), m_Stroke(stroke), Component()
+        {
+            Size({ size, stroke + paddingy * 2 });
+        }
 
         void Render(CommandCollection&) override;
         bool WithinBounds(const Vec2<int>&) const override { return false; }
@@ -35,8 +37,10 @@ namespace MenuAccessories
     {
     public:
         VerticalDivider(int size, int stroke, int paddingx, int paddingy)
-            : m_Size(size), m_PaddingX(paddingx), m_PaddingY(paddingy), m_Stroke(stroke), Component({ stroke + paddingx * 2, size })
-        {}
+            : m_Size(size), m_PaddingX(paddingx), m_PaddingY(paddingy), m_Stroke(stroke), Component()
+        {
+            Size({ stroke + paddingy * 2, size });
+        }
 
         void Render(CommandCollection&) override;
         bool WithinBounds(const Vec2<int>&) const override { return false; }

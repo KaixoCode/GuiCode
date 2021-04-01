@@ -41,7 +41,7 @@ public:
 	/**
 	 * Close the right click menu.
 	 */
-	void Close()
+	void Close() override
 	{
 		m_Focus = false;
 		m_Close = false;

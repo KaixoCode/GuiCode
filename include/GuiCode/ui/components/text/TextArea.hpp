@@ -147,6 +147,8 @@ public:
      */
     auto Placeholder() -> std::string& { return m_Displayer.Placeholder(); }
 
+    auto Displayer() ->TextDisplayer& { return m_Displayer; }
+
 private:
     TextDisplayer& m_Displayer;
     Vec2<int> m_Mouse;

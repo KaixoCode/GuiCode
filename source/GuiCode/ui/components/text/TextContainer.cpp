@@ -10,18 +10,46 @@ TextContainer::TextContainer(const std::string& c, bool editable)
 
 void TextContainer::Insert(const std::string& add)
 { 
-	RemoveSelection();
-	auto& _start = m_Content.begin() + Selection().Lowest();
-	m_Content.insert(_start, add.begin(), add.end());
-	Select(Selection().Lowest() + add.length());
+	if (m_EnableRegex)
+	{
+		std::string copy = m_Content;
+		RemoveSelection();
+		auto& _start = m_Content.begin() + Selection().Lowest();
+		m_Content.insert(_start, add.begin(), add.end());
+		if (!std::regex_match(m_Content, m_Filter))
+			m_Content = copy;
+		else
+			Select(Selection().Lowest() + add.length());
+	}
+	else
+	{
+		RemoveSelection();
+		auto& _start = m_Content.begin() + Selection().Lowest();
+		m_Content.insert(_start, add.begin(), add.end());
+		Select(Selection().Lowest() + add.length());
+	}
 }
 
 void TextContainer::Insert(const char& add)
 {
-	RemoveSelection();
-	auto& _start = m_Content.begin() + Selection().Lowest();
-	m_Content.insert(_start, add);
-	Select(Selection().Lowest() + 1);
+	if (m_EnableRegex)
+	{
+		std::string copy = m_Content;
+		RemoveSelection();
+		auto& _start = m_Content.begin() + Selection().Lowest();
+		m_Content.insert(_start, add);
+		if (!std::regex_match(m_Content, m_Filter))
+			m_Content = copy;
+		else
+			Select(Selection().Lowest() + 1);
+	}
+	else
+	{
+		RemoveSelection();
+		auto& _start = m_Content.begin() + Selection().Lowest();
+		m_Content.insert(_start, add);
+		Select(Selection().Lowest() + 1);
+	}
 }
 
 void TextContainer::Delete()

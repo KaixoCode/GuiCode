@@ -168,7 +168,7 @@ public:
     /**
      * Type of key combo
      */
-    enum Value
+    enum Combo
     {
         NONE = 0,
         CTRL_A = ('A' << 8) | Event::Mod::CONTROL,
@@ -202,10 +202,16 @@ public:
         CTRL_SHIFT_W = ('W' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         ALT_F4 = (VK_F4 << 8) | Event::Mod::ALT,
         CTRL_F4 = (VK_F4 << 8) | Event::Mod::CONTROL,
+        SHIFT_TAB = (0x9 << 8) | Event::Mod::SHIFT,
+    };
+
+    enum Value
+    {
         BACKSPACE = 0x8,
+        ESC = VK_ESCAPE,
         TAB = 0x9,
         DEL = 0x2e,
-        ENTER = 0xa,
+        ENTER = 0xd,
         LEFT = 0x25,
         RIGHT = 0x27,
         UP = 0x26,
@@ -223,8 +229,16 @@ public:
      * Constructor
      * @param v value
      */
-    Key(Key::Value v)
+    Key(Key::Combo v)
         : m_Value(v)
+    {}
+
+    /**
+     * Constructor
+     * v keytyped event, automatically converted to a key combo
+     */
+    Key(Event::KeyTyped v)
+        : m_Value((Combo)((v.key << 8) | v.keymod))
     {}
 
     /**
@@ -232,17 +246,25 @@ public:
      * v keypressed event, automatically converted to a key combo
      */
     Key(Event::KeyPressed v)
-        : m_Value((Value)((v.key << 8) | v.keymod))
+        : m_Value((Combo)((v.key << 8) | v.keymod))
     {}
 
-    bool operator==(Key::Value a) const { return m_Value == a; }
-    bool operator!=(Key::Value a) const { return m_Value != a; }
-    bool operator<(Key::Value a)  const { return m_Value < a; }
-    bool operator>(Key::Value a)  const { return m_Value > a; }
-    bool operator<=(Key::Value a) const { return m_Value <= a; }
-    bool operator>=(Key::Value a) const { return m_Value >= a; }
+    /**
+     * Constructor
+     * v keyreleased event, automatically converted to a key combo
+     */
+    Key(Event::KeyReleased v)
+        : m_Value((Combo)((v.key << 8) | v.keymod))
+    {}
+
+    bool operator==(Key::Combo a) const { return m_Value == a; }
+    bool operator!=(Key::Combo a) const { return m_Value != a; }
+    bool operator<(Key::Combo a)  const { return m_Value < a; }
+    bool operator>(Key::Combo a)  const { return m_Value > a; }
+    bool operator<=(Key::Combo a) const { return m_Value <= a; }
+    bool operator>=(Key::Combo a) const { return m_Value >= a; }
     explicit operator int()       const { return static_cast<int>(m_Value); }
-    operator Value()              const { return m_Value; }
+    operator Combo()              const { return m_Value; }
 
     /**
      * Convert the key combo to a string.
@@ -252,10 +274,10 @@ public:
         static std::string _ctrl = "Ctrl+";
         static std::string _shift = "Shift+";
         static std::string _alt = "Alt+";
-        static std::unordered_map<Key::Value, std::string> _keys;
+        static std::unordered_map<Key::Combo, std::string> _keys;
         _keys.reserve(33);
 
-        std::unordered_map<Key::Value, std::string>::iterator _it;
+        std::unordered_map<Key::Combo, std::string>::iterator _it;
         if ((_it = _keys.find(m_Value)) == _keys.end())
         {
             int _value = static_cast<int>(m_Value);
@@ -286,10 +308,19 @@ public:
     }
 
 private:        
-    Value m_Value;
+    Combo m_Value;
 };
 
 inline bool operator ==(const Event::KeyPressed& a, const Key b) { return ((a.key << 8) | a.keymod) == (int)b; }
 inline bool operator ==(const Event::KeyPressed&& a, const Key b) { return ((a.key << 8) | a.keymod) == (int)b; }
+inline bool operator ==(const Event::KeyReleased& a, const Key b) { return ((a.key << 8) | a.keymod) == (int)b; }
+inline bool operator ==(const Event::KeyReleased&& a, const Key b) { return ((a.key << 8) | a.keymod) == (int)b; }
+inline bool operator ==(const Event::KeyTyped& a, const Key b) { return ((a.key << 8) | a.keymod) == (int)b; }
+inline bool operator ==(const Event::KeyTyped&& a, const Key b) { return ((a.key << 8) | a.keymod) == (int)b; }
 inline bool operator ==(const Key b, const Event::KeyPressed& a) { return ((a.key << 8) | a.keymod) == (int)b; }
 inline bool operator ==(const Key b, const Event::KeyPressed&& a) { return ((a.key << 8) | a.keymod) == (int)b; }
+inline bool operator ==(const Key b, const Event::KeyReleased& a) { return ((a.key << 8) | a.keymod) == (int)b; }
+inline bool operator ==(const Key b, const Event::KeyReleased&& a) { return ((a.key << 8) | a.keymod) == (int)b; }
+inline bool operator ==(const Key b, const Event::KeyTyped& a) { return ((a.key << 8) | a.keymod) == (int)b; }
+inline bool operator ==(const Key b, const Event::KeyTyped&& a) { return ((a.key << 8) | a.keymod) == (int)b; }
+

@@ -11,8 +11,8 @@ namespace TreeItemType
     // ------------------------------- Normal -----------------------------------
     // --------------------------------------------------------------------------
 
-    Normal::Normal(const std::filesystem::path& path, Vec2<int> size)
-        : TreeItemBase(path, size)
+    Normal::Normal(const std::filesystem::path& path)
+        : TreeItemBase(path)
     {
         m_Listener += [this](Event::MouseExited& event)
         {
@@ -29,11 +29,11 @@ namespace TreeItemType
     // ------------------------------- Folder -----------------------------------
     // --------------------------------------------------------------------------
 
-    Folder::Folder(const std::filesystem::path &path, Vec2<int> size)
-        : TreeItemBase(path, size), m_TreePanel(&Container::Emplace<TreePanel>())
+    Folder::Folder(const std::filesystem::path &path)
+        : TreeItemBase(path), m_TreePanel(&Container::Emplace<TreePanel>())
     {
         m_Folder = true;
-        m_ActualHeight = size.height;
+       // m_ActualHeight = size.height;
         m_TreePanel->Height(0);
 
         m_Listener += [this](Event::MouseExited& event)

@@ -63,11 +63,6 @@ public:
     virtual bool Active() const { return m_Active; }
 
     /**
-     * True when the mouse is hovering over this <code>Button</code>.
-     */
-    virtual bool Hovering() const { return m_Hovering; }
-
-    /**
      * Returns the keycombo for 'pressing' this <code>Button</code>.
      * @return keycombo
      */
@@ -79,14 +74,22 @@ public:
      */
     const std::string& Name() const { return m_Name; }
 
+
 protected:
     bool m_Clicked = false,
         m_Active = false,
-        m_Hovering = false,
-        m_Enabled = true;
+        m_Enabled = true,
+        m_InMenu = false;
+
+    ButtonBase* m_Pre = nullptr, * m_Post = nullptr;
 
     Key m_KeyCombo;
     std::string m_Name;
+
+    friend class MenuBase;
+    void InMenu(bool v) { m_InMenu = v; }
+    void PreButton(ButtonBase* v) { m_Pre = v; }
+    void PostButton(ButtonBase* v) { m_Post = v; }
 };
 
 // --------------------------------------------------------------------------

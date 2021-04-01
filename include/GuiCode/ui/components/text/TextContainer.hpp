@@ -167,10 +167,18 @@ public:
 	 */
 	int CtrlRight(int start);
 
+	void Filter(const std::string& r) { m_EnableRegex = true, m_Filter = r; }
+	void Filter(const std::regex& r) { m_EnableRegex = true, m_Filter = r; }
+	auto Filter() -> std::regex& { return m_Filter; }
+	void EnableFilter(bool b) { m_EnableRegex = b; }
+	bool FilterEnabled() { return m_EnableRegex; }
+
 private:
 	std::string m_Content;
+	std::regex m_Filter{ ".*", std::regex_constants::ECMAScript };
 
-	bool m_Editable;
+	bool m_Editable = true,
+		m_EnableRegex = false;
 
 	::Selection m_Selection{ 0, 0 };
 
