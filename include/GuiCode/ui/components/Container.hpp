@@ -76,10 +76,10 @@ public:
      */
     ComponentCollection& Components() { return m_Components; }
 
-    Component* FocusedComponent() { return m_FocusedComponent; }
-    Component* HoveringComponent() { return m_HoveringComponent; }
-    void FocusedComponent(Component* a) { m_FocusedComponent = a; }
-    void HoveringComponent(Component* a) { m_HoveringComponent = a; }
+    virtual Component* FocusedComponent() { return m_FocusedComponent; }
+    virtual Component* HoveringComponent() { return m_HoveringComponent; }
+    virtual void FocusedComponent(Component* a) { m_FocusedComponent = a; }
+    virtual void HoveringComponent(Component* a) { m_HoveringComponent = a; }
 
 protected:
     ComponentCollection m_Components;

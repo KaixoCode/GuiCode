@@ -16,7 +16,9 @@ namespace Graphics
 
         Text, TextView, Line, Quad, TexturedQuad, Ellipse, Triangle, Point,
 
-        FrameBuffer, FrameBufferEnd
+        FrameBuffer, FrameBufferEnd,
+
+        _DebugOverlay
 
     };
 

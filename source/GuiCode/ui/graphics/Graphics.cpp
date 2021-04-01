@@ -8,6 +8,12 @@
 // --------------------------------------------------------------------------
 namespace Graphics
 {
+    bool debugoverlay = false;
+    void DebugOverlay(bool v)
+    {
+        debugoverlay = v;
+    }
+
     namespace Fonts
     {
         int Gidole, Gidole14, Gidole16;
@@ -89,13 +95,13 @@ namespace Graphics
 
     void Init()
     {
-        //Fonts::Gidole = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"));
-        //Fonts::Gidole14 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 14);
-        //Fonts::Gidole16 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 16);
+        Fonts::Gidole = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"));
+        Fonts::Gidole14 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 14);
+        Fonts::Gidole16 = Graphics::LoadFont(ASSET("fonts/gidole/Gidole-Regular.otf"), 16);
 
-        Fonts::Gidole = Graphics::LoadFont(ASSET("fonts/DIN.otf"));
-        Fonts::Gidole14 = Graphics::LoadFont(ASSET("fonts/DIN.otf"), 14);
-        Fonts::Gidole16 = Graphics::LoadFont(ASSET("fonts/DIN.otf"), 16);
+        //Fonts::Gidole = Graphics::LoadFont(ASSET("fonts/DIN.otf"));
+        //Fonts::Gidole14 = Graphics::LoadFont(ASSET("fonts/DIN.otf"), 14);
+        //Fonts::Gidole16 = Graphics::LoadFont(ASSET("fonts/DIN.otf"), 16);
 
         Textures::FileIcon.SetTexture(ASSET("textures/file.png"));
         Textures::AudioFileIcon.SetTexture(ASSET("textures/audiofile.png"));
@@ -130,10 +136,22 @@ namespace Graphics
     
     Vec2<Align> m_TextAlign = { Align::LEFT, Align::BOTTOM };
 
+
+    struct OverlayQuad
+    {
+        Vec4<int> dims;
+        Color color;
+    };
+
+    std::vector<OverlayQuad> m_Overlays;
+
+
     void RunCommands(const ::CommandCollection& d)
     {
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0, 0, 0, 0);
+
+        m_Overlays.clear();
 
         for (auto& i : m_FrameBufferDrawn)
             i.second = false;
@@ -158,6 +176,15 @@ namespace Graphics
                 case TextView: m_Text(a->textview->data(), a->textview->length(), a->position.x, a->position.y); break;
                 case Ellipse: m_Ellipse(a->diameters, a->angles); break;
                 case Triangle: m_Triangle(a->dimension, a->rotation); break;
+                case _DebugOverlay:
+                {
+                    Vec4<int> dim = a->dimension;
+                    dim.x += m_Matrix[3][0];
+                    dim.y += m_Matrix[3][1];
+                    m_Overlays.emplace_back(OverlayQuad{ dim, m_Fill });
+
+                    break;
+                }
                 }
             }
             switch (a->type)
@@ -203,6 +230,13 @@ namespace Graphics
             case FrameBuffer: m_FrameBuffer(a->id, a->refresh); break;
             case FrameBufferEnd: m_FrameBufferEnd(); break;
             }
+        }
+
+        if (debugoverlay)
+        for (auto& i : m_Overlays)
+        {
+            m_Fill = i.color;
+            m_Quad(i.dims, 0);
         }
     }
 

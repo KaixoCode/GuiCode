@@ -128,5 +128,6 @@ void ScrollPanel::Render(CommandCollection& d)
     }
     d.Command<PopMatrix>();
     d.Command<PopClip>();
+    Component::Render(d);
     NeedsRedraw(false);
 }

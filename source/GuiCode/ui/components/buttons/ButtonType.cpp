@@ -218,18 +218,14 @@ namespace ButtonType
 
     void FocusToggle::Update(const Vec4<int>& viewport)
     {
+        if (!Focused())
+            Active(false);
+
         if (!::Graphics::WindowFocused())
         {
-            if (m_Counter == 0)
-            {
-                m_NeedsRedraw = true;
-                Active(false);
-            }
-            else 
-                m_Counter--;
+            m_NeedsRedraw = true;
+            Active(false);
         }
-        else
-            m_Counter = 10;
 
         Toggle::Update(viewport);
     }

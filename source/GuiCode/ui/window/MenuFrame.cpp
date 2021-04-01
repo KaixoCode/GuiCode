@@ -56,6 +56,9 @@ void ComponentFrame::Render(CommandCollection& d)
 
 void ComponentFrame::Component(::Component* component)
 {
+    if (m_Component != nullptr)
+        m_Component->Focused(false);
+
     m_Panel->Component(component);
     m_Component = component;
     if (component)

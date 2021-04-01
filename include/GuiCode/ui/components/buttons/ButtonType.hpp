@@ -201,7 +201,6 @@ namespace ButtonType
 
     protected:
         void SetupCallbacks() override;
-        int m_Counter = 0;
     };
 
     // --------------------------------------------------------------------------

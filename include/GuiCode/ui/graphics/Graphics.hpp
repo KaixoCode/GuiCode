@@ -84,5 +84,7 @@ namespace Graphics
     int CharWidth(const char&, int font, int size = -1);
 
     void Init();
+
+    void DebugOverlay(bool v);
 };
 

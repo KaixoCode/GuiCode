@@ -102,6 +102,7 @@ TextDisplayer::TextDisplayer()
 	{
 		m_Container.Select(m_Container.Selection().start);
 	};
+	
 	m_Listener += [this](Event::Focused& e)
 	{
 		RecalculateLines();

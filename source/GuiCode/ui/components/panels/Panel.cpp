@@ -71,8 +71,10 @@ void Panel::Render(CommandCollection& d)
 
         d.Command<Translate>(Vec2<int>{ X(), Y() });
         Background(d);
-
+        Vec2<int> m_Pos = Position();
+        Position({ 0,0 });
         Container::Render(d);
+        Position(m_Pos);
         m_LayoutManager.DrawDividers(d);
         d.Command<PopMatrix>();
     }

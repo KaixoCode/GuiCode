@@ -171,8 +171,18 @@ void Container::Focused(bool v)
 
     // Make sure all sub components are also unfocused.
     if (!v)
+    {
+        Event _e{ Event::Type::Unfocused };
         for (auto& _c : m_Components)
-            _c->Focused(false);
+        {
+            if (_c->Focused())
+            {
+                _c->Focused(false);
+                _c->AddEvent(_e);
+            }
+        }
+        m_FocusedComponent = nullptr;
+    }
 }
 
 void Container::Hovering(bool v)
@@ -181,8 +191,11 @@ void Container::Hovering(bool v)
 
     // Make sure all sub components are also unfocused.
     if (!v)
+    {
         for (auto& _c : m_Components)
             _c->Hovering(false);
+        m_HoveringComponent = nullptr;
+    }
 }
 
 void Container::Remove(int index)

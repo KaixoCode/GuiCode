@@ -35,16 +35,16 @@ bool Component::WithinBounds(const Vec2<int>& pos) const
 
 void Component::Render(CommandCollection& d)
 {
-    //if (Focused())
-    //{
-    //    d.Command<Graphics::Fill>(Color{ 255, 0, 0, 20 });
-    //    d.Command<Graphics::Quad>(Vec4<int>{ Position(), Size() });
-    //}
-    //if (Hovering())
-    //{
-    //    d.Command<Graphics::Fill>(Color{ 0, 255, 0, 20 });
-    //    d.Command<Graphics::Quad>(Vec4<int>{ Position(), Size() });
-    //}
+    if (Focused())
+    {
+        d.Command<Graphics::Fill>(Color{ 255, 0, 0, 10 });
+        d.Command<Graphics::_DebugOverlay>(Vec4<int>{ Position(), Size() });
+    }
+    if (Hovering())
+    {
+        d.Command<Graphics::Fill>(Color{ 0, 255, 0, 10 });
+        d.Command<Graphics::_DebugOverlay>(Vec4<int>{ Position(), Size() });
+    }
     m_NeedsRedraw = false;
 }
 
