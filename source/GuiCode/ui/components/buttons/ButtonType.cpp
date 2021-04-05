@@ -15,30 +15,17 @@ namespace ButtonType
     {
         m_Listener += [this](Event::MousePressed& event)
         {
-            m_NeedsRedraw = true;
             if (event.button == Event::MouseButton::LEFT && Hovering())
                 m_Active = true;
-        };
-
-        m_Listener += [this](Event::MouseExited& event)
-        {
-            m_NeedsRedraw = true;
-        };
-
-        m_Listener += [this](Event::MouseEntered& event)
-        {
-            m_NeedsRedraw = true;
         };
 
         m_Listener += [this](Event::MouseReleased& event)
         {
             if (event.button == Event::MouseButton::LEFT)
             {
-                m_NeedsRedraw = true;
                 if (!Disabled() && Hovering() && m_Active)
-                {
                     m_Callback();
-                }
+                
                 m_Active = false;
             }
         };
@@ -108,29 +95,13 @@ namespace ButtonType
     void Toggle::Update(const Vec4<int>& viewport)
     {
         if (m_Link)
-        {
-            if (*m_Link != m_Active)
-                m_NeedsRedraw = true;
-
             m_Active = *m_Link;
-        }
+        
         ButtonBase::Update(viewport);
     }
 
     void Toggle::SetupCallbacks()
     {
-        m_Listener += [this](Event::MouseExited& event)
-        {
-            m_NeedsRedraw = true;
-            m_Hovering = false;
-        };
-
-        m_Listener += [this](Event::MouseEntered& event)
-        {
-            m_NeedsRedraw = true;
-            m_Hovering = true;
-        };
-
         m_Listener += [this](Event::KeyPressed& event)
         {
             if ((m_KeyCombo == event || (event.key == Key::ENTER && Focused() && !m_EnterPressed)) && !Disabled())
@@ -180,7 +151,6 @@ namespace ButtonType
         {
             if (event.button == Event::MouseButton::LEFT && !Disabled() && Component::WithinBounds({ event.x, event.y }))
             {
-                m_NeedsRedraw = true;
                 if (m_Link)
                 {
                     *m_Link ^= true;
@@ -205,7 +175,6 @@ namespace ButtonType
     {
         m_Listener += [this](Event::Unfocused& event)
         {
-            m_NeedsRedraw = true;
             Active(false);
         };
 
@@ -223,7 +192,6 @@ namespace ButtonType
 
         if (!::Graphics::WindowFocused())
         {
-            m_NeedsRedraw = true;
             Active(false);
         }
 
@@ -247,14 +215,12 @@ namespace ButtonType
 
         m_Listener += [this](Event::MouseEntered& event)
         {
-            m_NeedsRedraw = true;
             m_Hovering = true;
             m_Active = true;
         };
 
         m_Listener += [this](Event::MouseExited& event)
         {
-            m_NeedsRedraw = true;
             m_Hovering = false;
             m_Active = false;
         };

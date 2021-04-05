@@ -9,7 +9,7 @@
 /**
  * Multiline text area with scrollbars.
  */
-class TextArea : public ScrollPanel
+class TextArea : public ScrollPanel<TextDisplayer>
 {
 public:
 

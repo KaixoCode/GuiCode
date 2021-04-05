@@ -9,7 +9,7 @@
 /**
  * Basis for a <code>Menu</code>
  */
-class MenuBase : public Container
+class MenuBase : public Container<>
 {
 public:
     MenuBase();

@@ -45,7 +45,6 @@ void Component::Render(CommandCollection& d)
         d.Command<Graphics::Fill>(Color{ 0, 255, 0, 10 });
         d.Command<Graphics::_DebugOverlay>(Vec4<int>{ Position(), Size() });
     }
-    m_NeedsRedraw = false;
 }
 
 void Component::Update(const Vec4<int>& viewport) 

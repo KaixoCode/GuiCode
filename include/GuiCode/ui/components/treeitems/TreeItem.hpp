@@ -8,7 +8,7 @@
 /**
  * Basis for a <code>TreeItem</code>
  */
-class TreeItemBase : public Container
+class TreeItemBase : public Container<>
 {
 public:
     TreeItemBase(const std::filesystem::path& path)

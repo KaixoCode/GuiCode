@@ -11,7 +11,7 @@ using ToggleCallback = std::function<void(bool&)>;
 /**
  * Basis for a <code>Button</code>
  */
-class ButtonBase : public Container
+class ButtonBase : public Container<>
 {
 public:
 

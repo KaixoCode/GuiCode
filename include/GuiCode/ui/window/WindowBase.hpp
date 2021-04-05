@@ -5,7 +5,7 @@
 /**
  * Base for a window
  */
-class WindowBase : protected Container
+class WindowBase : protected Container<>
 {
 public:
     /**

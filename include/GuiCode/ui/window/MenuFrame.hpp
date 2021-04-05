@@ -10,7 +10,7 @@
 /**
  * Panel used by the <code>ComponentFrame</code>.
  */
-class ComponentFramePanel : public Panel
+class ComponentFramePanel : public Panel<>
 {
 public:
     /**
@@ -65,7 +65,7 @@ public:
      * Returns the base panel.
      * @return panel
      */
-    ::Panel& Panel() { return *m_Panel; }
+    ::Panel<>& Panel() { return *m_Panel; }
 
     /**
      * Set the component of this <code>ComponentFrame</code>.

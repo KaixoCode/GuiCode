@@ -12,7 +12,7 @@
 /**
  * TextDisplayer displays text (wow surprising).
  */
-class TextDisplayer : public Panel
+class TextDisplayer : public Panel<>
 {
 public:
 

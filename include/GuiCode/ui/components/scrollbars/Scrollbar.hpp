@@ -33,7 +33,7 @@ public:
      * Set absolute scroll value.
      * @param v value to scroll to
      */
-    void Value(int v) { if (v != m_Value) NeedsRedraw(true); m_Value = constrain(v, m_Range.start, m_Range.end - m_VisibleRange); }
+    void Value(int v) { m_Value = constrain(v, m_Range.start, m_Range.end - m_VisibleRange); }
     
     /**
      * Set the visible range on the screen. This is used to calculate the size of the scrollbar.

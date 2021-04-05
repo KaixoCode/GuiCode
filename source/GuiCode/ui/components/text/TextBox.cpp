@@ -73,7 +73,6 @@ void TextBox::Render(CommandCollection& d)
     m_Displayer.Render(d);
     d.Command<PopMatrix>();
     d.Command<PopClip>();
-    NeedsRedraw(false);
     Component::Render(d);
 }
     

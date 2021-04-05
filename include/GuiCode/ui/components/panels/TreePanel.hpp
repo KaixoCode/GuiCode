@@ -9,7 +9,7 @@
  * A <code>TreePanel</code> can be used to display a tree of files, using 
  * the <code>TreeItem</code> class.
  */
-class TreePanel : public Panel 
+class TreePanel : public Panel<>
 {
 public:
     /**

@@ -26,7 +26,7 @@ public:
     SmallFrame(const std::string& name, const int width, const int height, bool hideonclose = false, bool show = false, bool r = true)
         : Window(name, width, height, hideonclose, show, r),
         m_CloseButton(&Emplace<Button<ButtonGraphics::CloseButton, ButtonType::Normal>>([&]() { this->Close(); }, "")), 
-        m_Panel(&Emplace<::Panel>())
+        m_Panel(&Emplace<::Panel<>>())
     {
         m_CloseButton->Size({ 46, 32 });
     }
@@ -38,10 +38,10 @@ public:
      * Returns the base panel.
      * @return panel
      */
-    ::Panel& Panel() { return *m_Panel; }
+    ::Panel<>& Panel() { return *m_Panel; }
 
 private:
-    ::Panel* m_Panel;
+    ::Panel<>* m_Panel;
 
     ButtonBase* m_CloseButton;
 };

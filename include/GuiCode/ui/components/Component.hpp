@@ -220,13 +220,6 @@ public:
      * @return <code>Layout::Hint</code>
      */
     virtual Layout::Hint LayoutHint() const { return m_LayoutHint; }
-    
-    /**
-     * Returns true when this <code>Component</code> needs a redraw
-     * @return true when a redraw is needed
-     */
-    virtual bool NeedsRedraw() { return m_NeedsRedraw; }
-    virtual void NeedsRedraw(bool v) { m_NeedsRedraw = v; }
 
     /**
      * Returns true when the given <code>pos</code> is inside the <code>Component</code>
@@ -294,7 +287,6 @@ protected:
     int m_Cursor = GLFW_CURSOR_NORMAL;
 
     bool m_Visible = true,
-        m_NeedsRedraw = true,
         m_Hovering = false,
         m_Focused = false,
         m_TabSwitch = false;

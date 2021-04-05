@@ -9,7 +9,7 @@
 /**
  * Single line TextBox.
  */
-class TextBox : public Panel
+class TextBox : public Panel<>
 {
 public:
 
