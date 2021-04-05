@@ -11,7 +11,14 @@ struct unique_wrapper : public std::unique_ptr<Type>
     operator Type* () { return get(); }
 };
 
-template<typename Type = Component, typename Collection = std::vector<unique_wrapper<Type>>, typename = typename std::enable_if_t<std::is_base_of_v<Component, Type>>>
+template<typename Type>
+using OwningCollection = std::vector<unique_wrapper<Type>>;
+
+template<typename Type>
+using CopyCollection = std::vector<Type*>;
+
+template<typename Type = Component, typename Collection = OwningCollection<Type>,
+    typename = typename std::enable_if_t<std::is_base_of_v<Component, Type>>>
 class Container : public Component
 {
 public:
@@ -237,9 +244,9 @@ public:
     template<typename T>
     void Erase(T& i)
     {
-        if (i->get() == m_HoveringComponent)
+        if (*i == m_HoveringComponent)
             m_HoveringComponent = nullptr;
-        if (i->get() == m_FocusedComponent)
+        if (*i == m_FocusedComponent)
             m_FocusedComponent = nullptr;
         m_Components.erase(i, m_Components.end()); 
     }

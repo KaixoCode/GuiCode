@@ -10,7 +10,7 @@
  * A crucial building block, this component contains a layout which 
  * let's you arrange other panels or components.
  */
-template<typename Type = Component, typename Collection = std::vector<unique_wrapper<Type>>>
+template<typename Type = Component, typename Collection = OwningCollection<Type>>
 class Panel : public Container<Type, Collection>
 {
 public:
