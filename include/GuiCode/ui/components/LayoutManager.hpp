@@ -787,6 +787,8 @@ struct LayoutManager
 
     void DividerColor(const Color& c) { m_DivColor = c; }
 
+    void Refresh() { m_PrevDim = { 0, 0, 0, 0 }; }
+
     int m_Constrain(int a, int b, int c)
     {
         if (c == -1)
