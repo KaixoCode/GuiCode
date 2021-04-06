@@ -19,8 +19,8 @@ TextComponent::TextComponent(const std::string& t, int f, float fsize)
 
 void TextComponent::Content(const std::string& c)
 {
-	Width(Graphics::StringWidth(c, Font(), FontSize()) + 4);
-	Height(FontSize() + 4);
+	//Width(Graphics::StringWidth(c, Font(), FontSize()) + 4);
+	//Height(FontSize() + 4);
 	TextBox::Content(c);
 }
 

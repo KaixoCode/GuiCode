@@ -69,7 +69,14 @@ public:
 	 * Set the content of this container.
 	 * @param c content
 	 */
-	void Content(const std::string& c) { m_Container.Content(c); }
+	void Content(const std::string& c)
+	{
+		if (c != m_Container.Content())
+		{
+			m_Container.Content(c);
+			RecalculateLines();
+		}
+	}
 
 	/**
 	 * Set if this container is editable.

@@ -279,6 +279,8 @@ public:
      */
     auto BackTabComponent() -> Component& { return *m_BackTabComponent; }
 
+    auto Listener() -> EventListener& { return m_Listener; }
+
 protected:
     Component* m_TabComponent = nullptr, * m_BackTabComponent = nullptr;
 

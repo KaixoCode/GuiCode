@@ -1139,11 +1139,11 @@ namespace Graphics
         if (size != -1 && _size != 0)
             _scale = size / (float)_size;
 
-        int _width = 0;
+        float _width = 0;
         for (auto& i : str)
             _width += (_font[i].Advance >> 6) * _scale;
         
-        return _width;
+        return (int)_width;
     };
 
     int StringWidth(const std::string_view& str, int font, int size)
@@ -1154,12 +1154,12 @@ namespace Graphics
         if (size != -1 && _size != 0)
             _scale = size / (float)_size;
 
-        int _width = 0;
+        float _width = 0;
         for (auto& i : str)
             if (i != '\n')
                 _width += (_font[i].Advance >> 6) * _scale;
 
-        return _width;
+        return (int)_width;
     };
 
     int CharWidth(const char& c, int font, int size)
