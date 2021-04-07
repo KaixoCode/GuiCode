@@ -51,6 +51,12 @@ public:
      * True when this <code>Button</code> is enabled.
      */
     virtual bool Enabled() const { return m_Enabled; }
+
+    /**
+     * Set if this button is enabled.
+     * @param v enabled
+     */
+    virtual void Enabled(bool v) { m_Enabled = v; }
    
     /**
      * True when this <code>Button</code> is disabled.

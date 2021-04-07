@@ -34,6 +34,12 @@ public:
 
     bool WithinBounds(const Vec2<int>& pos) const override;
 
+    void Clear() override
+    {
+        m_Prev = nullptr;
+        Container::Clear();
+    }
+
     /**
      * Emplace a component to this container,
      * @return reference to the emplaced component.

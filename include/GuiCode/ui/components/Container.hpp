@@ -50,7 +50,7 @@ public:
     /**
      * Remove all components.
      */
-    void Clear() { m_Components.clear(); m_HoveringComponent = nullptr, m_FocusedComponent = nullptr; }
+    virtual void Clear() { m_Components.clear(); m_HoveringComponent = nullptr, m_FocusedComponent = nullptr; }
 
     int Cursor() const override { return m_Pressed && m_FocusedComponent ? m_FocusedComponent->Cursor() : m_HoveringComponent ? m_HoveringComponent->Cursor() : m_Cursor; }
 
@@ -63,10 +63,8 @@ public:
      */
     void Erase(ComponentCollection::const_iterator& i) 
     {
-        if (i->get() == m_HoveringComponent)
-            m_HoveringComponent = nullptr;
-        if (i->get() == m_FocusedComponent)
-            m_FocusedComponent = nullptr;
+        m_HoveringComponent = nullptr;
+        m_FocusedComponent = nullptr;
         m_Components.erase(i, m_Components.end()); 
     }
 
