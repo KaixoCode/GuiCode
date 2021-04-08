@@ -238,6 +238,8 @@ namespace Graphics
             m_Fill = i.color;
             m_Quad(i.dims, 0);
         }
+
+        prevShader = -1;
     }
 
     void m_FrameBuffer(unsigned int id, bool refresh)
