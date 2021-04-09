@@ -229,6 +229,13 @@ public:
     virtual void NeedsRedraw(bool v) { m_NeedsRedraw = v; }
 
     /**
+     * Returns true when this <code>Component</code> needs a recalculation, due to size change
+     * @return true when a recalc is needed
+     */
+    virtual bool NeedsRecalc() { return m_NeedsRecalc; }
+    virtual void NeedsRecalc(bool v) { m_NeedsRecalc = v; }
+
+    /**
      * Returns true when the given <code>pos</code> is inside the <code>Component</code>
      * @return true when <code>pos</code> is inside of the bounds of this <code>Component</code>
      * @param pos position to check
@@ -297,6 +304,7 @@ protected:
 
     bool m_Visible = true,
         m_NeedsRedraw = true,
+        m_NeedsRecalc = true,
         m_Hovering = false,
         m_Focused = false,
         m_TabSwitch = false;

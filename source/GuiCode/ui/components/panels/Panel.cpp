@@ -20,7 +20,7 @@ Panel::Panel()
     // Hacky fix to the TreePanel Folder expanding bug...
     m_Listener += [this](Event::MousePressed& e)
     {
-        Container::Update(m_Viewport);
+        //Container::Update(m_Viewport);
     };
 }
 
@@ -36,7 +36,7 @@ void Panel::Update(const Vec4<int>& viewport)
     // Step 1 is updating the layout to make sure the positions of all components are correct.
     m_LayoutManager.Update({ 0, 0, Width(), Height() }, m_Components); // Also set the cursor
     m_Cursor = m_Pressed && m_LayoutManager.Cursor() == -1 ? GLFW_CURSOR_NORMAL : m_LayoutManager.Cursor();
-    
+
     // Next: calculate the highest coords and auto resize to those coords if that is enabled.
     if (m_AutoResizeX)
         Width(m_LayoutManager.BiggestCoords().x);
@@ -48,6 +48,34 @@ void Panel::Update(const Vec4<int>& viewport)
     // make sure to overlap the viewport with the coords of this panel, and then
     // since all components in a panel are drawn relative from it, translate.
     Container::Update(viewport.Overlap({ X(), Y(), Width(), Height() }).Translate({ X(), Y() }));
+
+    // If any of the components, in their update, changed size and requested a recalculation of
+    // the positioning, do that.
+    bool _recalc = false;
+    for (auto& _c : m_Components)
+        if (_c->NeedsRecalc())
+            _recalc = true, _c->NeedsRecalc(false); 
+
+    if (_recalc)
+    {
+        // Then this panel also requires a recalc
+        m_NeedsRecalc = true;
+
+        // Step 1 is updating the layout to make sure the positions of all components are correct.
+        m_LayoutManager.Update({ 0, 0, Width(), Height() }, m_Components); // Also set the cursor
+        m_Cursor = m_Pressed && m_LayoutManager.Cursor() == -1 ? GLFW_CURSOR_NORMAL : m_LayoutManager.Cursor();
+
+        // Next: calculate the highest coords and auto resize to those coords if that is enabled.
+        if (m_AutoResizeX)
+            Width(m_LayoutManager.BiggestCoords().x);
+
+        if (m_AutoResizeY)
+            Height(m_LayoutManager.BiggestCoords().y);
+
+        for (auto& _c : m_Components)
+            _c->Update({ _c->Position(), _c->Size() });
+    }
+
 }
 
 void Panel::Render(CommandCollection& d)
