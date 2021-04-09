@@ -753,23 +753,32 @@ struct LayoutManager
 
         // Calculate the position using the alignment
         Vec2<int> position = { dim.x, dim.y };
-        if (div.Align() == Div::Alignment::Center)
-            position += { dim.width / 2 - object->Size().width / 2, dim.height / 2 - object->Size().height / 2 };
-        else if (div.Align() == Div::Alignment::Right)
-            position += { dim.width - object->Size().width, dim.height / 2 - object->Size().height / 2 };
-        else if (div.Align() == Div::Alignment::Left)
-            position += { 0, dim.height / 2 - object->Size().height / 2 };
-        else if (div.Align() == Div::Alignment::Bottom)
-            position += { dim.width / 2 - object->Size().width / 2, 0 };
-        else if (div.Align() == Div::Alignment::Top)
-            position += { dim.width / 2 - object->Size().width / 2, dim.height - object->Size().height };
+        
+        // If resize component, set size
+        if (div.ResizeComponent())
+        {
+            if (object->Size() != dim.size)
+                m_PrevDim = { 0, 0, 0, 0 },
+                object->Size(dim.size);
+        }
 
+        // Otherwise adjust positioning
+        else
+        {
+            if (div.Align() == Div::Alignment::Center)
+                position += { dim.width / 2 - object->Size().width / 2, dim.height / 2 - object->Size().height / 2 };
+            else if (div.Align() == Div::Alignment::Right)
+                position += { dim.width - object->Size().width, dim.height / 2 - object->Size().height / 2 };
+            else if (div.Align() == Div::Alignment::Left)
+                position += { 0, dim.height / 2 - object->Size().height / 2 };
+            else if (div.Align() == Div::Alignment::Bottom)
+                position += { dim.width / 2 - object->Size().width / 2, 0 };
+            else if (div.Align() == Div::Alignment::Top)
+                position += { dim.width / 2 - object->Size().width / 2, dim.height - object->Size().height };
+        }
         object->Position(position);
 
-        if (div.ResizeComponent())
-            if (object->Size() != dim.size)
-                m_PrevDim = { 0, 0, 0, 0 }, 
-                object->Size(dim.size);
+        
 
         if (object->Width() + position.x > m_BiggestX)
             m_BiggestX = object->Width() + position.x;
