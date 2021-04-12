@@ -140,7 +140,7 @@ struct Event
             union { int mod; int wheelmod; };
         };
 
-        KeyPressed keyPressed;
+        KeyPressed keyPressed{ 0, 0, 0, 0 };
         KeyTyped keyTyped;
         KeyReleased keyReleased;
 

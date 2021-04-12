@@ -165,7 +165,7 @@ struct Layout
 
     union
     {
-        GridLayout grid;
+        GridLayout grid{ 0, 0, 0, 0 };
         BorderLayout border;
         StackLayout stack;
     };

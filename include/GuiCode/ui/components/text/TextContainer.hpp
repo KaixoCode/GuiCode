@@ -72,7 +72,7 @@ public:
 	 * Get the selection as a <code>std::string_view</code>.
 	 * @return selection
 	 */
-	auto SelectionString() -> std::string_view { return std::string_view(m_Content).substr(m_Selection.Lowest(), m_Selection.Highest() - m_Selection.Lowest()); }
+	auto SelectionString() -> std::string_view { return std::string_view(m_Content).substr(m_Selection.Lowest(), (size_t)m_Selection.Highest() - m_Selection.Lowest()); }
 	
 	/**
 	 * Returns true when there is text selected (selection.start != selection.end).

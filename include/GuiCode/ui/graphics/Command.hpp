@@ -158,7 +158,7 @@ namespace Graphics
             union { float weight, fontSize; };
 
             // TextAlign
-            Vec2<Align> align;
+            Vec2<Align> align{ Align::CENTER, Align::CENTER };
         };
     };
 
