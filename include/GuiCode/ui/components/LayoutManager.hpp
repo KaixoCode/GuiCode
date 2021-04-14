@@ -759,7 +759,8 @@ struct LayoutManager
         {
             if (object->Size() != dim.size)
                 m_PrevDim = { 0, 0, 0, 0 },
-                object->Size(dim.size);
+                object->Size(dim.size),
+                object->ConstrainSize();
         }
 
         // Otherwise adjust positioning

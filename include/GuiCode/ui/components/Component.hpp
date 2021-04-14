@@ -288,6 +288,21 @@ public:
 
     auto Listener() -> EventListener& { return m_Listener; }
 
+    /**
+     * Constrain the size of the component inbetween the min and max size.
+     */
+    void ConstrainSize()
+    {
+        if (m_MinSize.width > 0)
+            m_Size.width = std::max(m_Size.width, m_MinSize.width);
+        if (m_MaxSize.width > 0)
+            m_Size.width = std::min(m_Size.width, m_MaxSize.width);
+        if (m_MinSize.height > 0)
+            m_Size.height = std::max(m_Size.height, m_MinSize.height);
+        if (m_MaxSize.height > 0)
+            m_Size.height = std::min(m_Size.height, m_MaxSize.height);
+    }
+
 protected:
     Component* m_TabComponent = nullptr, * m_BackTabComponent = nullptr;
 

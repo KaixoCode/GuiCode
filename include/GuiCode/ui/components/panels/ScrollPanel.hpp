@@ -75,4 +75,6 @@ protected:
         m_PMouseY = 0,
         m_PValX = 0,
         m_PValY = 0;
+
+    bool HoveringOverChildScrollPanel();
 };

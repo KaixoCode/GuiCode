@@ -117,6 +117,14 @@ begin = std::chrono::steady_clock::now();
 #define MEASURE_FPS
 #endif
 
+#ifdef _DEBUG
+#define db_
+#define dbblock_(x) x
+#else
+#define db_ if constexpr (false)
+#define dbblock_(x)
+#endif
+
 #define LIMIT_FPS(x) \
 static std::chrono::steady_clock::time_point endl = std::chrono::steady_clock::now(); \
 static std::chrono::steady_clock::time_point beginl = std::chrono::steady_clock::now(); \

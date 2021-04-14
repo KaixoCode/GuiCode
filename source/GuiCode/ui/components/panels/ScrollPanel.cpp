@@ -12,6 +12,10 @@ ScrollPanel::ScrollPanel()
         if (e.wheelmod & Event::Mod::SHIFT || e.wheelmod & Event::Mod::CONTROL)
             return;
 
+        // Don't scroll if hovering over child scrollpanel
+        if (HoveringOverChildScrollPanel())
+            return;
+
         if (m_Hovering && m_ScrollbarY->Visible())
             m_ScrollbarY->Scroll(-e.amount / 4);
     };
@@ -22,6 +26,11 @@ ScrollPanel::ScrollPanel()
         m_PMouseY = e.y;
         m_PValX = m_ScrollbarX->Value();
         m_PValY = m_ScrollbarY->Value();
+        
+        // Don't start dragging if hovering over child scrollpanel
+        if (HoveringOverChildScrollPanel())
+            return;
+
         m_Dragging = true;
     };
 
@@ -59,19 +68,21 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
         int yw = m_ScrollbarY->Width();
         int xh = m_ScrollbarX->Height();
 
-        int yoff = m_ScrollbarX->NotNecessary() || !m_EnableX ? 0 : xh;
+        bool scrollxenable = !m_ScrollbarX->NotNecessary() && (m_EnableX || m_Panel->Width() > Width());
+        bool scrollyenable = !m_ScrollbarY->NotNecessary() && (m_EnableY || m_Panel->Height() > Height());
+        int yoff = scrollxenable ? xh : 0;
         m_ScrollbarY->Position({ Width() - yw, yoff });
         m_ScrollbarY->Height(Height() - yoff);
         m_ScrollbarY->Range({ 0, m_Panel->Height() + yoff });
         m_ScrollbarY->VisibleRange(Height());
-        m_ScrollbarY->Visible(!m_ScrollbarY->NotNecessary() && m_EnableY);
+        m_ScrollbarY->Visible(scrollyenable);
 
-        int xoff = m_ScrollbarY->NotNecessary() || !m_EnableY ? 0 : yw;
+        int xoff = scrollyenable ? yw : 0;
         m_ScrollbarX->Position({ 0, 0 });
         m_ScrollbarX->Width(Width() - xoff);
         m_ScrollbarX->Range({ 0, m_Panel->Width() + xoff });
         m_ScrollbarX->VisibleRange(Width());
-        m_ScrollbarX->Visible(!m_ScrollbarX->NotNecessary() && m_EnableX);
+        m_ScrollbarX->Visible(scrollxenable);
 
         int _x = std::min(-m_ScrollbarX->Value(), 0);
         int _y = Height() - m_Panel->Height() + m_ScrollbarY->Value();
@@ -86,6 +97,8 @@ void ScrollPanel::Update(const Vec4<int>& viewport)
 
         if (!m_EnableY)
             m_Panel->Height(Height() - yoff);
+
+        m_Panel->ConstrainSize();
         
         Panel::Update(viewport);
 
@@ -130,4 +143,29 @@ void ScrollPanel::Render(CommandCollection& d)
     d.Command<PopClip>();
     Component::Render(d);
     NeedsRedraw(false);
+}
+
+bool ScrollPanel::HoveringOverChildScrollPanel()
+{
+    if (m_HoveringComponent != nullptr)
+    {
+        ScrollPanel* _scroll = nullptr;
+        Container* _cont = nullptr;
+        Component* _comp = m_HoveringComponent;
+
+        // Go through all hovering components until we
+        // reach a point when it's no longer a container
+        while (_cont = dynamic_cast<Container*>(_comp))
+        {
+            _comp = _cont->HoveringComponent();
+
+            // See if the container is a scrollpanel, if it is, it
+            // means we have a child scrollpanel that we're hovering
+            // over, so we don't want to scroll this scrollpanel, so
+            // we return.
+            if (dynamic_cast<ScrollPanel*>(_cont))
+                return true;
+        }
+    }
+    return false;
 }
