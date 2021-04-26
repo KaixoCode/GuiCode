@@ -1,5 +1,5 @@
 #pragma once
-#include "GuiCode/ui/window/MenuFrame.hpp"
+#include "GuiCode/ui/window/ComponentFrame.hpp"
 
 // --------------------------------------------------------------------------
 // ------------------------- Right Click Menu -------------------------------

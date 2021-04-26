@@ -2,7 +2,8 @@
 #include "GuiCode/pch.hpp"
 #include "GuiCode/ui/events/Event.hpp"
 
-class EventListener {
+class EventListener 
+{
 public:
     template<typename T>
     using Callback = std::function<void(T&)>;

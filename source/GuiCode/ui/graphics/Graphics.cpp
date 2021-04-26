@@ -165,7 +165,6 @@ namespace Graphics
                 switch (a->type)
                 {
                 case Fill: m_Fill = a->fill / 255.0; break;
-                case Stroke: m_Stroke = a->stroke / 255.0; break;
                 case TextAlign: m_TextAlign = a->align; break;
                 case FontSize: m_FontSize = a->fontSize; break;
                 case Font: m_Font = a->font, m_FontSize = a->fontSize; break;

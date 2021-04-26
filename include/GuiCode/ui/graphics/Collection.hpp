@@ -12,7 +12,7 @@ public:
      * Emplace a <code>Graphics::Command</code>.
      * @tparam T type
      * @param ...args arguments for the constructor of <code>T</code>
-     */
+     */ 
     template<Graphics::Type T, typename ...Args>
     void Command(Args ...args)
     {
@@ -43,6 +43,16 @@ public:
     const std::vector<Graphics::CommandBase>& Get() const
     {
         return m_CommandCollection;
+    }
+
+    /**
+     * Append another command collection to this one.
+     * @param d command collection
+     */
+    void Append(CommandCollection& d)
+    {
+        for (auto& e : d.Get())
+            m_CommandCollection.push_back(e);
     }
 
     /**

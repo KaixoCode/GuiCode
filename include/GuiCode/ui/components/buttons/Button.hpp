@@ -80,7 +80,6 @@ public:
      */
     const std::string& Name() const { return m_Name; }
 
-
 protected:
     bool m_Active = false,
         m_Enabled = true,
@@ -91,6 +90,7 @@ protected:
     Key m_KeyCombo;
     std::string m_Name;
 
+    // Used for using arrows in menus 
     friend class MenuBase;
     void InMenu(bool v) { m_InMenu = v; }
     void PreButton(ButtonBase* v) { m_Pre = v; }

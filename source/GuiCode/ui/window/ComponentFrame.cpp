@@ -1,5 +1,5 @@
 #include "GuiCode/pch.hpp"
-#include "GuiCode/ui/window/MenuFrame.hpp"
+#include "GuiCode/ui/window/ComponentFrame.hpp"
 
 // --------------------------------------------------------------------------
 // ------------------------- Menu Frame Panel -------------------------------

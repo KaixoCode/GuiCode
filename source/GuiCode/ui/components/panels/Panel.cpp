@@ -15,13 +15,6 @@ Panel::Panel()
 
         m_LayoutManager.AddEvent(e);
     };
-
-    // TODO: Find a better fix than just updating when mousepressed....
-    // Hacky fix to the TreePanel Folder expanding bug...
-    m_Listener += [this](Event::MousePressed& e)
-    {
-        //Container::Update(m_Viewport);
-    };
 }
 
 void Panel::Background(CommandCollection& d)
@@ -75,36 +68,19 @@ void Panel::Update(const Vec4<int>& viewport)
         for (auto& _c : m_Components)
             _c->Update({ _c->Position(), _c->Size() });
     }
-
 }
 
 void Panel::Render(CommandCollection& d)
 {
     using namespace Graphics;
-    if (m_SmartPanel)
-    {
-        d.Command<PushMatrix>();
+    d.Command<PushMatrix>();
 
-        d.Command<Translate>(Vec2<int>{ X(), Y() });
-        d.Command<FrameBuffer>(m_PanelId, m_NeedsRedraw);
-        Background(d);
-        Container::Render(d);
-        m_LayoutManager.DrawDividers(d);
-        d.Command<FrameBufferEnd>();
-        d.Command<PopMatrix>();
-    }
-    else
-    {
-        d.Command<PushMatrix>();
-
-        d.Command<Translate>(Vec2<int>{ X(), Y() });
-        Background(d);
-        Vec2<int> m_Pos = Position();
-        Position({ 0,0 });
-        Container::Render(d);
-        Position(m_Pos);
-        m_LayoutManager.DrawDividers(d);
-        d.Command<PopMatrix>();
-    }
-        
+    d.Command<Translate>(Vec2<int>{ X(), Y() });
+    Background(d);
+    Vec2<int> m_Pos = Position();
+    Position({ 0,0 });
+    Container::Render(d);
+    Position(m_Pos);
+    m_LayoutManager.DrawDividers(d);
+    d.Command<PopMatrix>();
 }

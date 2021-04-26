@@ -8,13 +8,13 @@ namespace Graphics
      */
     enum Type
     {
-        Fill, Stroke, StrokeWeight,
+        Fill, 
 
         FontSize, Font, TextAlign,
 
         Clip, PopClip, ClearClip, Translate, PushMatrix, PopMatrix, Scale, Viewport,
 
-        Text, TextView, Line, Quad, TexturedQuad, Ellipse, Triangle, Point,
+        Text, TextView, Line, Quad, TexturedQuad, Ellipse, Triangle,
 
         FrameBuffer, FrameBufferEnd,
 
@@ -27,18 +27,31 @@ namespace Graphics
      */
     struct CommandBase
     {
-        // TODO: wip
-        bool operator ==(const CommandBase& b)
+        bool operator ==(const CommandBase& b) const
         {
             if (b.type != type)
                 return false;
 
             switch (type)
             {
-            case Quad: return dimension == b.dimension;
+            case Text: return text == b.text && position == b.position;
+            case TextView: return text == b.text && position == b.position;
+            case Translate: return translate == b.translate;
+            case Clip: return dimension == b.dimension;
+            case Viewport: return dimension == b.dimension;
+            case TextAlign: return align == b.align;
+            case Font: return font == b.font && fontSize == b.fontSize;
+            case FontSize: return fontSize == b.fontSize;
+            case TexturedQuad: return texture == b.texture && textureDimension == b.textureDimension;
+            case Quad:
+            case Ellipse:
+            case Triangle:
+                return dimension == b.dimension && rotation == b.rotation;
+            case Line: return positions == b.positions && thickness == b.thickness;
             case Fill: return fill == b.fill;
-            case Stroke: return stroke == b.stroke;
             }
+
+            return true;
         }
 
         Type type;
