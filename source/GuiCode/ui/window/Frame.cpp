@@ -23,12 +23,19 @@ void Frame::Update(const Vec4<int>& viewport)
         m_MaxiButton2->Visible(false);
     }
     m_MinimButton->Position({ _x -= 46, Height() - 32 + _offset });
+
+    _x = -_offset + 45;
+    int _y = Height() - 32 + _offset;
+    if (m_Menu->Components().size() != 0)
+        m_Menu->Position({ _x + 6, _y });
+
     Window::Update(viewport);
 }
 
 void Frame::Render(CommandCollection& d)
 {
     using namespace Graphics;
+    d.Command<Clip>(Vec4<int>{ 0, 0, Width(), Height() });
     Window::Render(d);
     bool _maxi = IsMaximized(GetWin32Handle());
     int _offset = _maxi ? -8 : 0;
@@ -44,7 +51,6 @@ void Frame::Render(CommandCollection& d)
 
     if (m_Menu->Components().size() != 0)
     {
-        m_Menu->Position({ _x + 6, _y });
         _x += m_Menu->Width() + 6;
         d.Command<TextAlign>(Align::CENTER, Align::CENTER);
         d.Command<Text>(&_line, _x += 6, _y + 16);
@@ -53,4 +59,5 @@ void Frame::Render(CommandCollection& d)
     d.Command<Fill>(::Color{ 179, 179, 179, 255 });
     d.Command<TextAlign>(Align::LEFT, Align::CENTER);
     d.Command<Text>(&m_Name, Vec2<int>{_x + 9, _y + 16});
+    d.Command<PopClip>();
 }
