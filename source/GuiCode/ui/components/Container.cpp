@@ -189,7 +189,7 @@ void Container::Hovering(bool v)
 {
     m_Hovering = v;
 
-    // Make sure all sub components are also unfocused.
+    // Make sure all sub components are also not hovering.
     if (!v)
     {
         for (auto& _c : m_Components)
