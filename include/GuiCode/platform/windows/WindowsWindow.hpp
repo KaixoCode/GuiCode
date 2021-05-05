@@ -9,7 +9,7 @@ class WindowsWindow;
 class WindowsWindow : public WindowBase
 {
 public:
-    WindowsWindow(const std::string& name, int width, int height, bool hideonclose, bool show, bool resizable, bool decorated);
+    WindowsWindow(const WindowData&);
     ~WindowsWindow() 
     {
         for (auto& a : m_ShellIcons)
@@ -22,6 +22,10 @@ public:
     
     auto Size(int w, int h)    -> void override { glfwSetWindowSize(*this, w, h); }
     auto Size(Vec2<int> s)     -> void override { glfwSetWindowSize(*this, s.width, s.height); }
+    auto MaxSize(int w, int h) -> void override { Size({ w, h }); }
+    auto MaxSize(Vec2<int> s)  -> void override { glfwSetWindowSizeLimits(*this, m_MinSize.width, m_MinSize.height, s.width, s.height); m_MaxSize = s; }
+    auto MinSize(int w, int h) -> void override { Size({ w, h }); }
+    auto MinSize(Vec2<int> s)  -> void override { glfwSetWindowSizeLimits(*this, s.width, s.height, m_MaxSize.width, m_MaxSize.height); m_MinSize = s; }
     auto Location(Vec2<int> s) -> void override { glfwSetWindowPos(*this, s.x, s.y); }
     auto Maximize()            -> void override { glfwMaximizeWindow(*this); }
     auto Restore()             -> void override { glfwRestoreWindow(*this); }
@@ -79,7 +83,6 @@ public:
     }
 
 protected:
-
     float m_Scale = 1;
 
     bool m_InitialResize = true,

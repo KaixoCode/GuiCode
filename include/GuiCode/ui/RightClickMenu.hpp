@@ -84,7 +84,7 @@ private:
 	bool m_Focus = false;
 
 	RightClickMenu()
-		: ComponentFrame("", 50, 50)
+		: ComponentFrame(WindowData{ "", Vec2<int>{ 50, 50 }, true, true, true, false, false, false, nullptr })
 	{
 		m_Listener += [this](Event::MousePressed& e)
 		{

@@ -27,8 +27,8 @@ public:
      * @param hideonclose when true this window will not exit the program but simply hide the window when closed.
      * @param r resizeable
      */
-    Frame(const std::string& name, const int width, const int height, bool hideonclose = false, bool show = true, bool r = true)
-        : Window(name, width, height, hideonclose, show, r), m_Resizable(r),
+    Frame(const WindowData& d)
+        : Window(d), m_Resizable(d.resizeable),
         m_CloseButton(&Emplace<Button<ButtonGraphics::CloseButton, ButtonType::Normal>>([&]() { this->Close(); }, "")),
         m_MaxiButton1(&Emplace<Button<ButtonGraphics::Maxi1Button, ButtonType::Normal>>([&]() { this->Restore(); }, "")),
         m_MaxiButton2(&Emplace<Button<ButtonGraphics::Maxi2Button, ButtonType::Normal>>([&]() { this->Maximize(); }, "")),

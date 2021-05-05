@@ -14,11 +14,11 @@ std::vector<NOTIFYICONDATA> WindowsWindow::m_ShellIcons;
 int WindowsWindow::m_ShellIconCount = 0;
 std::unordered_map<int, std::function<void(Event&)>> WindowsWindow::m_ShellIconCallbacks;
 
-WindowsWindow::WindowsWindow(const std::string& name, int width, int height, bool hideonclose, bool show, bool resizable, bool decorated)
-    : WindowBase(name, width, height, hideonclose)
+WindowsWindow::WindowsWindow(const WindowData& d)
+    : WindowBase(d)
 {
-    m_InitialSize = { width, height };
-    m_Projection = glm::ortho(0.0f, (float)std::max(width / m_Scale, 5.0f), 0.0f, (float)std::max(height / m_Scale, 5.0f));
+    m_InitialSize = d.size;
+    m_Projection = glm::ortho(0.0f, (float)std::max(d.size.width / m_Scale, 5.0f), 0.0f, (float)std::max(d.size.height / m_Scale, 5.0f));
     if (m_WindowCount == 0 && !glfwInit())
     {
         LOG("Failed to initialize GLFW");
@@ -28,18 +28,18 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_FLOATING, !decorated);
-    glfwWindowHint(GLFW_RESIZABLE, resizable);
-    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, !decorated);
-    glfwWindowHint(GLFW_DECORATED, decorated);
+    glfwWindowHint(GLFW_FLOATING, d.alwaysOnTop);
+    glfwWindowHint(GLFW_RESIZABLE, d.resizeable);
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, d.transparentBuffer);
+    glfwWindowHint(GLFW_DECORATED, d.decorated);
     glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_VISIBLE, show);
+    glfwWindowHint(GLFW_VISIBLE, d.showOnCreate);
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
-    if (WindowsWindow::m_MainWindow != nullptr)
-        m_Window = glfwCreateWindow(55, 55, name.c_str(), NULL, WindowsWindow::m_MainWindow->GetWindow());
-    else 
-        m_Window = glfwCreateWindow(55, 55, name.c_str(), NULL, NULL);
+    auto window = dynamic_cast<Window*>(d.parent);
+    m_Window = glfwCreateWindow(55, 55, d.name.c_str(), NULL, m_MainWindow ? m_MainWindow->operator GLFWwindow *() : NULL);
+    if (window)
+        SetWindowLongPtr(GetWin32Handle(), GWLP_HWNDPARENT, (LONG)window->GetWin32Handle());
 
     m_WindowId = m_WindowIdCounter++;
     if (&m_Window == NULL)
@@ -49,7 +49,7 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
             glfwTerminate();
     }
 
-    if (!decorated)
+    if (!d.decorated)
     {
         long style = GetWindowLong(GetWin32Handle(), GWL_EXSTYLE);
         style = style & ~WS_EX_APPWINDOW | WS_EX_TOOLWINDOW; 
@@ -86,33 +86,12 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     DwmExtendFrameIntoClientArea(GetWin32Handle(), &_margins);
 
     //Size(Width(), Height());    
-    show ? Show() : Hide();
+    d.showOnCreate ? Show() : Hide();
 
 }
 
 void WindowsWindow::Update(const Vec4<int>& viewport) 
 {
-    // Need to trigger a resize after setup because otherwise
-    // stuff fails for some reason...
-    if (Visible() && m_InitialResize) 
-    {
-        m_InitialResize = false;     
-        Size(m_InitialSize);
-    }
-
-    // Go through the even queue
-    while (!m_EventQueue.empty())
-    {
-        AddEvent(m_EventQueue.front());
-
-        // Check again if the eventqueue is empty, because some button somewhere
-        // might trigger a resize of the window, which will trigger this WindowsWindow::Update
-        // which will finish this while loop, and then exit out of AddEvent about here ^
-        // and then m_EventQueue will be empty, causing an exception when calling pop().
-        if (!m_EventQueue.empty())
-            m_EventQueue.pop();
-    }
-
     // Update all the components
     Container::Update(viewport);
 
@@ -171,6 +150,28 @@ void WindowsWindow::WindowsLoop()
         //d.Command<Graphics::FrameBufferEnd>();
         Graphics::RunCommands(d);
         glfwSwapBuffers(*this);
+
+
+        // Need to trigger a resize after setup because otherwise
+        // stuff fails for some reason...
+        if (Visible() && m_InitialResize)
+        {
+            m_InitialResize = false;
+            Size(m_InitialSize);
+        }
+
+        // Go through the even queue
+        while (!m_EventQueue.empty())
+        {
+            AddEvent(m_EventQueue.front());
+
+            // Check again if the eventqueue is empty, because some button somewhere
+            // might trigger a resize of the window, which will trigger this WindowsWindow::Update
+            // which will finish this while loop, and then exit out of AddEvent about here ^
+            // and then m_EventQueue will be empty, causing an exception when calling pop().
+            if (!m_EventQueue.empty())
+                m_EventQueue.pop();
+        }
     }
 
 }
@@ -430,6 +431,16 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
         if (wParam == TRUE)
             _fCallDWP = false;
         break;
+    }
+    case WM_GETMINMAXINFO:
+    {
+        LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
+        lpMMI->ptMinTrackSize.x = _self->m_MinSize.width == -1 ? 0 : _self->m_MinSize.width;
+        lpMMI->ptMinTrackSize.y = _self->m_MinSize.height == -1 ? 0 : _self->m_MinSize.height;
+        lpMMI->ptMaxTrackSize.x = _self->m_MaxSize.width == -1 ? 100000 : _self->m_MaxSize.width;
+        lpMMI->ptMaxTrackSize.y = _self->m_MaxSize.height == -1 ? 100000 : _self->m_MaxSize.height;
+        _fCallDWP = false;
+        _lRet = 0;
     }
     // Handle hit testing in the NCA if not handled by DwmDefWindowProc.
     case WM_NCHITTEST:

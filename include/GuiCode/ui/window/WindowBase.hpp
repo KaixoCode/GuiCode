@@ -2,6 +2,26 @@
 #include "GuiCode/pch.hpp"
 #include "GuiCode/ui/components/Container.hpp"
 
+class WindowBase;
+
+struct WindowData
+{
+    WindowData() {}
+    WindowData(const std::string& n, Vec2<int> s, bool a, bool t, bool h, bool c, bool r, bool d, WindowBase* p)
+        : name(n), size(s), alwaysOnTop(a), transparentBuffer(t), hideOnClose(h), showOnCreate(c), resizeable(r),
+        decorated(d), parent(p)
+    {}
+
+    std::string name;
+    Vec2<int> size;
+    bool alwaysOnTop = false;
+    bool transparentBuffer = false;
+    bool hideOnClose = false;
+    bool showOnCreate = true;
+    bool resizeable = true;
+    bool decorated = true;
+    WindowBase* parent = nullptr;
+};
 /**
  * Base for a window
  */
@@ -14,14 +34,18 @@ public:
      * @param width width
      * @param height height
      */
-    WindowBase(const std::string& name, int width, int height, bool hideonclose = false)
-        : Container(), m_Name(name), m_HideOnClose(hideonclose)
+    WindowBase(const WindowData& d)
+        : Container(), m_Name(d.name), m_HideOnClose(d.hideOnClose)
     {
-        m_Size = { width, height };
+        m_Size = d.size;
     }
 
     virtual auto Size(int w, int h)    -> void { Size({ w,h }); };
     virtual auto Size(Vec2<int> s)     -> void = 0;
+    virtual auto MaxSize(int w, int h) -> void = 0;
+    virtual auto MaxSize(Vec2<int> s)  -> void = 0;
+    virtual auto MinSize(int w, int h) -> void = 0;
+    virtual auto MinSize(Vec2<int> s)  -> void = 0;
     virtual auto Location(Vec2<int> s) -> void = 0;
     virtual auto Maximize()            -> void = 0;
     virtual auto Restore()             -> void = 0;

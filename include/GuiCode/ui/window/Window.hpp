@@ -23,7 +23,7 @@ struct Window : public WindowType
      * @param resizable resizable
      * @param decorated decorated
      */
-    Window(const std::string& name, int width, int height, bool hideonclose = false, bool show = true, bool resizable = true, bool decorated = true)
-        : WindowType(name, width, height, hideonclose, show, resizable, decorated)
+    Window(const WindowData& d)
+        : WindowType(d)
     {}
 };

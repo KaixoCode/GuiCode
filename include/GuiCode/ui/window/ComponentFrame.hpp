@@ -47,7 +47,7 @@ public:
      * @param width width
      * @param height height
      */
-    ComponentFrame(const std::string& name, const int width, const int height);
+    ComponentFrame(const WindowData&);
 
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection& d) override;

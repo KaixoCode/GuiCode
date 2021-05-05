@@ -197,6 +197,7 @@ public:
         CTRL_X = ('X' << 8) | Event::Mod::CONTROL,
         CTRL_Y = ('Y' << 8) | Event::Mod::CONTROL,
         CTRL_Z = ('Z' << 8) | Event::Mod::CONTROL,
+        CTRL_SPACE = (' ' << 8) | Event::Mod::CONTROL,
         CTRL_COMMA = (188 << 8) | Event::Mod::CONTROL, // TODO: This one doesnt work
         CTRL_SHIFT_S = ('S' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         CTRL_SHIFT_W = ('W' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
@@ -296,6 +297,7 @@ public:
             if (_f)
                 _str = _str + "F" + std::to_string(_l - 0x6F);
             if (_l == 188) _str += ',';
+            if (_l == ' ') _str += "SPACE";
             else if (!_f)
                 _str += static_cast<char>(_l);
 

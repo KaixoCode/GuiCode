@@ -35,8 +35,8 @@ void ComponentFramePanel::Render(CommandCollection& d)
 // ----------------------------- Menu Frame ---------------------------------
 // --------------------------------------------------------------------------
 
-ComponentFrame::ComponentFrame(const std::string& name, const int width, const int height)
-    : Window(name, width, height, true, false, true, false),
+ComponentFrame::ComponentFrame(const WindowData& d)
+    : Window(d),
     m_Panel(&Emplace<::ComponentFramePanel>())
 {
     Size({ 100, 100 });
@@ -46,15 +46,6 @@ ComponentFrame::ComponentFrame(const std::string& name, const int width, const i
         if (e.key == Key::ESC && Visible())
             Close();
     };
-
-    m_Listener += [this](Event::MouseMoved& e)
-    {
-        if (!m_Component)
-            return;
-
-
-    };
-
 }
 
 void ComponentFrame::Update(const Vec4<int>& viewport)
@@ -88,9 +79,12 @@ void ComponentFrame::Update(const Vec4<int>& viewport)
 
             _checkSize(m_Component);
 
-            Size({ bx + 2, by - sy + 2 });
-            m_Panel->Size({ bx + 2, by - sy + 2 });
-            m_Component->Position({ 1, m_Panel->Height() - m_Component->Height() - 1 });
+            int finalx = (int)std::ceil(std::max((bx + 4) / m_Scale, 5.0f));
+            int finaly = (int)std::ceil(std::max((by - sy + 5) / m_Scale, 5.0f));
+
+            Size({ finalx, finaly });
+            m_Panel->Size({ finalx, finaly });
+            m_Component->Position({ 2, (int)std::floor(Height() - m_Component->Height() - 2 / m_Scale) });
         }
         else
         {

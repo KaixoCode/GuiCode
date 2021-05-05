@@ -55,7 +55,7 @@ public:
 
 private:
 	Dragging()
-		: ComponentFrame("", 50, 50)
+		: ComponentFrame({})
 	{
 		m_Listener += [this](Event::MouseMoved& e)
 		{
