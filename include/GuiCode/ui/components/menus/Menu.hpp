@@ -105,7 +105,6 @@ public:
         return _ta;
     }
 
-
 protected:
     Vec2<int> m_ButtonSize{ -1, -1 };
 

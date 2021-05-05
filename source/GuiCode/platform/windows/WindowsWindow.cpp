@@ -30,7 +30,7 @@ WindowsWindow::WindowsWindow(const std::string& name, int width, int height, boo
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_FLOATING, !decorated);
     glfwWindowHint(GLFW_RESIZABLE, resizable);
-    //glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, !decorated);
     glfwWindowHint(GLFW_DECORATED, decorated);
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_VISIBLE, show);

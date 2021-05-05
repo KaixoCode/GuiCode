@@ -47,16 +47,7 @@ public:
      * @param width width
      * @param height height
      */
-    ComponentFrame(const std::string& name, const int width, const int height)
-        : Window(name, width, height, true, false, true, false),
-        m_Panel(&Emplace<::ComponentFramePanel>())
-    {
-        m_Listener += [this](Event::KeyPressed& e)
-        {
-            if (e.key == Key::ESC && Visible())
-                Close();
-        };
-    }
+    ComponentFrame(const std::string& name, const int width, const int height);
 
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection& d) override;
