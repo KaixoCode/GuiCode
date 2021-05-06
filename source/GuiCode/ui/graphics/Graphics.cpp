@@ -980,6 +980,20 @@ namespace Graphics
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
+    void FreeFont(int id)
+    {
+        auto _it = Graphics::m_Fonts.find(id);
+        if (_it != Graphics::m_Fonts.end())
+        {
+            unsigned int _fontId = (*_it).first;
+            glDeleteTextures(1, &_fontId);
+            m_Fonts.erase(_it);
+
+            Graphics::m_FontAdvance.erase(id);
+            Graphics::m_Fontsizes.erase(id);
+        }
+    }
+
     int LoadFont(const std::string& path)
     {
         return LoadFont(path, 48);
@@ -989,9 +1003,10 @@ namespace Graphics
     {
         static FT_Library _ft;
         static int m_FontIdCounter = 0;
+        static bool init = false;
         m_FontIdCounter++;
         int _fontid = m_FontIdCounter;
-        if (!_ft && FT_Init_FreeType(&_ft))
+        if (!init && FT_Init_FreeType(&_ft))
         {
             LOG("ERROR::FREETYPE: Could not init FreeType Library");
             return -1;
@@ -1016,6 +1031,10 @@ namespace Graphics
             glGenTextures(1, &_texture);
             glBindTexture(GL_TEXTURE_2D_ARRAY, _texture);
             glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RED, size, size, 128, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+
+            unsigned char* empty = new unsigned char[size * size];
+            for (int i = 0; i < size * size; i++)
+                empty[i] = 0;
            
             Graphics::Character _character0 = {
                     _texture,
@@ -1046,6 +1065,16 @@ namespace Graphics
 
                 glTexSubImage3D(
                     GL_TEXTURE_2D_ARRAY,
+                    0, 0, 0, _c,
+                    size,
+                    size,
+                    1, GL_RED,
+                    GL_UNSIGNED_BYTE,
+                    empty
+                );
+
+                glTexSubImage3D(
+                    GL_TEXTURE_2D_ARRAY,
                     0, 0, size - _character.Size.y, _c,
                     _face->glyph->bitmap.width,
                     _face->glyph->bitmap.rows,
@@ -1066,11 +1095,14 @@ namespace Graphics
 
             glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
             m_Fontsizes.emplace(_fontid, size);
+            delete[] empty;
         }
 
+
         FT_Done_Face(_face);
-        _ft = {};
-        FT_Done_FreeType(_ft);
+        init = true;
+        //_ft = {};
+        //FT_Done_FreeType(_ft);
         return _fontid;
     }
 

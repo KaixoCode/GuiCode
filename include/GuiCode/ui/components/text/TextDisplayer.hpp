@@ -196,8 +196,9 @@ public:
 	bool Focused() const override { return Panel::Focused(); }
 	void Focused(bool v) override { m_Timer = 60; Panel::Focused(v); }
 
+	void RecalculateLines();
 
-private:
+protected:
 	TextContainer m_Container;
 
 	std::string m_Placeholder;
@@ -228,7 +229,6 @@ private:
 	std::vector<std::string_view> m_Lines;
 	std::vector<int> m_LineWidths;
 
-	void RecalculateLines();
 	void CalcLinesWordWrap();
 	void CalcLinesCharWrap();
 	void CalcLinesNoWrap();
