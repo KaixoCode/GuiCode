@@ -130,8 +130,7 @@ namespace Graphics
     // Text stuff
     float m_FontSize = 16.0f;
     int m_Font = Fonts::Gidole;
-    std::unordered_map<int, std::unordered_map<char, Graphics::Character>> m_Fonts;
-    std::unordered_map<int, std::unordered_map<char, int>> m_FontAdvance;
+    std::unordered_map<int, std::unordered_map<int, std::unordered_map<char, Graphics::Character>>> m_Fonts;
     std::unordered_map<int, int> m_Fontsizes;
     
     Vec2<Align> m_TextAlign = { Align::LEFT, Align::BOTTOM };
@@ -840,15 +839,22 @@ namespace Graphics
         
 
         auto _fafa = m_Font;
-        if (m_Scaling < 1)
-            _fafa = Graphics::Fonts::Gidole;
 
-        auto& _font = Graphics::m_Fonts[_fafa];
+        int _pickedSize = 48;
+        if (m_Scaling >= 1)
+        {
+            if (m_FontSize <= 14) _pickedSize = 14;
+            else if (m_FontSize <= 16) _pickedSize = 16;
+        }
 
-        int _size = m_Fontsizes[_fafa];
+        auto& _font = Graphics::m_Fonts[_fafa][_pickedSize];
+
+        int _size = _pickedSize;
         float _scale = 1;
         if (_size != 0)
             _scale = m_FontSize / (float)_size;
+
+
 
         static Shader _shader
         {
@@ -980,16 +986,19 @@ namespace Graphics
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
+    static int m_FontSizes[]{ 14, 16, 48 };
     void FreeFont(int id)
     {
         auto _it = Graphics::m_Fonts.find(id);
         if (_it != Graphics::m_Fonts.end())
         {
-            unsigned int _fontId = (*_it).first;
-            glDeleteTextures(1, &_fontId);
+            for (int i : m_FontSizes)
+            {
+                const GLuint _textureId = (*_it).second[i][-1].TextureID;
+                glDeleteTextures(1, &_textureId);
+            }
             m_Fonts.erase(_it);
 
-            Graphics::m_FontAdvance.erase(id);
             Graphics::m_Fontsizes.erase(id);
         }
     }
@@ -1001,6 +1010,7 @@ namespace Graphics
     
     int LoadFont(const std::string& path, unsigned int size)
     {
+
         static FT_Library _ft;
         static int m_FontIdCounter = 0;
         static bool init = false;
@@ -1021,81 +1031,86 @@ namespace Graphics
         else
         {
             Graphics::m_Fonts.insert(
-                std::pair<int, std::unordered_map<char, Graphics::Character>>(
-                    _fontid, std::unordered_map<char, Graphics::Character>{}));
+                std::pair<int, std::unordered_map<int, std::unordered_map<char, Graphics::Character>>>(
+                    _fontid, std::unordered_map<int, std::unordered_map<char, Graphics::Character>>{}));
 
-            FT_Set_Pixel_Sizes(_face, 0, size);
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-            unsigned int _texture;
-            glGenTextures(1, &_texture);
-            glBindTexture(GL_TEXTURE_2D_ARRAY, _texture);
-            glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RED, size, size, 128, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
-
-            unsigned char* empty = new unsigned char[size * size];
-            for (int i = 0; i < size * size; i++)
-                empty[i] = 0;
-           
-            Graphics::Character _character0 = {
-                    _texture,
-                    glm::ivec2(-1, -1),
-                    glm::ivec2(-1, -1),
-                    -1
-            };
-
-            Graphics::m_Fonts[_fontid].insert(std::pair<char, Graphics::Character>((char)-1, _character0));
-
-            for (unsigned char _c = 0; _c < 128; _c++)
+            for (int _curSize : m_FontSizes)
             {
-                if (FT_Load_Char(_face, _c, FT_LOAD_RENDER))
-                {
-                    LOG("ERROR::FREETYTPE: Failed to load Glyph");
-                    continue;
-                }
+                Graphics::m_Fonts[_fontid].insert(
+                    std::pair<int, std::unordered_map<char, Graphics::Character>>(
+                        _curSize, std::unordered_map<char, Graphics::Character>{}));
 
-                Graphics::Character _character = {
-                    _c,
-                    glm::ivec2(_face->glyph->bitmap.width, _face->glyph->bitmap.rows),
-                    glm::ivec2(_face->glyph->bitmap_left, _face->glyph->bitmap_top),
-                    static_cast<unsigned int>(_face->glyph->advance.x)
+                FT_Set_Pixel_Sizes(_face, 0, _curSize);
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+                unsigned int _texture;
+                glGenTextures(1, &_texture);
+                glBindTexture(GL_TEXTURE_2D_ARRAY, _texture);
+                glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RED, _curSize, _curSize, 128, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+
+                unsigned char* empty = new unsigned char[_curSize * _curSize];
+                for (int i = 0; i < _curSize * _curSize; i++)
+                    empty[i] = 0;
+           
+                Graphics::Character _character0 = {
+                        _texture,
+                        glm::ivec2(-1, -1),
+                        glm::ivec2(-1, -1),
+                        -1
                 };
 
-                int _xpos = _character.Bearing.x;
-                int _ypos = _character.Size.y - _character.Bearing.y;
+                Graphics::m_Fonts[_fontid][_curSize].insert(std::pair<char, Graphics::Character>((char)-1, _character0));
 
-                glTexSubImage3D(
-                    GL_TEXTURE_2D_ARRAY,
-                    0, 0, 0, _c,
-                    size,
-                    size,
-                    1, GL_RED,
-                    GL_UNSIGNED_BYTE,
-                    empty
-                );
+                for (unsigned char _c = 0; _c < 128; _c++)
+                {
+                    if (FT_Load_Char(_face, _c, FT_LOAD_RENDER))
+                    {
+                        LOG("ERROR::FREETYTPE: Failed to load Glyph");
+                        continue;
+                    }
 
-                glTexSubImage3D(
-                    GL_TEXTURE_2D_ARRAY,
-                    0, 0, size - _character.Size.y, _c,
-                    _face->glyph->bitmap.width,
-                    _face->glyph->bitmap.rows,
-                    1, GL_RED,
-                    GL_UNSIGNED_BYTE,
-                    _face->glyph->bitmap.buffer
-                );
+                    Graphics::Character _character = {
+                        _c,
+                        glm::ivec2(_face->glyph->bitmap.width, _face->glyph->bitmap.rows),
+                        glm::ivec2(_face->glyph->bitmap_left, _face->glyph->bitmap_top),
+                        static_cast<unsigned int>(_face->glyph->advance.x)
+                    };
 
-                Graphics::m_Fonts[_fontid].insert(
-                    std::pair<char, Graphics::Character>(_c, _character));
+                    int _xpos = _character.Bearing.x;
+                    int _ypos = _character.Size.y - _character.Bearing.y;
 
-                Graphics::m_FontAdvance[_fontid].insert(std::pair<char, int>(_c, _character.Advance));
+                    glTexSubImage3D(
+                        GL_TEXTURE_2D_ARRAY,
+                        0, 0, 0, _c,
+                        _curSize,
+                        _curSize,
+                        1, GL_RED,
+                        GL_UNSIGNED_BYTE,
+                        empty
+                    );
+
+                    glTexSubImage3D(
+                        GL_TEXTURE_2D_ARRAY,
+                        0, 0, _curSize - _character.Size.y, _c,
+                        _face->glyph->bitmap.width,
+                        _face->glyph->bitmap.rows,
+                        1, GL_RED,
+                        GL_UNSIGNED_BYTE,
+                        _face->glyph->bitmap.buffer
+                    );
+
+                    Graphics::m_Fonts[_fontid][_curSize].insert(
+                        std::pair<char, Graphics::Character>(_c, _character));
+                }
+                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+                glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+                m_Fontsizes.emplace(_fontid, size);
+                delete[] empty;
             }
-            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-            m_Fontsizes.emplace(_fontid, size);
-            delete[] empty;
         }
 
 
@@ -1167,14 +1182,19 @@ namespace Graphics
     int StringWidth(const std::string& str, int font, int size) 
     {
         auto& _font = m_Fonts[font];
-        auto& _size = m_Fontsizes[font];
+        int _pickedSize = 48;
+        if (m_Scaling >= 1)
+        {
+            if (size <= 14) _pickedSize = 14;
+            else if (size <= 16) _pickedSize = 16;
+        }
         float _scale = 1;
-        if (size != -1 && _size != 0)
-            _scale = size / (float)_size;
+        if (size != -1 && _pickedSize != 0)
+            _scale = size / (float)_pickedSize;
 
         float _width = 0;
         for (auto& i : str)
-            _width += (_font[i].Advance >> 6) * _scale;
+            _width += (_font[_pickedSize][i].Advance >> 6) * _scale;
         
         return (int)_width;
     };
@@ -1182,15 +1202,20 @@ namespace Graphics
     int StringWidth(const std::string_view& str, int font, int size)
     {
         auto& _font = m_Fonts[font];
-        auto& _size = m_Fontsizes[font];
+        int _pickedSize = 48;
+        if (m_Scaling >= 1)
+        {
+            if (size <= 14) _pickedSize = 14;
+            else if (size <= 16) _pickedSize = 16;
+        }
         float _scale = 1;
-        if (size != -1 && _size != 0)
-            _scale = size / (float)_size;
+        if (size != -1 && _pickedSize != 0)
+            _scale = size / (float)_pickedSize;
 
         float _width = 0;
         for (auto& i : str)
             if (i != '\n')
-                _width += (_font[i].Advance >> 6) * _scale;
+                _width += (_font[_pickedSize][i].Advance >> 6) * _scale;
 
         return (int)_width;
     };
@@ -1201,12 +1226,17 @@ namespace Graphics
             return 0;
 
         auto& _font = m_Fonts[font];
-        auto& _size = m_Fontsizes[font];
+        int _pickedSize = 48;
+        if (m_Scaling >= 1)
+        {
+            if (size <= 14) _pickedSize = 14;
+            else if (size <= 16) _pickedSize = 16;
+        }
         float _scale = 1;
-        if (size != -1 && _size != 0)
-            _scale = size / (float)_size;
+        if (size != -1 && _pickedSize != 0)
+            _scale = size / (float)_pickedSize;
 
-        return (_font[c].Advance >> 6) * _scale;
+        return (_font[_pickedSize][c].Advance >> 6) * _scale;
     };
 }
 
