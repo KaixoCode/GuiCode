@@ -325,6 +325,7 @@ namespace ButtonType
                     Active(true);
                 }
             };
+            m_Clip = false;
         }
 
         void Update(const Vec4<int>& viewport) override
@@ -346,7 +347,7 @@ namespace ButtonType
                 for (auto& i : m_Menu->Components())
                     i->Focused(false);
             }
-            m_Menu->Visible(Active());
+            //m_Menu->Visible(Active());
             if (A == Align::CENTER || A == Align::BOTTOM)
                 m_Menu->Position({ X(), Y() - m_Menu->Height() });
 
@@ -358,6 +359,9 @@ namespace ButtonType
 
             ButtonType::Update(viewport);
         }
+
+        virtual void Active(bool a) override { m_Active = a; m_Menu->Visible(Active()); }
+        virtual bool Active() const override { return m_Active; }
 
         /**
          * Emplace an item to the <code>Menu</code>

@@ -17,7 +17,7 @@ namespace ButtonType
         {
             m_NeedsRedraw = true;
             if (event.button == Event::MouseButton::LEFT && Hovering())
-                m_Active = true;
+                Active(true);
         };
 
         m_Listener += [this](Event::MouseExited& event)
@@ -39,7 +39,7 @@ namespace ButtonType
                 {
                     m_Callback();
                 }
-                m_Active = false;
+                Active(false);
             }
         };
 
@@ -49,7 +49,7 @@ namespace ButtonType
                 m_Callback();
 
             if (event.key == Key::ENTER && Focused() && !Active() && !Disabled())
-                m_Active = true, m_Callback();
+                Active(true), m_Callback();
 
             if (!Focused())
                 return;
@@ -72,14 +72,14 @@ namespace ButtonType
         m_Listener += [this](Event::KeyReleased& event)
         {
             if (event.key == Key::ENTER)
-                m_Active = false;
+                Active(false);
         };
     }
 
     void Normal::Update(const Vec4<int>& v)
     {
         if (!Focused())
-            m_Active = false;
+            Active(false);
         ButtonBase::Update(v);
     }
 
@@ -112,7 +112,7 @@ namespace ButtonType
             if (*m_Link != m_Active)
                 m_NeedsRedraw = true;
 
-            m_Active = *m_Link;
+            Active(*m_Link);;
         }
         ButtonBase::Update(viewport);
     }
@@ -141,15 +141,15 @@ namespace ButtonType
                 if (m_Link)
                 {
                     *m_Link ^= true;
-                    m_Active = *m_Link;
+                    Active(*m_Link);
                 }
                 else if (m_ToggleCallback)
                 {
-                    m_Active ^= true;
+                    Active(!Active());
                     m_ToggleCallback(m_Active);
                 }
                 else
-                    m_Active ^= true;
+                    Active(!Active());
             }
 
             if (!Focused())
@@ -184,15 +184,15 @@ namespace ButtonType
                 if (m_Link)
                 {
                     *m_Link ^= true;
-                    m_Active = *m_Link;
+                    Active(*m_Link);
                 }
                 else if (m_ToggleCallback)
                 {
-                    m_Active ^= true;
+                    Active(!Active());
                     m_ToggleCallback(m_Active);
                 }
                 else
-                    m_Active ^= true;
+                    Active(!Active());
             }
         };
     }
@@ -241,7 +241,7 @@ namespace ButtonType
         {
             if (m_KeyCombo == event && !Disabled())
             {
-                m_Active ^= true;
+                Active(!Active());
             }
         };
 
@@ -249,14 +249,14 @@ namespace ButtonType
         {
             m_NeedsRedraw = true;
             m_Hovering = true;
-            m_Active = true;
+            Active(true);
         };
 
         m_Listener += [this](Event::MouseExited& event)
         {
             m_NeedsRedraw = true;
             m_Hovering = false;
-            m_Active = false;
+            Active(false);
         };
     };
 

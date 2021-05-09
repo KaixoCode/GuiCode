@@ -83,7 +83,8 @@ public:
 protected:
     bool m_Active = false,
         m_Enabled = true,
-        m_InMenu = false;
+        m_InMenu = false,
+        m_Clip = true;
 
     ButtonBase* m_Pre = nullptr, * m_Post = nullptr;
 
@@ -113,8 +114,12 @@ struct Button : public ButtonType
 
     void Render(CommandCollection& d) override
     {
+        if (m_Clip)
+            d.Command<Graphics::Clip>(Vec4<int>{ Position(), Size() });
         ButtonType::Render(d);
         ButtonGraphics::Render(*this, d);
+        if (m_Clip)
+            d.Command<Graphics::PopClip>();
     };
 };
 

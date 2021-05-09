@@ -12,6 +12,7 @@ struct Event
      */
     enum class Type
     {
+        NONE, 
         KeyTyped, KeyPressed, KeyReleased, MousePressed, MouseReleased,
         MouseClicked, MouseMoved, MouseDragged, MouseWheel, 
         MouseExited, MouseEntered, Focused, Unfocused
