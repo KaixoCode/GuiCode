@@ -262,7 +262,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
         _self->CursorPos().y < _self->Height() - (32 + _offset) / _self->m_Scale && _self->CursorPos().x > _padding && _self->CursorPos().x < _self->Width() - _padding && _self->CursorPos().y > _padding)
     {
         bool _dblclk = false;
-
+        bool _rClick = false;
         switch (uMsg)
         {
         case WM_NCLBUTTONDBLCLK:
@@ -296,6 +296,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 
         case WM_NCRBUTTONUP:
         case WM_RBUTTONUP:
+            _rClick = true;
             _self->MouseButtonCallback(_self, Event::MouseButton::RIGHT, Event::Type::MouseReleased, 0);
             ReleaseCapture();
             _fCallDWP = false;
@@ -319,7 +320,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             _fCallDWP = false;
             break;
         }
-        if (RightClickMenu::Get().Opened() && _self != &RightClickMenu::Get());
+        if (_rClick && RightClickMenu::Get().Opened() && _self != &RightClickMenu::Get());
         else
         if (_fCallDWP == false && GetFocus() != _self->GetWin32Handle())
             ::SetFocus(_self->GetWin32Handle());

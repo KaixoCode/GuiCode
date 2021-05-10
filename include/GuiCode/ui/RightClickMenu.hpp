@@ -76,6 +76,7 @@ public:
 		}
 		Size(menu->Size());
 		m_PSize = menu->Size();
+		Update(m_Viewport);
 		SetForegroundWindow(GetWin32Handle());
 
 		// Change the capture to this window to make sure 

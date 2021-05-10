@@ -1,4 +1,5 @@
 #include "GuiCode/ui/components/menus/Menu.hpp"
+#include "GuiCode/ui/components/buttons/Button.hpp"
 
 // --------------------------------------------------------------------------
 // ---------------------------- Menu Base -----------------------------------
@@ -15,13 +16,35 @@ MenuBase::MenuBase()
         if (Focused() && e.key == Key::DOWN)
         {
             if (FocusedComponent() == nullptr && Components().size() > 0)
-                Components()[0]->Focused(true);
+            {
+                ButtonBase* pre = dynamic_cast<ButtonBase*>(Components()[0].get());
+                while (pre && pre->Disabled())
+                {
+                    pre = pre->PostButton();
+                }
+
+                if (pre)
+                {
+                    pre->Focused(true);
+                }
+            }
         }
 
         if (Focused() && e.key == Key::UP)
         {
             if (FocusedComponent() == nullptr && Components().size() > 0)
-                Components()[Components().size() - 1]->Focused(true);
+            {
+                ButtonBase* post = dynamic_cast<ButtonBase*>(Components()[Components().size() - 1].get());
+                while (post && post->Disabled())
+                {
+                    post = post->PreButton();
+                }
+
+                if (post)
+                {
+                    post->Focused(true);
+                }
+            }
         }
     };
 };
