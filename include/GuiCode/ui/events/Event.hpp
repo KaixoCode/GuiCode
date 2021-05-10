@@ -298,7 +298,7 @@ public:
             if (_f)
                 _str = _str + "F" + std::to_string(_l - 0x6F);
             if (_l == 188) _str += ',';
-            if (_l == ' ') _str += "SPACE";
+            else if (_l == ' ') _str += "SPACE";
             else if (!_f)
                 _str += static_cast<char>(_l);
 

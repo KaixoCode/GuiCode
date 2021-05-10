@@ -74,12 +74,15 @@ namespace ButtonType
             if (event.key == Key::ENTER)
                 Active(false);
         };
+
+        m_Listener += [this](Event::Unfocused& event)
+        {
+            Active(false);
+        };
     }
 
     void Normal::Update(const Vec4<int>& v)
     {
-        if (!Focused())
-            Active(false);
         ButtonBase::Update(v);
     }
 
