@@ -53,7 +53,7 @@ public:
 	 * @param e callback
 	 */
 	DropDown(Callback e = [](Enum v) {})
-		: m_Callback(e), ButtonType::Normal{ [this] { RightClickMenu::Get().Open(&m_Menu); m_Active = false; } },
+		: m_Callback(e), ButtonType::Normal{ [this] { RightClickMenu::Get().Open(&m_Menu, false, m_AbsPos); m_Active = false; } },
 		m_Key(ButtonType::List::NewKey())
 	{
 		m_Menu.ButtonSize({ 140, 20 });
@@ -138,6 +138,7 @@ public:
 
 	void Render(CommandCollection& d) override
 	{
+		m_AbsPos = d.Translate() + Position();
 		ButtonType::Normal::Render(d);
 		Graphics::Render(*this, d);
 	};
@@ -149,5 +150,6 @@ private:
 	int m_Key;
 	Enum m_Value;
 	::Menu<MenuGraphics::Vertical, MenuType::Normal> m_Menu;
+	Vec2<int> m_AbsPos;
 };
 

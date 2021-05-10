@@ -41,73 +41,6 @@ ComponentFrame::ComponentFrame(const WindowData& d)
 {
     Size({ 100, 100 });
 
-    m_Listener += [this](Event& e) 
-    {
-        if (m_ChangedSize)
-        {
-            m_ChangedSize = false;
-            e.type = Event::Type::NONE;
-        }
-
-        if (e.type == Event::Type::MouseMoved)
-        {
-
-            if (m_Component)
-            {
-                Container* _cont = dynamic_cast<Container*>(m_Component);
-                if (_cont)
-                {
-                    int sx = 0, bx = m_Component->Width();
-                    int sy = m_Component->Y(), by = m_Component->Y() + m_Component->Height();
-                    std::function<void(::Component*)> _checkSize = [&](::Component* comp)
-                    {
-                        Container* _cont = dynamic_cast<Container*>(comp);
-                        if (_cont)
-                            for (auto& _c : _cont->Components())
-                            {
-                                if (!_c->Visible())
-                                    continue;
-                                int _nx = _c->X() + _c->Width();
-                                int _ny = _c->Y();
-                                if (_nx > bx)
-                                    bx = _nx;
-
-                                if (_ny < sy)
-                                    sy = _ny;
-
-                                _checkSize(_c.get());
-                            }
-                    };
-
-                    _checkSize(m_Component);
-
-                    int finalx = (int)std::ceil(std::max((bx + 4) / m_Scale, 5.0f));
-                    int finaly = (int)std::ceil(std::max((by - sy + 5) / m_Scale, 5.0f));
-
-                    if (m_PSize != Vec2<int>{ finalx, finaly })
-                    {
-                        m_PSize = { finalx, finaly };
-                        m_ChangedSize = true;
-                        m_UpdateSize = true;
-                    }
-
-                    m_Panel->Size({ finalx, finaly });
-                    m_Component->Position({ 2, (int)std::floor(Height() - m_Component->Height() - 2 / m_Scale) });
-                }
-                else
-                {
-                    Size(
-                        (int)std::ceil(std::max((m_Component->Width() + 2) / m_Scale, 5.0f)),
-                        (int)std::ceil(std::max((m_Component->Height() + 2) / m_Scale, 5.0f))
-                    );
-
-                    m_Panel->Size({ m_Component->Width(), m_Component->Height() });
-                }
-            }
-        }
-
-    };
-
     m_Listener += [this](Event::KeyPressed& e)
     {
         if (e.key == Key::ESC && Visible())
@@ -117,11 +50,58 @@ ComponentFrame::ComponentFrame(const WindowData& d)
 
 void ComponentFrame::Update(const Vec4<int>& viewport)
 {
-    if (m_UpdateSize)
+    if (m_Component)
     {
-        m_UpdateSize = false;
-        Size(m_PSize);
+        Container* _cont = dynamic_cast<Container*>(m_Component);
+        if (_cont)
+        {
+            int sx = 0, bx = m_Component->Width();
+            int sy = m_Component->Y(), by = m_Component->Y() + m_Component->Height();
+            std::function<void(::Component*)> _checkSize = [&](::Component* comp)
+            {
+                Container* _cont = dynamic_cast<Container*>(comp);
+                if (_cont)
+                    for (auto& _c : _cont->Components())
+                    {
+                        if (!_c->Visible())
+                            continue;
+                        int _nx = _c->X() + _c->Width();
+                        int _ny = _c->Y();
+                        if (_nx > bx)
+                            bx = _nx;
+
+                        if (_ny < sy)
+                            sy = _ny;
+
+                        _checkSize(_c.get());
+                    }
+            };
+
+            _checkSize(m_Component);
+
+            int finalx = (int)std::ceil(std::max((bx + 4) / m_Scale, 5.0f));
+            int finaly = (int)std::ceil(std::max((by - sy + 5) / m_Scale, 5.0f));
+
+            if (finalx > m_PSize.x || finaly > m_PSize.y)
+            {
+                m_PSize = { finalx, finaly };
+            
+                Size(m_PSize);
+                m_Panel->Size(m_PSize);
+            }
+            m_Component->Position({ 2, (int)std::floor(Height() - m_Component->Height() - 2 / m_Scale) });
+        }
+        else
+        {
+            Size(
+                (int)std::ceil(std::max((m_Component->Width() + 2) / m_Scale, 5.0f)),
+                (int)std::ceil(std::max((m_Component->Height() + 2) / m_Scale, 5.0f))
+            );
+
+            m_Panel->Size({ m_Component->Width(), m_Component->Height() });
+        }
     }
+
     m_Panel->Position({ 0, 0 });
     m_Panel->Background(::Color{ 0, 0, 0, 0 });
     Color(::Color{ 0, 0, 0, 0 });

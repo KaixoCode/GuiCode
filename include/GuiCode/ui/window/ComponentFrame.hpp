@@ -73,9 +73,8 @@ public:
 
     virtual void Close() = 0;
         
-private:
+protected:
     ::ComponentFramePanel* m_Panel;
     ::Component* m_Component = nullptr;
     Vec2<int> m_PSize{ 0, 0 };
-    bool m_ChangedSize = false, m_UpdateSize = false;
 };

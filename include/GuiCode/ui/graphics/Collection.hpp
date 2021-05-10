@@ -12,7 +12,7 @@ public:
      * Emplace a <code>Graphics::Command</code>.
      * @tparam T type
      * @param ...args arguments for the constructor of <code>T</code>
-     */ 
+     */
     template<Graphics::Type T, typename ...Args>
     void Command(Args ...args)
     {
@@ -33,6 +33,33 @@ public:
         m_FontSize = size;
         m_CommandCollection.emplace_back(Graphics::Type::Font, m_Font, size);
     }
+
+    template<>
+    void Command<Graphics::Type::PushMatrix>()
+    {
+        m_MatrixStack.push(m_Matrix);
+        m_CommandCollection.emplace_back(Graphics::Type::PushMatrix);
+    }
+
+    template<>
+    void Command<Graphics::Type::PopMatrix>()
+    {
+        if (m_MatrixStack.size() > 1)
+        {
+            m_Matrix = m_MatrixStack.top();
+            m_MatrixStack.pop();
+        }
+        m_CommandCollection.emplace_back(Graphics::Type::PopMatrix);
+    }
+
+    template<>
+    void Command<Graphics::Type::Translate, Vec2<int>>(Vec2<int> trans)
+    {
+        m_Matrix = glm::translate(m_Matrix, glm::vec3(trans.x, trans.y, 0));
+        m_CommandCollection.emplace_back(Graphics::Type::Translate, trans);
+    }
+
+    Vec2<int> Translate() { return { (int)m_Matrix[3][0], (int)m_Matrix[3][1] }; };
 
     int Width(const std::string& s);
 
@@ -67,4 +94,6 @@ private:
     int m_Font = -1;
     int m_FontSize = 48;
     std::vector<Graphics::CommandBase> m_CommandCollection;
+    std::stack<glm::mat4> m_MatrixStack;
+    glm::mat4 m_Matrix{ 1.0f };
 };

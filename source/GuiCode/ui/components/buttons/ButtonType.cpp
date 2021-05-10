@@ -35,7 +35,7 @@ namespace ButtonType
             if (event.button == Event::MouseButton::LEFT)
             {
                 m_NeedsRedraw = true;
-                if (!Disabled() && Hovering() && m_Active)
+                if (!Disabled() && Hovering())
                 {
                     m_Callback();
                 }
@@ -57,15 +57,33 @@ namespace ButtonType
             if (m_InMenu && event.key == Key::DOWN && m_Post != nullptr)
             {
                 event.key = -1;
-                Focused(false);
-                m_Post->Focused(true);
+                ButtonBase* post = m_Post;
+                while (post && post->Disabled())
+                {
+                    post = post->PostButton();
+                }
+
+                if (post)
+                {
+                    Focused(false);
+                    post->Focused(true);
+                }
             }
 
             if (m_InMenu && event.key == Key::UP && m_Pre != nullptr)
             {
                 event.key = -1;
-                Focused(false);
-                m_Pre->Focused(true);
+                ButtonBase* pre = m_Pre;
+                while (pre && pre->Disabled())
+                {
+                    pre = pre->PreButton();
+                }
+
+                if (pre)
+                {
+                    Focused(false);
+                    pre->Focused(true);
+                }
             }
         };
 
@@ -161,15 +179,33 @@ namespace ButtonType
             if (m_InMenu && event.key == Key::DOWN && m_Post != nullptr)
             {
                 event.key = -1;
-                Focused(false);
-                m_Post->Focused(true);
+                ButtonBase* post = m_Post;
+                while (post && post->Disabled())
+                {
+                    post = post->PostButton();
+                }
+
+                if (post)
+                {
+                    Focused(false);
+                    post->Focused(true);
+                }
             }
 
             if (m_InMenu && event.key == Key::UP && m_Pre != nullptr)
             {
                 event.key = -1;
-                Focused(false);
-                m_Pre->Focused(true);
+                ButtonBase* pre = m_Pre;
+                while (pre && pre->Disabled())
+                {
+                    pre = pre->PreButton();
+                }
+
+                if (pre)
+                {
+                    Focused(false);
+                    pre->Focused(true);
+                }
             }
         };
 

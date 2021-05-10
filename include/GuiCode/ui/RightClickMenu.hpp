@@ -53,7 +53,7 @@ public:
 	 * Open the right click menu.
 	 * @param menu menu to show
 	 */
-	void Open(MenuBase* menu, bool f = false)
+	void Open(MenuBase* menu, bool f = false, const Vec2<int>& pos = { -1, -1 })
 	{
 		m_Focus = true;
 
@@ -63,10 +63,20 @@ public:
 		Component(menu);
 
 		// Show the window at the cursor position
-		POINT point; GetCursorPos(&point);
-		Location({ point.x, point.y });
-		if (f)
-			SetForegroundWindow(GetWin32Handle());
+		if (pos.x != -1 && pos.y != -1 && m_CurrentWindow)
+		{
+			RECT rect;
+			GetWindowRect(m_CurrentWindow->GetWin32Handle(), &rect);
+			Location({ rect.left + pos.x, rect.bottom - pos.y });
+		}
+		else
+		{
+			POINT point; GetCursorPos(&point);
+			Location({ point.x, point.y });
+		}
+		Size(menu->Size());
+		m_PSize = menu->Size();
+		SetForegroundWindow(GetWin32Handle());
 
 		// Change the capture to this window to make sure 
 		// when releasing the mouse it doesn't immediatly

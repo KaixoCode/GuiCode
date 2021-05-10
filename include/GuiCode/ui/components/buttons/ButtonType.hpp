@@ -59,7 +59,7 @@ namespace ButtonType
         {
             m_Listener += [this](Event::MouseReleased& event)
             {
-                if (event.button == Event::MouseButton::LEFT && Active())
+                if (event.button == Event::MouseButton::LEFT)
                 {
                     if (!Disabled() && Component::WithinBounds({ event.x, event.y }))
                     {
@@ -283,21 +283,39 @@ namespace ButtonType
                 if (!Active() && m_InMenu && event.key == Key::DOWN && m_Post != nullptr)
                 {
                     event.key = -1;
-                    Focused(false);
-                    m_Post->Focused(true);
+                    ButtonBase* post = m_Post;
+                    while (post && post->Disabled())
+                    {
+                        post = post->PostButton();
+                    }
+
+                    if (post)
+                    {
+                        Focused(false);
+                        post->Focused(true);
+                    }
                 }
 
                 if (!Active() && m_InMenu && event.key == Key::UP && m_Pre != nullptr)
                 {
                     event.key = -1;
-                    Focused(false);
-                    m_Pre->Focused(true);
+                    ButtonBase* pre = m_Pre;
+                    while (pre && pre->Disabled())
+                    {
+                        pre = pre->PreButton();
+                    }
+
+                    if (pre)
+                    {
+                        Focused(false);
+                        pre->Focused(true);
+                    }
                 }
 
                 if (Active() && m_InMenu && event.key == Key::LEFT)
                 {
                     auto bttn = dynamic_cast<ButtonBase*>(m_Menu->FocusedComponent());
-                    if (bttn && bttn->Active())
+                    if (bttn && bttn->Active() && bttn->HasSubMenu())
                         return;
 
                     m_Menu->FocusedComponent(nullptr);
@@ -347,7 +365,7 @@ namespace ButtonType
                 for (auto& i : m_Menu->Components())
                     i->Focused(false);
             }
-            //m_Menu->Visible(Active());
+            m_Menu->Visible(Active());
             if (A == Align::CENTER || A == Align::BOTTOM)
                 m_Menu->Position({ X(), Y() - m_Menu->Height() });
 
@@ -359,9 +377,6 @@ namespace ButtonType
 
             ButtonType::Update(viewport);
         }
-
-        virtual void Active(bool a) override { m_Active = a; m_Menu->Visible(Active()); }
-        virtual bool Active() const override { return m_Active; }
 
         /**
          * Emplace an item to the <code>Menu</code>
@@ -386,6 +401,8 @@ namespace ButtonType
             return ButtonType::WithinBounds(pos) || (Active() && m_Menu->WithinBounds(pos));
         }
 
+        virtual bool HasSubMenu() override { return true; }
+        
     private:
         ::MenuBase* m_Menu;
 

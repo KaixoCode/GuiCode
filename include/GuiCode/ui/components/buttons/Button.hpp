@@ -80,6 +80,11 @@ public:
      */
     const std::string& Name() const { return m_Name; }
 
+    virtual bool HasSubMenu() { return false; }
+
+    ButtonBase* PreButton() { return m_Pre; }
+    ButtonBase* PostButton() { return m_Post; }
+
 protected:
     bool m_Active = false,
         m_Enabled = true,

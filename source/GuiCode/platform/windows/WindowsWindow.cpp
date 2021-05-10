@@ -13,6 +13,7 @@ WindowsWindow* WindowsWindow::m_MainWindow = nullptr;
 std::vector<NOTIFYICONDATA> WindowsWindow::m_ShellIcons;
 int WindowsWindow::m_ShellIconCount = 0;
 std::unordered_map<int, std::function<void(Event&)>> WindowsWindow::m_ShellIconCallbacks;
+WindowsWindow* WindowsWindow::m_CurrentWindow = nullptr;
 
 WindowsWindow::WindowsWindow(const WindowData& d)
     : WindowBase(d)
@@ -112,6 +113,7 @@ void WindowsWindow::Render(CommandCollection& d)
 
 void WindowsWindow::Loop()
 {
+    m_CurrentWindow = this;
     WindowsLoop();
     glfwPollEvents();
 }
@@ -260,6 +262,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
         _self->CursorPos().y < _self->Height() - (32 + _offset) / _self->m_Scale && _self->CursorPos().x > _padding && _self->CursorPos().x < _self->Width() - _padding && _self->CursorPos().y > _padding)
     {
         bool _dblclk = false;
+
         switch (uMsg)
         {
         case WM_NCLBUTTONDBLCLK:
@@ -316,7 +319,8 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             _fCallDWP = false;
             break;
         }
-
+        if (RightClickMenu::Get().Opened() && _self != &RightClickMenu::Get());
+        else
         if (_fCallDWP == false && GetFocus() != _self->GetWin32Handle())
             ::SetFocus(_self->GetWin32Handle());
     }

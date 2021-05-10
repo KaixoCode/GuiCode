@@ -121,6 +121,8 @@ protected:
     static std::vector<NOTIFYICONDATA> m_ShellIcons;
     static std::unordered_map<int, std::function<void(Event&)>> m_ShellIconCallbacks;
     static int m_ShellIconCount;
+
+    static WindowsWindow* m_CurrentWindow;
 };
 
 
