@@ -235,6 +235,10 @@ public:
         : m_Value(v)
     {}
 
+    Key(int v)
+        : m_Value(v)
+    {}
+
     /**
      * Constructor
      * v keytyped event, automatically converted to a key combo
@@ -265,8 +269,8 @@ public:
     bool operator>(Key::Combo a)  const { return m_Value > a; }
     bool operator<=(Key::Combo a) const { return m_Value <= a; }
     bool operator>=(Key::Combo a) const { return m_Value >= a; }
-    explicit operator int()       const { return static_cast<int>(m_Value); }
-    operator Combo()              const { return m_Value; }
+    operator int()       const { return static_cast<int>(m_Value); }
+    //operator Combo()              const { return m_Value; }
 
     /**
      * Convert the key combo to a string.
@@ -276,10 +280,10 @@ public:
         static std::string _ctrl = "Ctrl+";
         static std::string _shift = "Shift+";
         static std::string _alt = "Alt+";
-        static std::unordered_map<Key::Combo, std::string> _keys;
+        static std::unordered_map<int, std::string> _keys;
         _keys.reserve(33);
 
-        std::unordered_map<Key::Combo, std::string>::iterator _it;
+        std::unordered_map<int, std::string>::iterator _it;
         if ((_it = _keys.find(m_Value)) == _keys.end())
         {
             int _value = static_cast<int>(m_Value);
@@ -311,7 +315,7 @@ public:
     }
 
 private:        
-    Combo m_Value;
+    int m_Value;
 };
 
 inline bool operator ==(const Event::KeyPressed& a, const Key b) { return ((a.key << 8) | a.keymod) == (int)b; }

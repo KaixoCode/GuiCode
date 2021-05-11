@@ -372,6 +372,11 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 
     switch (uMsg)
     {
+    case WM_HOTKEY:
+    {
+        _self->m_Hotkeys[wParam]();
+    }
+    break;
     case WM_WINDOWPOSCHANGED:
     {
         if (IsWindowVisible(hWnd) == true)

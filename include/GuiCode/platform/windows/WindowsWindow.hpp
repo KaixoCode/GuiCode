@@ -59,7 +59,7 @@ public:
     void WindowsLoop();
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection&) override;
-    using Callback = std::function<void(Event)>;
+    using Callback = std::function<void(void)>;
     void AddHotKey(Key, const Callback&);
 
     template<typename T>
