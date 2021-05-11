@@ -59,6 +59,8 @@ public:
     void WindowsLoop();
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection&) override;
+    using Callback = std::function<void(Event)>;
+    void AddHotKey(Key, const Callback&);
 
     template<typename T>
     static void AddShellIcon(int id, const std::string& title, T callback)
@@ -100,8 +102,11 @@ protected:
         m_MouseX = 0,
         m_MouseY = 0,
         m_WindowId = -1,
-        m_Cursorid = 0;
+        m_Cursorid = 0,
+        m_HotkeyCounter = 0;
     
+    std::map<int, Callback> m_Hotkeys;
+
     GLFWcursor* m_GLFWCursor = 0;
     glm::mat4 m_Projection;
 

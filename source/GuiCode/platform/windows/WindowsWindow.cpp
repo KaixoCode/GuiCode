@@ -178,6 +178,22 @@ void WindowsWindow::WindowsLoop()
 
 }
 
+void WindowsWindow::AddHotKey(Key k, const WindowsWindow::Callback& c)
+{
+    int value = k;
+    int key = value >> 8;
+    int mod = value & 0xff;
+    int winMod = 0;
+    int id = m_HotkeyCounter++;
+
+    if (mod & Event::Mod::CONTROL) { winMod |= MOD_CONTROL; }
+    if (mod & Event::Mod::ALT) { winMod |= MOD_ALT; }
+    if (mod & Event::Mod::SHIFT) { winMod |= MOD_SHIFT; }
+
+    if (RegisterHotKey(GetWin32Handle(), id, winMod, key))
+        m_Hotkeys.emplace(id, c);
+}
+
 // Hit test the frame for resizing and moving.
 LRESULT HitTestNCA(HWND hWnd, WPARAM wParam, LPARAM lParam, float scale)
 {
