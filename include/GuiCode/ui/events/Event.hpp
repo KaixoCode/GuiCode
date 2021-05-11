@@ -218,7 +218,9 @@ public:
         RIGHT = 0x27,
         UP = 0x26,
         DOWN = 0x28,
-        SHIFT = 0x10
+        SHIFT = 0x10,
+        CONTROL = 0x11,
+        ALT = 0x12
     };
     
     /**
@@ -244,7 +246,7 @@ public:
      * v keytyped event, automatically converted to a key combo
      */
     Key(Event::KeyTyped v)
-        : m_Value((Combo)((v.key << 8) | v.keymod))
+        : m_Value((v.key << 8) | v.keymod)
     {}
 
     /**
@@ -252,7 +254,7 @@ public:
      * v keypressed event, automatically converted to a key combo
      */
     Key(Event::KeyPressed v)
-        : m_Value((Combo)((v.key << 8) | v.keymod))
+        : m_Value((v.key << 8) | v.keymod)
     {}
 
     /**
@@ -260,7 +262,7 @@ public:
      * v keyreleased event, automatically converted to a key combo
      */
     Key(Event::KeyReleased v)
-        : m_Value((Combo)((v.key << 8) | v.keymod))
+        : m_Value((v.key << 8) | v.keymod)
     {}
 
     bool operator==(Key::Combo a) const { return m_Value == a; }

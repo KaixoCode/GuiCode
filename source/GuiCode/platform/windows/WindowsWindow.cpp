@@ -13,7 +13,7 @@ WindowsWindow* WindowsWindow::m_MainWindow = nullptr;
 std::vector<NOTIFYICONDATA> WindowsWindow::m_ShellIcons;
 int WindowsWindow::m_ShellIconCount = 0;
 std::unordered_map<int, std::function<void(Event&)>> WindowsWindow::m_ShellIconCallbacks;
-WindowsWindow* WindowsWindow::m_CurrentWindow = nullptr;
+WindowsWindow* WindowsWindow::CurrentWindow = nullptr;
 
 WindowsWindow::WindowsWindow(const WindowData& d)
     : WindowBase(d)
@@ -113,7 +113,7 @@ void WindowsWindow::Render(CommandCollection& d)
 
 void WindowsWindow::Loop()
 {
-    m_CurrentWindow = this;
+    CurrentWindow = this;
     WindowsLoop();
     glfwPollEvents();
 }
@@ -178,7 +178,7 @@ void WindowsWindow::WindowsLoop()
 
 }
 
-void WindowsWindow::AddHotKey(Key k, const WindowsWindow::Callback& c)
+int WindowsWindow::AddHotKey(Key k, const WindowsWindow::Callback& c)
 {
     int value = k;
     int key = value >> 8;
@@ -192,6 +192,14 @@ void WindowsWindow::AddHotKey(Key k, const WindowsWindow::Callback& c)
 
     if (RegisterHotKey(GetWin32Handle(), id, winMod, key))
         m_Hotkeys.emplace(id, c);
+
+    return id;
+}
+
+void WindowsWindow::RemoveHotKey(int id)
+{
+    m_Hotkeys.erase(id);
+    UnregisterHotKey(GetWin32Handle(), id);
 }
 
 // Hit test the frame for resizing and moving.

@@ -60,7 +60,10 @@ public:
     void Update(const Vec4<int>& viewport) override;
     void Render(CommandCollection&) override;
     using Callback = std::function<void(void)>;
-    void AddHotKey(Key, const Callback&);
+
+
+    int  AddHotKey(Key, const Callback&);
+    void RemoveHotKey(int);
 
     template<typename T>
     static void AddShellIcon(int id, const std::string& title, T callback)
@@ -83,6 +86,8 @@ public:
         Shell_NotifyIconA(NIM_ADD, &nidApp);
         m_ShellIconCallbacks.emplace(nidApp.uID, callback);
     }
+
+    static WindowsWindow* CurrentWindow;
 
 protected:
     float m_Scale = 1;
@@ -126,8 +131,6 @@ protected:
     static std::vector<NOTIFYICONDATA> m_ShellIcons;
     static std::unordered_map<int, std::function<void(Event&)>> m_ShellIconCallbacks;
     static int m_ShellIconCount;
-
-    static WindowsWindow* m_CurrentWindow;
 };
 
 

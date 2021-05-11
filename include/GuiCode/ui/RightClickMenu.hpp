@@ -63,10 +63,10 @@ public:
 		Component(menu);
 
 		// Show the window at the cursor position
-		if (pos.x != -1 && pos.y != -1 && m_CurrentWindow)
+		if (pos.x != -1 && pos.y != -1 && CurrentWindow)
 		{
 			RECT rect;
-			GetWindowRect(m_CurrentWindow->GetWin32Handle(), &rect);
+			GetWindowRect(CurrentWindow->GetWin32Handle(), &rect);
 			Location({ rect.left + pos.x, rect.bottom - pos.y });
 		}
 		else
