@@ -289,6 +289,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     {
         bool _dblclk = false;
         bool _rClick = false;
+        bool _click = false;
         switch (uMsg)
         {
         case WM_NCLBUTTONDBLCLK:
@@ -300,6 +301,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             SetCapture(hWnd);
             _self->MouseButtonCallback(_self, Event::MouseButton::LEFT, Event::Type::MousePressed, _dblclk);
             _fCallDWP = false;
+            _click = true;
             break;
 
         case WM_NCLBUTTONUP:
@@ -307,6 +309,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             _self->MouseButtonCallback(_self, Event::MouseButton::LEFT, Event::Type::MouseReleased, 0);
             ReleaseCapture();
             _fCallDWP = false;
+            _click = true;
             break;
 
         case WM_NCRBUTTONDBLCLK:
@@ -318,6 +321,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             SetCapture(hWnd);
             _self->MouseButtonCallback(_self, Event::MouseButton::RIGHT, Event::Type::MousePressed, _dblclk);
             _fCallDWP = false;
+            _click = true;
             break;
 
         case WM_NCRBUTTONUP:
@@ -326,6 +330,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             _self->MouseButtonCallback(_self, Event::MouseButton::RIGHT, Event::Type::MouseReleased, 0);
             ReleaseCapture();
             _fCallDWP = false;
+            _click = true;
             break;
 
         case WM_NCMBUTTONDBLCLK:
@@ -337,6 +342,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             SetCapture(hWnd);
             _self->MouseButtonCallback(_self, Event::MouseButton::MIDDLE, Event::Type::MousePressed, _dblclk);
             _fCallDWP = false;
+            _click = true;
             break;
 
         case WM_NCMBUTTONUP:
@@ -344,11 +350,12 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
             _self->MouseButtonCallback(_self, Event::MouseButton::MIDDLE, Event::Type::MouseReleased, 0);
             ReleaseCapture();
             _fCallDWP = false;
+            _click = true;
             break;
         }
         if (_rClick && RightClickMenu::Get().Opened() && _self != &RightClickMenu::Get());
         else
-        if (_fCallDWP == false && GetFocus() != _self->GetWin32Handle())
+        if (_click && _fCallDWP == false && GetFocus() != _self->GetWin32Handle())
             ::SetFocus(_self->GetWin32Handle());
     }
     else
@@ -389,8 +396,8 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     break;
     case WM_WINDOWPOSCHANGED:
     {
-        if (IsWindowVisible(hWnd) == true)
-            SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
+        //if (IsWindowVisible(hWnd) == true)
+        //    SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
     }
     break;
     case WM_SYSKEYDOWN:
@@ -448,7 +455,22 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     }
     case WM_MOUSEMOVE:
     {
-        _self->CursorPosCallback(_self, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+        int x = GET_X_LPARAM(lParam);
+        int y = GET_Y_LPARAM(lParam);
+        _self->CursorPosCallback(_self, x, y);
+        break;
+    }
+    case WM_MOUSELEAVE:
+        [[fallthrough]];
+    case WM_NCMOUSELEAVE:
+    {
+        POINT pos;
+        RECT rect;
+        GetCursorPos(&pos);
+        GetWindowRect(hWnd, &rect);
+        int x = pos.x - rect.left;
+        int y = pos.y - rect.top;
+        _self->CursorPosCallback(_self, x, y);
         break;
     }
     case WM_NCMOUSEMOVE:

@@ -120,6 +120,8 @@ protected:
 
     void UpdateCursor(int);
 
+    bool m_TrackingMouse = false, m_HoveringNC = false, m_HoveringW = false;
+
     static void CursorPosCallback(WindowsWindow* window, int x, int y);
     static void MouseButtonCallback(WindowsWindow* window, Event::MouseButton button, Event::Type action, int mod);
     static void MouseWheelCallback(WindowsWindow* window, int amount, int mod, int x, int y);
