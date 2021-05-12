@@ -145,7 +145,7 @@ namespace Graphics
     std::vector<OverlayQuad> m_Overlays;
 
 
-    void RunCommands(const ::CommandCollection& d)
+    void RunCommands(::CommandCollection& d)
     {
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0, 0, 0, 0);
@@ -154,7 +154,7 @@ namespace Graphics
 
         for (auto& i : m_FrameBufferDrawn)
             i.second = false;
-        
+
         for (int i = 0; i < d.Get().size(); i++)
         {
            

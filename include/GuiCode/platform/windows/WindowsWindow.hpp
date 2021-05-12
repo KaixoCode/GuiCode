@@ -108,7 +108,8 @@ protected:
         m_MouseY = 0,
         m_WindowId = -1,
         m_Cursorid = 0,
-        m_HotkeyCounter = 0;
+        m_HotkeyCounter = 0,
+        m_EstimateCommandSize = 0;
     
     std::map<int, Callback> m_Hotkeys;
 

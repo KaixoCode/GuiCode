@@ -67,7 +67,7 @@ public:
      * Returns the vector of <code>Graphics::CommandBase</code>.
      * @return all commands
      */
-    const std::vector<Graphics::CommandBase>& Get() const
+    std::vector<Graphics::CommandBase>& Get()
     {
         return m_CommandCollection;
     }

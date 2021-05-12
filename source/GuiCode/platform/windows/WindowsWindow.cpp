@@ -148,7 +148,9 @@ void WindowsWindow::WindowsLoop()
 
         //d.Command<Graphics::FrameBuffer>(9999, true, Vec4<int>{0, 0, Width(), Height()});
         CommandCollection d;
+        d.Get().reserve(m_EstimateCommandSize);
         Render(d);
+        m_EstimateCommandSize = d.Get().size() + 100;
         //d.Command<Graphics::FrameBufferEnd>();
         Graphics::RunCommands(d);
         glfwSwapBuffers(*this);

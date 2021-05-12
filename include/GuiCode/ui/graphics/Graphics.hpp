@@ -25,7 +25,7 @@ namespace Graphics
     void CurrentWindow(int a);
     void Scaling(float scale);
 
-    void RunCommands(const ::CommandCollection&);
+    void RunCommands(::CommandCollection&);
     
     // --------------------------------------------------------------------------
     // ---------------------------- Textures ------------------------------------
