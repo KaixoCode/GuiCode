@@ -62,18 +62,50 @@ public:
 		// Set the menu
 		Component(menu);
 
-		// Show the window at the cursor position
+		int biggestX = 0;
+		int biggestY = 0;
+
+		int sx = 0, bx = menu->Width();
+		int sy = menu->Y(), by = menu->Y() + menu->Height();
+
+		biggestX = (int)std::ceil(std::max((bx + 4) / m_Scale, 5.0f));
+		biggestY = (int)std::ceil(std::max((by - sy + 5) / m_Scale, 5.0f));
+		
+		int x = 0;
+		int y = 0;
+
+		POINT point; GetCursorPos(&point);
+		auto monitor = MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST);
+		MONITORINFO info;
+		info.cbSize = sizeof(MONITORINFO);
+
+		GetMonitorInfoA(monitor, &info);
+
+		int maxx = info.rcMonitor.right;
+		int maxy = info.rcMonitor.bottom;
+
+		// Show at given x, y coords
 		if (pos.x != -1 && pos.y != -1 && CurrentWindow)
 		{
 			RECT rect;
 			GetWindowRect(CurrentWindow->GetWin32Handle(), &rect);
-			Location({ rect.left + pos.x, rect.bottom - pos.y });
+			x = rect.left + pos.x;
+			y = rect.bottom - pos.y;
 		}
+
+		// Show the window at the cursor position
 		else
 		{
-			POINT point; GetCursorPos(&point);
-			Location({ point.x, point.y });
+			x = point.x;
+			y = point.y;
 		}
+
+		if (x + biggestX > maxx)
+			x = maxx - biggestX;
+		if (y + biggestY > maxy)
+			y = maxy - biggestY;
+
+		Location({ x, y });
 		Size(menu->Size());
 		m_PSize = menu->Size();
 		Update(m_Viewport);
