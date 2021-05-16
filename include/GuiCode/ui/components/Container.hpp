@@ -69,6 +69,28 @@ public:
     }
 
     /**
+     * Remove a <code>Component</code> from this <code>Container</code> using a reference.
+     * @param component
+     */
+    void Erase(Component& i)
+    {
+        m_HoveringComponent = nullptr;
+        m_FocusedComponent = nullptr;
+        m_Components.erase(std::remove_if(m_Components.begin(), m_Components.end(), [&](auto& c) { return c.get() == &i; }));
+    }
+
+    /**
+     * Remove a <code>Component</code> from this <code>Container</code> using a reference.
+     * @param component
+     */
+    void EraseLater(Component& i)
+    {
+        m_HoveringComponent = nullptr;
+        m_FocusedComponent = nullptr;
+        m_EraseLater.push_back(&i);
+    }
+
+    /**
      * Get all components.
      * @return <code>ComponentCollection</code>
      */
@@ -92,4 +114,7 @@ private:
      * appropriate events to those components
      */
     void Determine(Event& e);
+
+    // Used to delete a component at a time where it won't crash.
+    std::vector<Component*> m_EraseLater;
 };

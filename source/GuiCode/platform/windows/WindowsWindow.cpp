@@ -118,7 +118,7 @@ WindowsWindow::WindowsWindow(const WindowData& d)
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_MULTISAMPLE);
+    //glEnable(GL_MULTISAMPLE);
     glEnable(GL_SCISSOR_TEST);
     glfwSwapInterval(0);
 

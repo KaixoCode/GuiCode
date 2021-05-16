@@ -12,6 +12,7 @@ public:
     WindowsWindow(const WindowData&);
     ~WindowsWindow() 
     {
+        glfwDestroyWindow(m_Window);
         for (auto& a : m_ShellIcons)
             Shell_NotifyIconA(NIM_DELETE, &a);
 
