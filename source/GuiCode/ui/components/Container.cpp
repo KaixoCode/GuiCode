@@ -58,6 +58,12 @@ Container::Container()
 
 void Container::Update(const Vec4<int>& viewport)
 {
+    // Erase any components
+    for (auto _c : m_EraseLater)
+        Erase(*_c);
+
+    m_EraseLater.clear();
+
     // This just sets the m_Viewport to viewport.
     Component::Update(viewport);
     

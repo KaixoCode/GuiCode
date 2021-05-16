@@ -1,4 +1,5 @@
 #pragma once
+#include "GuiCode/pch.hpp"
 #include "GuiCode/ui/window/WindowBase.hpp"
 #include "GuiCode/ui/RightClickMenu.hpp"
 #include "GuiCode/ui/Dragging.hpp"
@@ -32,17 +33,24 @@ public:
 	}
 
 	/**
+	 * Remove window.
+	 */
+	void RemoveWindow(WindowBase& window)
+	{
+		m_Windows.erase(std::remove_if(m_Windows.begin(), m_Windows.end(), [&](auto& w) { return w.get() == &window; }));
+	}
+
+	/**
 	 * Call this in a while loop
 	 * <code> while (gui.Loop);</code>
 	 * @return true when Gui is running
 	 */
 	bool Loop()
 	{
-
-
 		LIMIT_FPS(60);
-		for (auto& _w : m_Windows)
+		for (int i = m_Windows.size() - 1; i >= 0; i--)
 		{
+			auto& _w = m_Windows[i];
 			_w->Loop();
 
 			if (_w->ShouldClose())
