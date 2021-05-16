@@ -201,10 +201,12 @@ public:
         CTRL_SPACE = (' ' << 8) | Event::Mod::CONTROL,
         CTRL_COMMA = (188 << 8) | Event::Mod::CONTROL, // TODO: This one doesnt work
         CTRL_SHIFT_S = ('S' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
+        CTRL_SHIFT_E = ('E' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         CTRL_SHIFT_W = ('W' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         ALT_F4 = (VK_F4 << 8) | Event::Mod::ALT,
         CTRL_F4 = (VK_F4 << 8) | Event::Mod::CONTROL,
         SHIFT_TAB = (0x9 << 8) | Event::Mod::SHIFT,
+        F11 = (VK_F11 << 8)
     };
 
     enum Value

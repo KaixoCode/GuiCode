@@ -39,6 +39,7 @@ public:
     auto Color(Color c)-> void { m_Color = c; }
     void Aero(bool b);
     void Icon(int);
+    void FullScreen(bool);
 
     operator    GLFWwindow* ()   const { return GetWindow(); }
     GLFWwindow* GetWindow()      const { return m_Window; }
@@ -53,7 +54,7 @@ public:
     bool        Visible()        const override { return IsWindowVisible(GetWin32Handle()); }
     bool        ShouldClose()    const override { return glfwWindowShouldClose(m_Window); };
     bool        Aero()           const { return m_Aero; }
-
+    bool        FullScreen()     const { return glfwGetWindowMonitor(m_Window) != nullptr; }
     
     void Loop() override;
     void WindowsLoop();
@@ -96,6 +97,7 @@ protected:
         m_Aero = false;
 
     Vec2<int> m_InitialSize;
+    Vec4<int> m_BackupDims;
 
     GLFWwindow* m_Window;
 

@@ -483,7 +483,7 @@ namespace Graphics
         static Shader _shader
         {
             // Vertex shader
-            "#version 330 core \n "
+            "#version 450 core \n "
             "layout(location = 0) in vec2 aPos; "
             "uniform mat4 mvp; "
             "void main() { "
@@ -491,7 +491,7 @@ namespace Graphics
             "}", 
 
             // Fragment shader
-            "#version 330 core \n "
+            "#version 450 core \n "
             "out vec4 FragColor; "
             "uniform vec4 color; "
             "void main() { "

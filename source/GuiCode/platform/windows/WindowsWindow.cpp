@@ -7,6 +7,52 @@
 #include <string>
 #include <codecvt>
 
+static int mini(int x, int y)
+{
+    return x < y ? x : y;
+}
+
+static int maxi(int x, int y)
+{
+    return x > y ? x : y;
+}
+
+GLFWmonitor* get_current_monitor(GLFWwindow* window)
+{
+    int nmonitors, i;
+    int wx, wy, ww, wh;
+    int mx, my, mw, mh;
+    int overlap, bestoverlap;
+    GLFWmonitor* bestmonitor;
+    GLFWmonitor** monitors;
+    const GLFWvidmode* mode;
+
+    bestoverlap = 0;
+    bestmonitor = NULL;
+
+    glfwGetWindowPos(window, &wx, &wy);
+    glfwGetWindowSize(window, &ww, &wh);
+    monitors = glfwGetMonitors(&nmonitors);
+
+    for (i = 0; i < nmonitors; i++) {
+        mode = glfwGetVideoMode(monitors[i]);
+        glfwGetMonitorPos(monitors[i], &mx, &my);
+        mw = mode->width;
+        mh = mode->height;
+
+        overlap =
+            maxi(0, mini(wx + ww, mx + mw) - maxi(wx, mx)) *
+            maxi(0, mini(wy + wh, my + mh) - maxi(wy, my));
+
+        if (bestoverlap < overlap) {
+            bestoverlap = overlap;
+            bestmonitor = monitors[i];
+        }
+    }
+
+    return bestmonitor;
+}
+
 int WindowsWindow::m_WindowCount = 0;
 int WindowsWindow::m_WindowIdCounter = 0;
 WindowsWindow* WindowsWindow::m_MainWindow = nullptr;
@@ -26,8 +72,8 @@ WindowsWindow::WindowsWindow(const WindowData& d)
         exit(-1);
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_FLOATING, d.alwaysOnTop);
     glfwWindowHint(GLFW_RESIZABLE, d.resizeable);
@@ -36,6 +82,7 @@ WindowsWindow::WindowsWindow(const WindowData& d)
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_VISIBLE, d.showOnCreate);
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+    glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
 
     auto window = dynamic_cast<Window*>(d.parent);
     m_Window = glfwCreateWindow(55, 55, d.name.c_str(), NULL, m_MainWindow ? m_MainWindow->operator GLFWwindow *() : NULL);
@@ -88,6 +135,34 @@ WindowsWindow::WindowsWindow(const WindowData& d)
 
     //Size(Width(), Height());    
     d.showOnCreate ? Show() : Hide();
+
+}
+
+void WindowsWindow::FullScreen(bool f)
+{
+    if (FullScreen() == f)
+        return;
+
+    if (f)
+    {
+        m_BackupDims = { Location(), RealSize() };
+        m_BackupDims.x += 8;
+        m_BackupDims.y += 32;
+        m_BackupDims.width -= 16;
+        m_BackupDims.height -= 40;
+
+        // get resolution of monitor
+        auto _monitor = get_current_monitor(m_Window);
+        const GLFWvidmode* mode = glfwGetVideoMode(_monitor);
+
+        // switch to full screen
+        glfwSetWindowMonitor(m_Window, _monitor, 0, 0, mode->width, mode->height, 0);
+    }
+    else
+    {
+        // restore last window size and position
+        glfwSetWindowMonitor(m_Window, nullptr, m_BackupDims.x, m_BackupDims.y, m_BackupDims.width, m_BackupDims.height, 0);
+    }
 
 }
 
@@ -502,6 +577,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     }
     // Handle hit testing in the NCA if not handled by DwmDefWindowProc.
     case WM_NCHITTEST:
+        if (!_self->FullScreen())
         if (_lRet == 0 && (_lRet = HitTestNCA(hWnd, wParam, lParam, _self->m_Scale)) != HTNOWHERE)
             _fCallDWP = false;
     }
