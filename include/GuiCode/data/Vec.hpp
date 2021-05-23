@@ -4,8 +4,8 @@
 template<typename T>
 struct Vec2
 {
-    union { T width, x, r, start; };
-    union { T height, y, g, end; };
+    union { T width, x, r, h, start; };
+    union { T height, y, g, s, end; };
 
     Vec2 operator -() { return { -x, -y }; }
     Vec2 operator -(const Vec2& other) { return { x - other.x, y - other.y }; }
@@ -49,9 +49,9 @@ struct Vec2
 template<typename T>
 struct Vec3
 {
-    union { T width, x, r; };
-    union { T height, y, g; }; 
-    union { T depth, z, b; };
+    union { T width, x, r, h; };
+    union { T height, y, g, s; }; 
+    union { T depth, z, b, v; };
 
     Vec3 operator -() { return { -x, -y, -z }; }
     Vec3 operator -(const Vec3& other) { return { x - other.x, y - other.y, z - other.z }; }
@@ -98,8 +98,8 @@ struct Vec4
         Vec2<T> position{ 0, 0 };
         struct
         {
-            union { T x, r; };
-            union { T y, g; };
+            union { T x, r, h; };
+            union { T y, g, s; };
         };
     };
     
@@ -108,7 +108,7 @@ struct Vec4
         Vec2<T> size{ 0, 0 };
         struct
         {
-            union { T z, b, width; };
+            union { T z, b, v, width; };
             union { T w, a, height; };
         };
     };

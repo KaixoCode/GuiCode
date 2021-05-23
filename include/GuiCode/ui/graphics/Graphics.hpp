@@ -85,6 +85,8 @@ namespace Graphics
     int StringWidth(const std::string_view&, int font, int size = -1);
     int CharWidth(const char&, int font, int size = -1);
 
+    void OffsetHsv(const Vec3<float>&);
+
     void Init();
 
     void DebugOverlay(bool v);
