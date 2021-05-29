@@ -77,6 +77,11 @@ public:
 		m_Running = false;
 	}
 
+	void Clear()
+	{
+		m_Windows.clear();
+	}
+
 private:
 
 	void m_Init()
