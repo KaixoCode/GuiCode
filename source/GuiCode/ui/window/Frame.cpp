@@ -3,7 +3,7 @@
 
 void Frame::Update(const Vec4<int>& viewport)
 {
-    bool _maxi = IsMaximized(GetWin32Handle());
+    bool _maxi = Maximized();
     int _offset = _maxi ? -8 : 0;
     m_Panel->Size({ Width(), Height() - 32 + _offset });
     m_Panel->Position({ 0, 0 });
@@ -37,7 +37,7 @@ void Frame::Render(CommandCollection& d)
     using namespace Graphics;
     d.Command<Clip>(Vec4<int>{ 0, 0, Width(), Height() });
     Window::Render(d);
-    bool _maxi = IsMaximized(GetWin32Handle());
+    bool _maxi = Maximized();
     int _offset = _maxi ? -8 : 0;
     int _x = -_offset;
     int _y = Height() - 32 + _offset;

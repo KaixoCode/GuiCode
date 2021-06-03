@@ -37,25 +37,30 @@ public:
     auto Hide()                -> void override { ShowWindow(GetWin32Handle(), SW_HIDE); }
     auto ShouldClose(bool b)   -> void override { glfwSetWindowShouldClose(m_Window, b); };
     auto Scale(float s)        -> void override { m_Scale = s; m_Projection = glm::ortho(0.0f, (float)std::max(m_Size.width * m_Scale, 5.0f), 0.0f, (float)std::max(m_Size.height * m_Scale, 5.0f)); };
+    auto AlwaysOnTop(bool b)   -> void override { SetWindowPos(GetWin32Handle(), b ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); }
+    auto ToForeground()        -> void override { SetForegroundWindow(GetWin32Handle()); }
     auto Color(Color c)-> void { m_Color = c; }
     void Aero(bool b);
     void Icon(int);
     void FullScreen(bool);
 
-    operator    GLFWwindow* ()   const { return GetWindow(); }
-    GLFWwindow* GetWindow()      const { return m_Window; }
-    HWND        GetWin32Handle() const { return glfwGetWin32Window(*this); }
-    Vec2<int>   Size()           const override { return { (int)std::ceil(Width() * m_Scale), (int)std::ceil(Height() * m_Scale) }; }
-    Vec2<int>   RealSize()       const { return m_Size; }
-    Vec2<int>   Location()       const override { int x, y; glfwGetWindowPos(m_Window, &x, &y); return { x, y }; }
-    Vec2<int>   CursorPos()      const override { return { m_MouseX, m_MouseY }; }
-    int         Width()          const override { return std::ceil(m_Size.width * m_Scale); }
-    int         Height()         const override { return std::ceil(m_Size.height * m_Scale); }
-    bool        Maximized()      const override { return IsMaximized(GetWin32Handle()); }
-    bool        Visible()        const override { return IsWindowVisible(GetWin32Handle()); }
-    bool        ShouldClose()    const override { return glfwWindowShouldClose(m_Window); };
-    bool        Aero()           const { return m_Aero; }
-    bool        FullScreen()     const { return glfwGetWindowMonitor(m_Window) != nullptr; }
+    operator    GLFWwindow* ()          const { return GetWindow(); }
+    GLFWwindow* GetWindow()             const { return m_Window; }
+    HWND        GetWin32Handle()        const { return glfwGetWin32Window(*this); }
+    Vec2<int>   Size()                  const override { return { (int)std::ceil(Width() * m_Scale), (int)std::ceil(Height() * m_Scale) }; }
+    Vec2<int>   RealSize()              const { return m_Size; }
+    Vec2<int>   Location()              const override { int x, y; glfwGetWindowPos(m_Window, &x, &y); return { x, y }; }
+    Vec2<int>   CursorPos()             const override { return { m_MouseX, m_MouseY }; }
+    Vec4<int>   GetWindowRect()         const override { RECT rect; ::GetWindowRect(GetWin32Handle(), &rect); return { rect.left, rect.top, rect.right, rect.bottom };
+    }
+    int         Width()                 const override { return std::ceil(m_Size.width * m_Scale); }
+    int         Height()                const override { return std::ceil(m_Size.height * m_Scale); }
+    bool        Maximized()             const override { return IsMaximized(GetWin32Handle()); }
+    bool        Visible()               const override { return IsWindowVisible(GetWin32Handle()); }
+    bool        ShouldClose()           const override { return glfwWindowShouldClose(m_Window); };
+    bool        Aero()                  const { return m_Aero; }
+    bool        FullScreen()            const { return glfwGetWindowMonitor(m_Window) != nullptr; }
+    bool        IsForegroundWindow()    const { return GetForegroundWindow() != GetWin32Handle(); }
     
     void Loop() override;
     void WindowsLoop();

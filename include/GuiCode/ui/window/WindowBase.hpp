@@ -2,6 +2,12 @@
 #include "GuiCode/pch.hpp"
 #include "GuiCode/ui/components/Container.hpp"
 
+namespace PlatformFunctions
+{
+    Vec2<int> GlobalCursorPos();
+    Vec4<int> MonitorRecFromPoint(Vec2<int> point);
+}
+
 class WindowBase;
 
 struct WindowData
@@ -57,16 +63,20 @@ public:
     virtual auto ShouldClose(bool b)   -> void = 0;
     virtual auto Loop()                -> void = 0;
     virtual auto Scale(float)          -> void = 0;
+    virtual auto AlwaysOnTop(bool)     -> void = 0;
+    virtual auto ToForeground()        -> void = 0;
 
-    virtual Vec2<int> Size()        const = 0;
-    virtual Vec2<int> Location()    const = 0;
-    virtual Vec2<int> CursorPos()   const = 0;
-    virtual int       Width()       const = 0;
-    virtual int       Height()      const = 0;
-    virtual bool      Maximized()   const = 0;
-    virtual bool      Visible()     const = 0;
-    virtual bool      ShouldClose() const = 0;
-    virtual bool      HideOnClose() const { return m_HideOnClose; };
+    virtual Vec2<int> Size()                const = 0;
+    virtual Vec2<int> Location()            const = 0;
+    virtual Vec2<int> CursorPos()           const = 0;
+    virtual Vec4<int> GetWindowRect()       const = 0;
+    virtual int       Width()               const = 0;
+    virtual int       Height()              const = 0;
+    virtual bool      Maximized()           const = 0;
+    virtual bool      Visible()             const = 0;
+    virtual bool      ShouldClose()         const = 0;
+    virtual bool      HideOnClose()         const { return m_HideOnClose; };
+    virtual bool      IsForegroundWindow()  const = 0;
 
 
 protected:

@@ -98,8 +98,8 @@ struct Vec4
         Vec2<T> position{ 0, 0 };
         struct
         {
-            union { T x, r, h; };
-            union { T y, g, s; };
+            union { T x, r, h, left; };
+            union { T y, g, s, top; };
         };
     };
     
@@ -108,8 +108,8 @@ struct Vec4
         Vec2<T> size{ 0, 0 };
         struct
         {
-            union { T z, b, v, width; };
-            union { T w, a, height; };
+            union { T z, b, v, width, right; };
+            union { T w, a, height, bottom; };
         };
     };
 

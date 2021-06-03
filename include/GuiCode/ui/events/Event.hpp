@@ -203,16 +203,16 @@ public:
         CTRL_SHIFT_S = ('S' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         CTRL_SHIFT_E = ('E' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
         CTRL_SHIFT_W = ('W' << 8) | Event::Mod::CONTROL | Event::Mod::SHIFT,
-        ALT_F4 = (VK_F4 << 8) | Event::Mod::ALT,
-        CTRL_F4 = (VK_F4 << 8) | Event::Mod::CONTROL,
+        ALT_F4 = (0x73 << 8) | Event::Mod::ALT,
+        CTRL_F4 = (0x73 << 8) | Event::Mod::CONTROL,
         SHIFT_TAB = (0x9 << 8) | Event::Mod::SHIFT,
-        F11 = (VK_F11 << 8)
+        F11 = (0x7A << 8)
     };
 
     enum Value
     {
         BACKSPACE = 0x8,
-        ESC = VK_ESCAPE,
+        ESC = 0x1B,
         TAB = 0x9,
         DEL = 0x2e,
         ENTER = 0xd,

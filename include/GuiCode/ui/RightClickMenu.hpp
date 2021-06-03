@@ -29,7 +29,7 @@ public:
 	void Loop() override
 	{
 		// Hide this window when it loses focus.
-		if (GetForegroundWindow() != GetWin32Handle() && m_Focus)
+		if (IsForegroundWindow() && m_Focus)
 			Close();
 
 		ComponentFrame::Loop();
@@ -56,9 +56,7 @@ public:
 	void Open(MenuBase* menu, bool f = false, const Vec2<int>& pos = { -1, -1 })
 	{
 		m_Focus = true;
-
-		// TODO: abstract this OS specific code away
-		
+				
 		// Set the menu
 		Component(menu);
 
@@ -74,21 +72,16 @@ public:
 		int x = 0;
 		int y = 0;
 
-		POINT point; GetCursorPos(&point);
-		auto monitor = MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST);
-		MONITORINFO info;
-		info.cbSize = sizeof(MONITORINFO);
+		Vec2<int> point = PlatformFunctions::GlobalCursorPos();
+		Vec4<int> rect = PlatformFunctions::MonitorRecFromPoint(point);
 
-		GetMonitorInfoA(monitor, &info);
-
-		int maxx = info.rcMonitor.right;
-		int maxy = info.rcMonitor.bottom;
+		int maxx = rect.right;
+		int maxy = rect.bottom;
 
 		// Show at given x, y coords
 		if (pos.x != -1 && pos.y != -1 && CurrentWindow)
 		{
-			RECT rect;
-			GetWindowRect(CurrentWindow->GetWin32Handle(), &rect);
+			Vec4<int> rect = CurrentWindow->GetWindowRect();
 			x = rect.left + pos.x;
 			y = rect.bottom - pos.y;
 		}
@@ -109,13 +102,11 @@ public:
 		Size(menu->Size());
 		m_PSize = menu->Size();
 		Update(m_Viewport);
-		SetForegroundWindow(GetWin32Handle());
+		ToForeground();
 
 		// Change the capture to this window to make sure 
 		// when releasing the mouse it doesn't immediatly
 		// unfocus this window and close it.
-		ReleaseCapture();
-		SetCapture(GetWin32Handle());
 		Visible(true);
 	}
 

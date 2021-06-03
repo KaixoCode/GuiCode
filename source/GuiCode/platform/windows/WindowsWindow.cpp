@@ -7,6 +7,27 @@
 #include <string>
 #include <codecvt>
 
+namespace PlatformFunctions
+{
+    Vec2<int> GlobalCursorPos()
+    {
+        POINT curPos; GetCursorPos(&curPos);
+        return { curPos.x, curPos.y };
+    }
+
+    Vec4<int> MonitorRecFromPoint(const Vec2<int>& point)
+    {
+        auto monitor = MonitorFromPoint(POINT{ point.x, point.y }, MONITOR_DEFAULTTONEAREST);
+        MONITORINFO info;
+        info.cbSize = sizeof(MONITORINFO);
+
+        GetMonitorInfoA(monitor, &info);
+
+        return { info.rcMonitor.left, info.rcMonitor.top, info.rcMonitor.right, info.rcMonitor.bottom };
+    }
+}
+
+
 static int mini(int x, int y)
 {
     return x < y ? x : y;
