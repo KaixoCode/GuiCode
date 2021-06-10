@@ -519,7 +519,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     {
         RECT _rect;
         long _x = 0, _y = 0;
-        if (GetWindowRect(hWnd, &_rect))
+        if (::GetWindowRect(hWnd, &_rect))
             _x = _rect.left, _y = _rect.top;
 
         int _win32mod = GET_KEYSTATE_WPARAM(wParam);
@@ -541,7 +541,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
         RECT _rect;
         int _width = 0, _height = 0;
 
-        if (GetWindowRect(hWnd, &_rect))
+        if (::GetWindowRect(hWnd, &_rect))
         {
             _width = _rect.right - _rect.left;
             _height = _rect.bottom - _rect.top;
@@ -563,7 +563,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
         POINT pos;
         RECT rect;
         GetCursorPos(&pos);
-        GetWindowRect(hWnd, &rect);
+        ::GetWindowRect(hWnd, &rect);
         int x = pos.x - rect.left;
         int y = pos.y - rect.top;
         _self->CursorPosCallback(_self, x, y);
@@ -573,7 +573,7 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     {
         RECT _rect;
         long _x = 0, _y = 0;
-        if (GetWindowRect(hWnd, &_rect))
+        if (::GetWindowRect(hWnd, &_rect))
             _x = _rect.left, _y = _rect.top;
 
         _self->CursorPosCallback(_self, GET_X_LPARAM(lParam) - _x, GET_Y_LPARAM(lParam) - _y);
