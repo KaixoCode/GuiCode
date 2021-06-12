@@ -51,8 +51,7 @@ public:
     Vec2<int>   RealSize()              const { return m_Size; }
     Vec2<int>   Location()              const override { int x, y; glfwGetWindowPos(m_Window, &x, &y); return { x, y }; }
     Vec2<int>   CursorPos()             const override { return { m_MouseX, m_MouseY }; }
-    Vec4<int>   GetWindowRect()         const override { RECT rect; ::GetWindowRect(GetWin32Handle(), &rect); return { rect.left, rect.top, rect.right, rect.bottom };
-    }
+    Vec4<int>   GetWindowRect()         const override { RECT rect; ::GetWindowRect(GetWin32Handle(), &rect); return { rect.left, rect.top, rect.right, rect.bottom }; }
     int         Width()                 const override { return std::ceil(m_Size.width * m_Scale); }
     int         Height()                const override { return std::ceil(m_Size.height * m_Scale); }
     bool        Maximized()             const override { return IsMaximized(GetWin32Handle()); }

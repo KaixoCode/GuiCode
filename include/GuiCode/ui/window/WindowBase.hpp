@@ -5,7 +5,7 @@
 namespace PlatformFunctions
 {
     Vec2<int> GlobalCursorPos();
-    Vec4<int> MonitorRecFromPoint(Vec2<int> point);
+    Vec4<int> MonitorRecFromPoint(const Vec2<int>& point);
 }
 
 class WindowBase;
