@@ -62,6 +62,7 @@ public:
     Vec2<int> Translate() { return { (int)m_Matrix[3][0], (int)m_Matrix[3][1] }; };
 
     int Width(const std::string& s);
+    int Width(const std::string_view& s);
 
     /**
      * Returns the vector of <code>Graphics::CommandBase</code>.
