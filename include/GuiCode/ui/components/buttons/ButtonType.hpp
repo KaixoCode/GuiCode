@@ -26,12 +26,12 @@ namespace ButtonType
          * @param size size
          * @param key keycombo
          */
-        Normal(Callback c = []() {}, const std::string& name = "Button", Key key = Key::NONE);
+        Normal(ButtonCallback c = []() {}, const std::string& name = "Button", Key key = Key::NONE);
 
         void Update(const Vec4<int>&) override;
 
     private:
-        Callback m_Callback;
+        ButtonCallback m_Callback;
     };
 
     // --------------------------------------------------------------------------
@@ -53,7 +53,7 @@ namespace ButtonType
          * @param size size
          * @param key keycombo
          */
-        List(Callback c = []() {}, const std::string& name = "Button",
+        List(ButtonCallback c = []() {}, const std::string& name = "Button",
             int id = 0, Key key = Key::NONE)
             : Normal(c, name, key), m_Id(id)
         {
@@ -82,7 +82,7 @@ namespace ButtonType
                 }
             };
 
-            auto& _exists = m_Lists.find(id);
+            auto _exists = m_Lists.find(id);
             if (_exists == m_Lists.end())
                 m_Lists.emplace(id, std::vector<List*>());
    
@@ -122,7 +122,7 @@ namespace ButtonType
         static inline std::unordered_map<int, std::vector<List*>> m_Lists;
         bool m_Selected = false;
         int m_Id = 0;
-        Callback m_Callback;
+        ButtonCallback m_Callback;
     };
 
     // --------------------------------------------------------------------------
@@ -273,17 +273,17 @@ namespace ButtonType
          */
         template<typename ...Args>
         Menu(Args&&...args)
-            : ButtonType(args...), m_Menu(&ButtonType::Emplace<::Menu<Graphics, MenuType>>())
+            : ButtonType(args...), m_Menu(&ButtonType::template Emplace<::Menu<Graphics, MenuType>>())
         {
-            m_Listener += [this](Event::KeyPressed& event)
+            this->m_Listener += [this](Event::KeyPressed& event)
             {
-                if (!Focused() || Disabled())
+                if (!this->Focused() || this->Disabled())
                     return;
 
-                if (!Active() && m_InMenu && event.key == Key::DOWN && m_Post != nullptr)
+                if (!this->Active() && this->m_InMenu && event.key == Key::DOWN && this->m_Post != nullptr)
                 {
                     event.key = -1;
-                    ButtonBase* post = m_Post;
+                    ButtonBase* post = this->m_Post;
                     while (post && post->Disabled())
                     {
                         post = post->PostButton();
@@ -291,15 +291,15 @@ namespace ButtonType
 
                     if (post)
                     {
-                        Focused(false);
+                        this->Focused(false);
                         post->Focused(true);
                     }
                 }
 
-                if (!Active() && m_InMenu && event.key == Key::UP && m_Pre != nullptr)
+                if (!this->Active() && this->m_InMenu && event.key == Key::UP && this->m_Pre != nullptr)
                 {
                     event.key = -1;
-                    ButtonBase* pre = m_Pre;
+                    ButtonBase* pre = this->m_Pre;
                     while (pre && pre->Disabled())
                     {
                         pre = pre->PreButton();
@@ -307,12 +307,12 @@ namespace ButtonType
 
                     if (pre)
                     {
-                        Focused(false);
+                        this->Focused(false);
                         pre->Focused(true);
                     }
                 }
 
-                if (Active() && m_InMenu && event.key == Key::LEFT)
+                if (this->Active() && this->m_InMenu && event.key == Key::LEFT)
                 {
                     auto bttn = dynamic_cast<ButtonBase*>(m_Menu->FocusedComponent());
                     if (bttn && bttn->Active() && bttn->HasSubMenu())
@@ -325,7 +325,7 @@ namespace ButtonType
                     m_CloseMenu = true;
                 }
 
-                if (Active() && m_InMenu && event.key == Key::ESC)
+                if (this->Active() && this->m_InMenu && event.key == Key::ESC)
                 {
                     auto bttn = dynamic_cast<ButtonBase*>(m_Menu->FocusedComponent());
                     if (bttn && bttn->Active())
@@ -338,12 +338,12 @@ namespace ButtonType
                     m_CloseMenu = true;
                 }
 
-                if (!Active() && m_InMenu && event.key == Key::RIGHT && Focused() && Visible())
+                if (!this->Active() && this->m_InMenu && event.key == Key::RIGHT && this->Focused() && this->Visible())
                 {
-                    Active(true);
+                    this->Active(true);
                 }
             };
-            m_Clip = false;
+            this->m_Clip = false;
         }
 
         void Update(const Vec4<int>& viewport) override
@@ -351,29 +351,29 @@ namespace ButtonType
             if (m_CloseMenu)
             {
                 m_CloseMenu = false;
-                Active(false);
+                this->Active(false);
             }
 
-            if (!m_Menu->Visible() && Active() && Focused())
+            if (!m_Menu->Visible() && this->Active() && this->Focused())
             {
                 m_Menu->Focused(true);
             }
 
-            if (m_Menu->Visible() && !Active())
+            if (m_Menu->Visible() && !this->Active())
             {
                 m_Menu->FocusedComponent(nullptr);
                 for (auto& i : m_Menu->Components())
                     i->Focused(false);
             }
-            m_Menu->Visible(Active());
+            m_Menu->Visible(this->Active());
             if (A == Align::CENTER || A == Align::BOTTOM)
-                m_Menu->Position({ X(), Y() - m_Menu->Height() });
+                m_Menu->Position({ this->X(), this->Y() - m_Menu->Height() });
 
             else if (A == Align::LEFT)
-                m_Menu->Position({ X() - m_Menu->Width(), Y() + Height() - m_Menu->Height() });
+                m_Menu->Position({ this->X() - m_Menu->Width(), this->Y() + this->Height() - m_Menu->Height() });
 
             else
-                m_Menu->Position({ X() + Width(), Y() + Height() - m_Menu->Height() });
+                m_Menu->Position({ this->X() + this->Width(), this->Y() + this->Height() - m_Menu->Height() });
 
             ButtonType::Update(viewport);
         }
@@ -398,7 +398,7 @@ namespace ButtonType
 
         bool WithinBounds(const Vec2<int>& pos) const override
         {
-            return ButtonType::WithinBounds(pos) || (Active() && m_Menu->WithinBounds(pos));
+            return ButtonType::WithinBounds(pos) || (this->Active() && m_Menu->WithinBounds(pos));
         }
 
         virtual bool HasSubMenu() override { return true; }

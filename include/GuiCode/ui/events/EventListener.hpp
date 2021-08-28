@@ -29,7 +29,7 @@ public:
      */
     void AddEvent(Event& e)
     {
-        for (auto& a = m_EventCallbacks.rbegin(); a != m_EventCallbacks.rend(); ++a)
+        for (auto a = m_EventCallbacks.rbegin(); a != m_EventCallbacks.rend(); ++a)
             a->operator()(e);
 
         switch (e.type)
@@ -50,19 +50,19 @@ public:
         }
     }
 
-    void AddEvent(Event::KeyPressed& e) { for (auto& a = m_KeyPressedCallbacks.rbegin(); a != m_KeyPressedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::KeyTyped& e) { for (auto& a = m_KeyTypedCallbacks.rbegin(); a != m_KeyTypedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::KeyReleased& e) { for (auto& a = m_KeyReleasedCallbacks.rbegin(); a != m_KeyReleasedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::MousePressed& e) { for (auto& a = m_MousePressedCallbacks.rbegin(); a != m_MousePressedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::MouseReleased& e) { for (auto& a = m_MouseReleasedCallbacks.rbegin(); a != m_MouseReleasedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::MouseClicked& e) { for (auto& a = m_MouseClickedCallbacks.rbegin(); a != m_MouseClickedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::MouseMoved& e) { for (auto& a = m_MouseMovedCallbacks.rbegin(); a != m_MouseMovedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::MouseDragged& e) { for (auto& a = m_MouseDraggedCallbacks.rbegin(); a != m_MouseDraggedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::MouseWheel& e) { for (auto& a = m_MouseWheelCallbacks.rbegin(); a != m_MouseWheelCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::MouseEntered& e) { for (auto& a = m_MouseEnteredCallbacks.rbegin(); a != m_MouseEnteredCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::MouseExited& e) { for (auto& a = m_MouseExitedCallbacks.rbegin(); a != m_MouseExitedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::Focused& e) { for (auto& a = m_FocusedCallbacks.rbegin(); a != m_FocusedCallbacks.rend(); ++a) a->operator()(e); }
-    void AddEvent(Event::Unfocused& e) { for (auto& a = m_UnfocusedCallbacks.rbegin(); a != m_UnfocusedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::KeyPressed& e) { for (auto a = m_KeyPressedCallbacks.rbegin(); a != m_KeyPressedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::KeyTyped& e) { for (auto a = m_KeyTypedCallbacks.rbegin(); a != m_KeyTypedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::KeyReleased& e) { for (auto a = m_KeyReleasedCallbacks.rbegin(); a != m_KeyReleasedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::MousePressed& e) { for (auto a = m_MousePressedCallbacks.rbegin(); a != m_MousePressedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::MouseReleased& e) { for (auto a = m_MouseReleasedCallbacks.rbegin(); a != m_MouseReleasedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::MouseClicked& e) { for (auto a = m_MouseClickedCallbacks.rbegin(); a != m_MouseClickedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::MouseMoved& e) { for (auto a = m_MouseMovedCallbacks.rbegin(); a != m_MouseMovedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::MouseDragged& e) { for (auto a = m_MouseDraggedCallbacks.rbegin(); a != m_MouseDraggedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::MouseWheel& e) { for (auto a = m_MouseWheelCallbacks.rbegin(); a != m_MouseWheelCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::MouseEntered& e) { for (auto a = m_MouseEnteredCallbacks.rbegin(); a != m_MouseEnteredCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::MouseExited& e) { for (auto a = m_MouseExitedCallbacks.rbegin(); a != m_MouseExitedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::Focused& e) { for (auto a = m_FocusedCallbacks.rbegin(); a != m_FocusedCallbacks.rend(); ++a) a->operator()(e); }
+    void AddEvent(Event::Unfocused& e) { for (auto a = m_UnfocusedCallbacks.rbegin(); a != m_UnfocusedCallbacks.rend(); ++a) a->operator()(e); }
 
     template<typename T>
     void operator +=(T t) { AddCallback(t); }

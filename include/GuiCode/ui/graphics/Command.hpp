@@ -79,7 +79,7 @@ namespace Graphics
 
         // Quad/Ellipse  
         CommandBase(Type type, int x, int y, int w, int h) : type(type), dimension({ x, y, w, h }), rotation(0) {}
-        CommandBase(Type type, const Vec4<int>& d) : type(type), dimension(d), angles({ 0, 0 }), rotation(0) {}
+        CommandBase(Type type, const Vec4<int>& d) : type(type), dimension(d), rotation(0) {}
         CommandBase(Type type, const Vec2<int>& d1, const Vec2<int>& d2) : type(type), dimension({ d1.x, d1.y, d2.x, d2.y }), rotation(0) {}
                          
         // Textured Quad 

@@ -14,7 +14,7 @@ void TextContainer::Insert(const std::string& add)
 	{
 		std::string copy = m_Content;
 		RemoveSelection();
-		auto& _start = m_Content.begin() + Selection().Lowest();
+		auto _start = m_Content.begin() + Selection().Lowest();
 		m_Content.insert(_start, add.begin(), add.end());
 		if (!std::regex_match(m_Content, m_Filter))
 			m_Content = copy;
@@ -24,7 +24,7 @@ void TextContainer::Insert(const std::string& add)
 	else
 	{
 		RemoveSelection();
-		auto& _start = m_Content.begin() + Selection().Lowest();
+		auto _start = m_Content.begin() + Selection().Lowest();
 		m_Content.insert(_start, add.begin(), add.end());
 		Select(Selection().Lowest() + add.length());
 	}
@@ -36,7 +36,7 @@ void TextContainer::Insert(const char& add)
 	{
 		std::string copy = m_Content;
 		RemoveSelection();
-		auto& _start = m_Content.begin() + Selection().Lowest();
+		auto _start = m_Content.begin() + Selection().Lowest();
 		m_Content.insert(_start, add);
 		if (!std::regex_match(m_Content, m_Filter))
 			m_Content = copy;
@@ -46,7 +46,7 @@ void TextContainer::Insert(const char& add)
 	else
 	{
 		RemoveSelection();
-		auto& _start = m_Content.begin() + Selection().Lowest();
+		auto _start = m_Content.begin() + Selection().Lowest();
 		m_Content.insert(_start, add);
 		Select(Selection().Lowest() + 1);
 	}
@@ -59,7 +59,7 @@ void TextContainer::Delete()
 
 	else if (Selection().Highest() < Length())
 	{
-		auto& _start = m_Content.begin() + Selection().Lowest();
+		auto _start = m_Content.begin() + Selection().Lowest();
 		m_Content.erase(_start, _start + 1);
 		Select(Selection().Lowest());
 	}
@@ -72,7 +72,7 @@ void TextContainer::Backspace()
 
 	else if (Selection().Lowest() > 0)
 	{
-		auto& _start = m_Content.begin() + Selection().Lowest();
+		auto _start = m_Content.begin() + Selection().Lowest();
 		m_Content.erase(_start - 1, _start);
 		Select(Selection().Lowest() - 1);
 	}
@@ -86,8 +86,8 @@ void TextContainer::RemoveSelection()
 
 void TextContainer::Remove(const ::Selection& s)
 {
-	auto& _start = m_Content.begin() + s.Lowest();
-	auto& _end = m_Content.begin() + s.Highest();
+	auto _start = m_Content.begin() + s.Lowest();
+	auto _end = m_Content.begin() + s.Highest();
 	m_Content.erase(_start, _end);
 	ConstrainSelection();
 }

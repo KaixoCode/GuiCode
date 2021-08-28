@@ -362,16 +362,25 @@ LRESULT CALLBACK WindowsWindow::SubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     if (uMsg == 10000 && m_ShellIconCallbacks.find(wParam) != m_ShellIconCallbacks.end())
     {
         if (lParam == WM_LBUTTONDOWN)
-            m_ShellIconCallbacks[wParam](Event{ Event::Type::MousePressed, 0, 0, Event::MouseButton::LEFT });
-
+        {
+            Event _e{ Event::Type::MousePressed, 0, 0, Event::MouseButton::LEFT };
+            m_ShellIconCallbacks[wParam](_e);
+        }
         if (lParam == WM_LBUTTONDBLCLK)
-            m_ShellIconCallbacks[wParam](Event{ Event::Type::MousePressed, 0, 0, Event::MouseButton::LEFT, true });
-
+        {
+            Event _e{ Event::Type::MousePressed, 0, 0, Event::MouseButton::LEFT, true };
+            m_ShellIconCallbacks[wParam](_e);
+        }
         if (lParam == WM_RBUTTONDOWN)
-            m_ShellIconCallbacks[wParam](Event{ Event::Type::MousePressed, 0, 0, Event::MouseButton::RIGHT });
-
+        {
+            Event _e{ Event::Type::MousePressed, 0, 0, Event::MouseButton::RIGHT };
+            m_ShellIconCallbacks[wParam](_e);
+        }
         if (lParam == WM_RBUTTONDBLCLK)
-            m_ShellIconCallbacks[wParam](Event{ Event::Type::MousePressed, 0, 0, Event::MouseButton::RIGHT, true });
+        {
+            Event _e{ Event::Type::MousePressed, 0, 0, Event::MouseButton::RIGHT, true };
+            m_ShellIconCallbacks[wParam](_e);
+        }
     }
 
     // Winproc worker for custom frame issues.

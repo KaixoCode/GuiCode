@@ -378,7 +378,7 @@ namespace Graphics
         m_IgnoreDraws = !refresh;
 
         // Make framebuffer if it doesn't exist yet
-        auto& _hasfb = m_FrameBuffers.find(id);
+        auto _hasfb = m_FrameBuffers.find(id);
         if (_hasfb == m_FrameBuffers.end())
         {
             GLuint _fb = 0;
@@ -414,7 +414,7 @@ namespace Graphics
         bool drawn = m_Size.width == -1;
         if (m_Size.width != -1)
         {
-            auto& it = m_FrameBufferDrawn.find(id);
+            auto it = m_FrameBufferDrawn.find(id);
             if (it != m_FrameBufferDrawn.end())
                 drawn = (*it).second, (*it).second = true;
             else

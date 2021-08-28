@@ -1,7 +1,7 @@
 #pragma once
 #include "GuiCode/ui/components/Container.hpp"
 
-using Callback = std::function<void()>;
+using ButtonCallback = std::function<void()>;
 using ToggleCallback = std::function<void(bool&)>;
 
 // --------------------------------------------------------------------------
@@ -119,11 +119,11 @@ struct Button : public ButtonType
 
     void Render(CommandCollection& d) override
     {
-        if (m_Clip)
-            d.Command<Graphics::Clip>(Vec4<int>{ Position(), Size() });
+        if (this->m_Clip)
+            d.Command<Graphics::Clip>(Vec4<int>{ this->Position(), this->Size() });
         ButtonType::Render(d);
         ButtonGraphics::Render(*this, d);
-        if (m_Clip)
+        if (this->m_Clip)
             d.Command<Graphics::PopClip>();
     };
 };

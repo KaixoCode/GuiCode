@@ -2,7 +2,7 @@
 #include "GuiCode/ui/components/Component.hpp"
 #include "GuiCode/ui/components/LayoutManager.hpp"
 #include "GuiCode/ui/components/Layout.hpp"
-
+class ButtonBase;
 class Container : public Component
 {
 public:

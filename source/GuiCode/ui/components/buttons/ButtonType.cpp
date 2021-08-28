@@ -10,7 +10,7 @@ namespace ButtonType
     // ------------------------------- Normal -----------------------------------
     // --------------------------------------------------------------------------
     
-    Normal::Normal(Callback c, const std::string& name, Key key)
+    Normal::Normal(ButtonCallback c, const std::string& name, Key key)
         : ButtonBase(name, key), m_Callback(c)
     {
         m_Listener += [this](Event::MousePressed& event)
